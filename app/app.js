@@ -10,6 +10,7 @@ var fusioApp = angular.module('fusioApp', [
     'fusioApp.app.grant',
     'fusioApp.auth',
     'fusioApp.login',
+    'fusioApp.logout',
     'fusioApp.profile',
     'fusioApp.security',
     'fusioApp.signup'
@@ -43,17 +44,6 @@ fusioApp.config(['$httpProvider', function($httpProvider) {
 }]);
 
 fusioApp.run(function ($rootScope, $window, $location, $http, version) {
-    /*
-    var token = $window.sessionStorage.getItem('fusio_access_token');
-    if (token) {
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-
-        angular.element(document.querySelector('body')).removeClass('fusio-hidden');
-    } else {
-        $location.path('/login');
-    }
-    */
-
     // set version
     $rootScope.version = version;
 });

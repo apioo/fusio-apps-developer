@@ -9,7 +9,7 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
     });
 }])
 
-.controller('AppDeveloperCtrl', ['$scope', '$http', '$uibModal', '$auth', function ($scope, $http, $uibModal, $auth) {
+.controller('AppDeveloperCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function ($scope, $http, $uibModal, $auth, $location) {
 
     $scope.apps = [];
 

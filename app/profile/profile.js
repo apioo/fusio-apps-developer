@@ -9,7 +9,7 @@ angular.module('fusioApp.profile', ['ngRoute'])
     });
 }])
 
-.controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', function ($scope, $http, $uibModal, $auth) {
+.controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function ($scope, $http, $uibModal, $auth, $location) {
 
     $scope.profile = {};
 

@@ -9,7 +9,7 @@ angular.module('fusioApp.security', ['ngRoute'])
     });
 }])
 
-.controller('SecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', function ($scope, $http, $uibModal, $auth) {
+.controller('SecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function ($scope, $http, $uibModal, $auth, $location) {
 
     if (!$auth.isAuthenticated()) {
         $location.path('/login');
