@@ -3,6 +3,7 @@
 {
     margin-top: 32px;
     border: 1px solid #aaa;
+    max-width: 1000px;
 }
 
 .fusio-app-container h1

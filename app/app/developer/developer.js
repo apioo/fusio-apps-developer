@@ -26,14 +26,13 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
 
     $scope.createApp = function(){
         var modalInstance = $uibModal.open({
-            size: 'lg',
+            size: 'md',
             backdrop: 'static',
             templateUrl: 'app/app/developer/create.html',
             controller: 'AppDeveloperCreateCtrl'
         });
 
         modalInstance.result.then(function(response){
-            $scope.response = response.data;
             $scope.load();
         }, function(){
         });
@@ -41,7 +40,7 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
 
     $scope.showApp = function(app){
         var modalInstance = $uibModal.open({
-            size: 'lg',
+            size: 'md',
             backdrop: 'static',
             templateUrl: 'app/app/developer/detail.html',
             controller: 'AppDeveloperDetailCtrl',
@@ -51,16 +50,14 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
                 }
             }
         });
-
-        modalInstance.result.then(function(response){
-            $scope.response = response.data;
-            $scope.load();
-        }, function(){
-        });
     };
 
-    $scope.deleteApp = function(appId){
-        
+    $scope.deleteApp = function(app){
+        if (confirm('Do you really want to delete the app?')) {
+            $http.delete(fusio_url + 'consumer/app/developer/' + app.id).then(function(response){
+                $scope.load();
+            });
+        }
     };
 
     $scope.load();
@@ -80,12 +77,32 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
         $scope.scopes = response.data.entry;
     });
     
-    $scope.create = function(apps){
-        
+    $scope.create = function(app){
+        var data = angular.copy(app);
+
+        // filter scopes
+        if (data.scopes && angular.isArray(data.scopes)) {
+            data.scopes = data.scopes.filter(function(value){
+                return value != null;
+            });
+        }
+
+        $http.post(fusio_url + 'consumer/app/developer', data).then(function(response){
+            $scope.response = response.data;
+            if (response.data.success === true) {
+                $uibModalInstance.close();
+            }
+        }, function(response){
+            $scope.response = response.data;
+        });
     };
 
     $scope.close = function(){
         $uibModalInstance.dismiss('cancel');
+    };
+
+    $scope.closeResponse = function(){
+        $scope.response = null;
     };
 
 }])

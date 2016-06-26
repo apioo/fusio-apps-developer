@@ -6,13 +6,29 @@
         </div>
         <div class="col-md-10">
             <div class="alert alert-info" role="alert">List of applications which you have granted access to your account. You can revoke the access at any time.</div>
-            <ul>
-                <li ng-repeat="grant in grants">
-                    <button class="btn btn-danger pull-right fusio-btn-grant-revoke" data-grant-id="{{ app.id }}">Revoke</button>
-                    {{ grant.app.name }}<br>
-                    <small>granted access on {{ grant.createDate }}</small>
-                </li>
-            </ul>
+            <table class="table">
+                <colgroup>
+                    <col width="*" />
+                    <col width="200" />
+                    <col width="200" />
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Granted on</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="grant in grants">
+                    <td>{{ grant.app.name }}</td>
+                    <td>{{ grant.createDate | date:'shortDate' }}</td>
+                    <td>
+                        <button class="btn btn-danger pull-right fusio-btn-grant-revoke" data-grant-id="{{ app.id }}">Revoke</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

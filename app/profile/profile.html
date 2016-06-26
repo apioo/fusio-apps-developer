@@ -5,6 +5,9 @@
             <div ng-include src="'app/nav.html'"></div>
         </div>
         <div class="col-md-10">
+            <div ng-if="profile.email" class="pull-right visible-lg-block visible-md-block">
+                <img gravatar-src="profile.email" gravatar-size="100">
+            </div>
             <form style="max-width:400px;">
                 <div class="form-group">
                     <label for="username">Username</label>

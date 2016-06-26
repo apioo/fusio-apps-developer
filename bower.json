@@ -13,6 +13,7 @@
     "bootstrap": "^3.3",
     "satellizer": "^0.14",
     "Ionicons": "ionicons#~2.0.1",
-    "angular-no-captcha": "~0.6.0"
+    "angular-no-captcha": "~0.6.0",
+    "angular-gravatar": "~0.4.2"
   }
 }

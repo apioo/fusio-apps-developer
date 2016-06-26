@@ -4,6 +4,7 @@ var fusioApp = angular.module('fusioApp', [
     'ngRoute',
     'ngSanitize',
     'ui.bootstrap',
+    'ui.gravatar',
     'satellizer',
     'noCAPTCHA',
     'fusioApp.app.developer',
@@ -30,8 +31,8 @@ fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function($auth) {
         request: function(request){
             if ($auth.isAuthenticated()) {
                 var payload = $auth.getPayload();
-                if (payload && payload.jti) {
-                    request.headers['Authorization'] = 'Bearer ' + payload.jti;
+                if (payload && payload.sub) {
+                    request.headers['Authorization'] = 'Bearer ' + payload.sub;
                 }
             }
             return request;
