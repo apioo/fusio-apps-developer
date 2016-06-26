@@ -1,0 +1,18 @@
+{
+  "name": "fusio-consumer",
+  "description": "Fusio consumer app",
+  "version": "0.1",
+  "homepage": "https://fusio-project.org",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "^1.5",
+    "angular-route": "^1.5",
+    "angular-sanitize": "^1.5",
+    "angular-bootstrap": "^1.2",
+    "bootstrap": "^3.3",
+    "satellizer": "^0.14",
+    "Ionicons": "ionicons#~2.0.1",
+    "angular-no-captcha": "~0.6.0"
+  }
+}

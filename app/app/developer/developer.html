@@ -1,0 +1,22 @@
+
+<div class="container fusio-app-container">
+    <div class="row">
+        <div class="col-md-2">
+            <div ng-include src="'app/nav.html'"></div>
+        </div>
+        <div class="col-md-10">
+            <div class="alert alert-info" role="alert">List of applications which you have created. Click on the show button to see the app key and secret.</div>
+            <ul>
+                <li ng-repeat="app in apps">
+                    <div class="btn-group pull-right" role="group">
+                        <button class="btn btn-default" ng-click="showApp(app.id)">Show</button>
+                        <button class="btn btn-danger" ng-click="deleteApp(app.id)">Delete</button>
+                    </div>
+                    {{ app.name }}<br>
+                    <small>created on {{ app.date | date:'shortDate' }}</small>
+                </li>
+            </ul>
+            <a ng-click="openCreateDialog()" class="btn btn-primary" role="button">Create</a>
+        </div>
+    </div>
+</div>

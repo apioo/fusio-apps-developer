@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="fusioApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="fusioApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="fusioApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="fusioApp" class="no-js"> <!--<![endif]-->
+<html ng-app="fusioApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusio-Consumer</title>
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+    <link href="bower_components/Ionicons/css/ionicons.min.css" rel="stylesheet" media="screen">
+    <link href="css/default.css" rel="stylesheet" media="screen">
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-route/angular-route.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-no-captcha/build/angular-no-captcha.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="bower_components/satellizer/satellizer.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/app/developer/developer.js"></script>
+    <script src="app/app/grant/grant.js"></script>
+    <script src="app/auth/auth.js"></script>
+    <script src="app/login/login.js"></script>
+    <script src="app/profile/profile.js"></script>
+    <script src="app/security/security.js"></script>
+    <script src="app/signup/signup.js"></script>
+    <script type="text/javascript">
+    /**
+     * Url to the fusio API endpoint. Change this to the fitting url to the
+     * backend API. If not provided Fusio will try to guess the correct url
+     * I.e.: http://127.0.0.1/projects/fusio/public/index.php/
+     */
+    var fusio_url = 'http://127.0.0.1/projects/fusio/public/index.php/';
+
+    /**
+     * Optional you can configure additional login provider which can be used
+     * by a user
+     */
+    fusioApp.config(function($authProvider) {
+        $authProvider.baseUrl = fusio_url;
+        $authProvider.loginUrl = 'consumer/login';
+        $authProvider.httpInterceptor = function() { return false; };
+
+        $authProvider.facebook({
+            url: 'consumer/provider/facebook',
+            clientId: 'Facebook App ID'
+        });
+
+        $authProvider.google({
+            url: 'consumer/provider/google',
+            clientId: 'Google Client ID'
+        });
+
+        $authProvider.github({
+            url: 'consumer/provider/github',
+            clientId: 'GitHub Client ID'
+        });
+    });
+
+    /**
+     * Google captcha site key for registration
+     */
+    fusioApp.config(['noCAPTCHAProvider', function(noCaptchaProvider) {
+        noCaptchaProvider.setSiteKey('6LcoZQoTAAAAAPE6fWloKOQieeggPS61L-nJBVz4');
+    }]);
+    </script>
+</head>
+<body>
+
+<header class="container-fluid fusio-header">
+    <span><a href="http://fusio-project.org">Fusio-Consumer</a> <span>({{ version }})</span></span>
+</header>
+
+<div ng-view></div>
+
+</body>
+</html>
