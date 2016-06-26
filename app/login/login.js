@@ -9,7 +9,7 @@ angular.module('fusioApp.login', ['ngRoute'])
     });
 }])
 
-.controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', function ($scope, $http, $auth, $location) {
+.controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', 'SatellizerConfig', function ($scope, $http, $auth, $location, SatellizerConfig) {
 
     $scope.user = {
         username: '',
@@ -23,6 +23,10 @@ angular.module('fusioApp.login', ['ngRoute'])
 
     $scope.authenticate = function(provider) {
         $auth.authenticate(provider);
+    };
+
+    $scope.isConfigured = function(provider) {
+        return SatellizerConfig.providers[provider] && SatellizerConfig.providers[provider].clientId;
     };
 
     $scope.login = function(user) {
