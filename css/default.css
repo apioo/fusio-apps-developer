@@ -98,6 +98,17 @@
     border-radius: 0px;
 }
 
+
+.modal-content
+{
+    border-radius:0px;
+}
+
+.panel
+{
+    border-radius:0px;
+}
+
 /*********************
 * Social Buttons
 *********************/

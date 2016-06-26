@@ -9,14 +9,14 @@
             <ul>
                 <li ng-repeat="app in apps">
                     <div class="btn-group pull-right" role="group">
-                        <button class="btn btn-default" ng-click="showApp(app.id)">Show</button>
-                        <button class="btn btn-danger" ng-click="deleteApp(app.id)">Delete</button>
+                        <button class="btn btn-default" ng-click="showApp(app)">Show</button>
+                        <button class="btn btn-danger" ng-click="deleteApp(app)">Delete</button>
                     </div>
                     {{ app.name }}<br>
                     <small>created on {{ app.date | date:'shortDate' }}</small>
                 </li>
             </ul>
-            <a ng-click="openCreateDialog()" class="btn btn-primary" role="button">Create</a>
+            <a ng-click="createApp()" class="btn btn-primary" role="button">Create</a>
         </div>
     </div>
 </div>
