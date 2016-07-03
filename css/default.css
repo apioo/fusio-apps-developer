@@ -95,6 +95,15 @@
     display: block;
 }
 
+.fusio-code
+{
+    font-family: monospace;
+    background-color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+}
+
 .btn, .form-control, .alert
 {
     border-radius: 0px;
