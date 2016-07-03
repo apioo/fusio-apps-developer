@@ -3,7 +3,7 @@
 
 ## About
 
-Fusio consumer implementation which provides a basic UI to handle app, app 
-grants and general profiles settings for a user which consumes a Fusio API. More
-informations about Fusio at http://fusio-project.org
-
+This is a sample Fusio consumer application which provides a basic account page
+to grant apps access to your account and to manage basic account data and app 
+grants/credentials. Note this is only a sample normally you would embed this 
+into your application. More informations about Fusio at http://fusio-project.org
