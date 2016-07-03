@@ -15,8 +15,9 @@ module.exports = function(grunt){
                     './bower_components/angular-route/angular-route.min.js',
                     './bower_components/angular-sanitize/angular-sanitize.min.js',
                     './bower_components/angular-no-captcha/build/angular-no-captcha.min.js',
-                    './bower_components/satellizer/satellizer.min.js',
                     './bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+                    './bower_components/satellizer/satellizer.min.js',
+                    './bower_components/angular-gravatar/build/angular-gravatar.min.js',
                     './dist/fusio-app.min.js',
                     './dist/fusio-templates.min.js'
                 ],
@@ -32,10 +33,11 @@ module.exports = function(grunt){
                 files: {
                     './dist/fusio-app.min.js': [
                         './app/app.js',
-                        './app/developer/developer.js',
-                        './app/grant/grant.js',
+                        './app/app/developer/developer.js',
+                        './app/app/grant/grant.js',
                         './app/auth/auth.js',
                         './app/login/login.js',
+                        './app/logout/logout.js',
                         './app/profile/profile.js',
                         './app/security/security.js',
                         './app/signup/signup.js'
@@ -54,6 +56,7 @@ module.exports = function(grunt){
                     './dist/fusio.min.css': [
                         './bower_components/bootstrap/dist/css/bootstrap.css',
                         './bower_components/bootstrap/dist/css/bootstrap-theme.css',
+                        './bower_components/Ionicons/css/ionicons.min.css',
                         './css/default.css'
                     ]
                 }
