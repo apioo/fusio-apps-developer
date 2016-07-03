@@ -29,6 +29,10 @@ angular.module('fusioApp.login', ['ngRoute'])
         return SatellizerConfig.providers[provider] && SatellizerConfig.providers[provider].clientId;
     };
 
+    $scope.closeResponse = function(){
+        $scope.response = null;
+    };
+
     $scope.login = function(user) {
         $auth.login(JSON.stringify(user))
             .then(function(){

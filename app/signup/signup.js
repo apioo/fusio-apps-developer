@@ -34,4 +34,8 @@ angular.module('fusioApp.signup', ['ngRoute'])
             });
     };
 
+    $scope.closeResponse = function(){
+        $scope.response = null;
+    };
+
 }]);

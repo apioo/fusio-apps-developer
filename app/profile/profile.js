@@ -11,16 +11,36 @@ angular.module('fusioApp.profile', ['ngRoute'])
 
 .controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function ($scope, $http, $uibModal, $auth, $location) {
 
-    $scope.profile = {};
+    $scope.account = {};
+    $scope.email = null;
 
     if (!$auth.isAuthenticated()) {
         $location.path('/login');
         return;
     }
 
-    $http.get(fusio_url + 'authorization/whoami').then(function(response){
-        $scope.profile = response.data;
-    });
+    $scope.update = function(account){
+        $http.put(fusio_url + 'consumer/account', account).then(function(response){
+            $scope.response = response.data;
+            $scope.load();
+        });
+    };
 
+    $scope.closeResponse = function(){
+        $scope.response = null;
+    };
+
+    $scope.load = function(){
+        $http.get(fusio_url + 'consumer/account').then(function(response){
+            $scope.account = response.data;
+            if (response.data.email) {
+                $scope.email = response.data.email;
+            }
+        }, function(response){
+            $scope.response = response.data;
+        });
+    };
+
+    $scope.load();
 
 }]);

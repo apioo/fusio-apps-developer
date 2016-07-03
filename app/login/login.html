@@ -1,6 +1,8 @@
 
 <div class="container fusio-login-container">
-    <div ng-if="response.success == false" class="alert alert-danger">{{response.message}}</div>
+    <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+        {{response.message}}
+    </uib-alert>
 
     <form id="loginForm" method="POST" ng-submit="login(user)">
         <h1>Login</h1>

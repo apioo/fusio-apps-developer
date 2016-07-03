@@ -73,4 +73,12 @@ angular.module('fusioApp.auth', ['ngRoute'])
         });
     };
 
+    $scope.closeError = function(){
+        $scope.error = null;
+    };
+
+    $scope.closeInfo = function(){
+        $scope.info = null;
+    };
+
 }]);

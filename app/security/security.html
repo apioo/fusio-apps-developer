@@ -5,7 +5,14 @@
             <div ng-include src="'app/nav.html'"></div>
         </div>
         <div class="col-md-10">
-            <form style="max-width:400px;">
+            <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+                {{response.message}}
+            </uib-alert>
+            <uib-alert type="success" close="closeResponse()" ng-if="response.success === true">
+                {{response.message}}
+            </uib-alert>
+
+            <form style="max-width:400px;" ng-submit="update(account)">
                 <div class="form-group">
                     <label for="oldPassword">Old password:</label>
                     <input type="password" id="oldPassword" ng-model="account.oldPassword" aria-describedby="oldPasswordHelp" required minlength="8" maxlength="128" class="form-control">
