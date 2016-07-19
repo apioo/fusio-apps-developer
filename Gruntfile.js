@@ -64,7 +64,7 @@ module.exports = function(grunt){
         },
         ngtemplates: {
             fusioApp: {
-                src: 'app/*/*.html',
+                src: 'app/**/*.html',
                 dest: 'dist/fusio-templates.min.js',
                 options: {
                     htmlmin: {
