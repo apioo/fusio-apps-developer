@@ -1,0 +1,37 @@
+{
+  "strict": true,
+  "node": true,
+  "globals": {
+    // Fusio
+    "fusioApp": false,
+    "fusio_url": false,
+    "document": false,
+    "window": false,
+    "confirm": false,
+    "btoa": false,
+    "atob": false,
+    "location": false,
+
+    // Angular
+    "angular": false,
+    
+    // Angular mocks
+    "module": false,
+    "inject": false,
+
+    // Jasmine
+    "jasmine": false,
+    "describe": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "it": false,
+    "expect": false,
+    "$": false,
+
+    // Protractor
+    "protractor": false,
+    "browser": false,
+    "element": false,
+    "by": false
+  }
+}
