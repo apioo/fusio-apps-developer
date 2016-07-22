@@ -83,7 +83,7 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
     // filter scopes
     if (data.scopes && angular.isArray(data.scopes)) {
       data.scopes = data.scopes.filter(function(value) {
-        return value !== null;
+        return value !== null && value !== undefined;
       });
     }
 
