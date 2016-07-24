@@ -9,7 +9,7 @@ angular.module('fusioApp.profile', ['ngRoute'])
   });
 }])
 
-.controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function($scope, $http, $uibModal, $auth, $location) {
+.controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.account = {};
   $scope.email = null;
@@ -20,7 +20,7 @@ angular.module('fusioApp.profile', ['ngRoute'])
   }
 
   $scope.update = function(account) {
-    $http.put(fusio_url + 'consumer/account', account).then(function(response) {
+    $http.put(fusio.baseUrl + 'consumer/account', account).then(function(response) {
       $scope.response = response.data;
       $scope.load();
     });
@@ -31,7 +31,7 @@ angular.module('fusioApp.profile', ['ngRoute'])
   };
 
   $scope.load = function() {
-    $http.get(fusio_url + 'consumer/account').then(function(response) {
+    $http.get(fusio.baseUrl + 'consumer/account').then(function(response) {
       $scope.account = response.data;
       if (response.data.email) {
         $scope.email = response.data.email;

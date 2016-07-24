@@ -9,7 +9,7 @@ angular.module('fusioApp.signup', ['ngRoute'])
   });
 }])
 
-.controller('SignupCtrl', ['$scope', '$http', '$auth', function($scope, $http, $auth) {
+.controller('SignupCtrl', ['$scope', '$http', '$auth', 'fusio', function($scope, $http, $auth, fusio) {
 
   $scope.user = {
     name: '',
@@ -23,7 +23,7 @@ angular.module('fusioApp.signup', ['ngRoute'])
     var data = angular.copy(user);
     delete data.passwordRepeat;
 
-    $http.post(fusio_url + 'consumer/register', data)
+    $http.post(fusio.baseUrl + 'consumer/register', data)
       .success(function(data) {
         $scope.response = data;
       })

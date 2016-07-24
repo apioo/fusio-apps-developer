@@ -9,7 +9,7 @@ angular.module('fusioApp.security', ['ngRoute'])
   });
 }])
 
-.controller('SecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function($scope, $http, $uibModal, $auth, $location) {
+.controller('SecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.account = {};
 
@@ -19,7 +19,7 @@ angular.module('fusioApp.security', ['ngRoute'])
   }
 
   $scope.update = function(account) {
-    $http.put(fusio_url + 'consumer/account/change_password', account).then(function(response) {
+    $http.put(fusio.baseUrl + 'consumer/account/change_password', account).then(function(response) {
       $scope.response = response.data;
     }, function(response) {
       $scope.response = response.data;

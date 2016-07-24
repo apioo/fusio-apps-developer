@@ -9,7 +9,7 @@ angular.module('fusioApp.app.grant', ['ngRoute'])
   });
 }])
 
-.controller('AppGrantCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', function($scope, $http, $uibModal, $auth, $location) {
+.controller('AppGrantCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.grants = [];
 
@@ -18,7 +18,7 @@ angular.module('fusioApp.app.grant', ['ngRoute'])
     return;
   }
 
-  $http.get(fusio_url + 'consumer/app/grant').then(function(response) {
+  $http.get(fusio.baseUrl + 'consumer/app/grant').then(function(response) {
     $scope.grants = response.data.entry;
   });
 

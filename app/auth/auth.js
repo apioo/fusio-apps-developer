@@ -9,7 +9,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
   });
 }])
 
-.controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', function($scope, $http, $auth, $location) {
+.controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', 'fusio', function($scope, $http, $auth, $location, fusio) {
 
   var params = $location.search();
   var responseType = params.response_type;
@@ -38,7 +38,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
       return;
     }
 
-    $http.get(fusio_url + 'consumer/app/meta?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function(response) {
+    $http.get(fusio.baseUrl + 'consumer/app/meta?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function(response) {
       $scope.app = response.data;
     }, function(response) {
       $scope.error = 'Could not request app informations';
@@ -58,7 +58,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
     $scope.error = null;
     $scope.info = null;
 
-    $http.post(fusio_url + 'consumer/authorize', data).then(function(response) {
+    $http.post(fusio.baseUrl + 'consumer/authorize', data).then(function(response) {
       if (response.data.redirectUri === '' || response.data.redirectUri == '#') {
         if (allow === 0) {
           $scope.info = 'The access was denied. There is nothing more todo here.';
