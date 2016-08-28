@@ -9,7 +9,7 @@ angular.module('fusioApp.login', ['ngRoute'])
   });
 }])
 
-.controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', 'SatellizerConfig', function($scope, $http, $auth, $location, SatellizerConfig) {
+.controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', '$route', 'SatellizerConfig', function($scope, $http, $auth, $location, $route, SatellizerConfig) {
 
   $scope.user = {
     username: '',
@@ -55,7 +55,7 @@ angular.module('fusioApp.login', ['ngRoute'])
 
           $location.url('/auth?' + parts.join('&'));
         } else {
-          location.reload();
+          $route.reload();
         }
       })
       .catch(function(response) {

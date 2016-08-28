@@ -17,7 +17,7 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.signup'
 ]);
 
-fusioApp.value('version', 'v0.1');
+fusioApp.value('version', 'v0.2');
 
 fusioApp.provider('fusio', function() {
   var baseUrl = null;
@@ -66,6 +66,10 @@ fusioApp.config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({
     redirectTo: '/login'
   });
+}]);
+
+fusioApp.config(['$locationProvider', function($locationProvider) {
+  $locationProvider.html5Mode(true);
 }]);
 
 fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function($auth) {

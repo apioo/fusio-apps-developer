@@ -9,7 +9,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
   });
 }])
 
-.controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', 'fusio', function($scope, $http, $auth, $location, fusio) {
+.controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', '$window', 'fusio', function($scope, $http, $auth, $location, $window, fusio) {
 
   var params = $location.search();
   var responseType = params.response_type;
@@ -66,7 +66,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
 
         $scope.response = response.data;
       } else {
-        location.href = response.data.redirectUri;
+        $window.location.href = response.data.redirectUri;
       }
     }, function(response) {
       $scope.error = response.data.message;
