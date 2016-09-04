@@ -33,13 +33,16 @@ module.exports = function(grunt) {
         files: {
           './dist/fusio-app.min.js': [
             './app/app.js',
-            './app/app/developer/developer.js',
-            './app/app/grant/grant.js',
+            './app/account/app/developer/developer.js',
+            './app/account/app/grant/grant.js',
+            './app/account/profile/profile.js',
+            './app/account/security/security.js',
+            './app/api/api.js',
             './app/auth/auth.js',
+            './app/documentation/documentation.js',
             './app/login/login.js',
             './app/logout/logout.js',
-            './app/profile/profile.js',
-            './app/security/security.js',
+            './app/overview/overview.js',
             './app/signup/signup.js'
           ]
         }

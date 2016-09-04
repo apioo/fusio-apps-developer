@@ -7,13 +7,16 @@ var fusioApp = angular.module('fusioApp', [
   'ui.gravatar',
   'satellizer',
   'noCAPTCHA',
-  'fusioApp.app.developer',
-  'fusioApp.app.grant',
+  'fusioApp.account.app.developer',
+  'fusioApp.account.app.grant',
+  'fusioApp.account.profile',
+  'fusioApp.account.security',
+  'fusioApp.api',
   'fusioApp.auth',
+  'fusioApp.documentation',
   'fusioApp.login',
   'fusioApp.logout',
-  'fusioApp.profile',
-  'fusioApp.security',
+  'fusioApp.overview',
   'fusioApp.signup'
 ]);
 
@@ -21,6 +24,7 @@ fusioApp.value('version', 'v0.2');
 
 fusioApp.provider('fusio', function() {
   var baseUrl = null;
+  var documentationMenu = null;
 
   this.setBaseUrl = function(_baseUrl) {
     baseUrl = _baseUrl;
@@ -28,6 +32,14 @@ fusioApp.provider('fusio', function() {
 
   this.getBaseUrl = function() {
     return baseUrl;
+  };
+
+  this.setDocumentationMenu = function(_documentationMenu) {
+    documentationMenu = _documentationMenu;
+  };
+
+  this.getDocumentationMenu = function() {
+    return documentationMenu;
   };
 
   this.guessFusioEndpointUrl = function(urlRewrite) {
@@ -57,14 +69,15 @@ fusioApp.provider('fusio', function() {
     }
 
     return {
-      baseUrl: baseUrl
+      baseUrl: baseUrl,
+      documentationMenu: documentationMenu
     };
   };
 });
 
 fusioApp.config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({
-    redirectTo: '/login'
+    redirectTo: '/'
   });
 }]);
 
@@ -90,7 +103,13 @@ fusioApp.config(['$httpProvider', function($httpProvider) {
   $httpProvider.interceptors.push('fusioAuthenticate');
 }]);
 
-fusioApp.run(function($rootScope, $window, $location, $http, version) {
+fusioApp.run(function($rootScope, $window, $location, $http, $auth, version) {
   // set version
+  $rootScope.isAuthenticated = $auth.isAuthenticated();
+  $rootScope.userName = null;
+  var payload = $auth.getPayload();
+  if (payload && payload.name) {
+    $rootScope.userName = payload.name;
+  }
   $rootScope.version = version;
 });

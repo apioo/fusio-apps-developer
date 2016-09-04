@@ -1,15 +1,15 @@
 'use strict';
 
-angular.module('fusioApp.security', ['ngRoute'])
+angular.module('fusioApp.account.security', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/security', {
-    templateUrl: 'app/security/security.html',
-    controller: 'SecurityCtrl'
+  $routeProvider.when('/account/security', {
+    templateUrl: 'app/account/security/security.html',
+    controller: 'AccountSecurityCtrl'
   });
 }])
 
-.controller('SecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+.controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.account = {};
 

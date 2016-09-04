@@ -1,15 +1,15 @@
 'use strict';
 
-angular.module('fusioApp.profile', ['ngRoute'])
+angular.module('fusioApp.account.profile', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/profile', {
-    templateUrl: 'app/profile/profile.html',
-    controller: 'ProfileCtrl'
+  $routeProvider.when('/account', {
+    templateUrl: 'app/account/profile/profile.html',
+    controller: 'AccountProfileCtrl'
   });
 }])
 
-.controller('ProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+.controller('AccountProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.account = {};
   $scope.email = null;

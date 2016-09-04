@@ -9,10 +9,12 @@ angular.module('fusioApp.logout', ['ngRoute'])
   });
 }])
 
-.controller('LogoutCtrl', ['$scope', '$auth', '$location', function($scope, $auth, $location) {
+.controller('LogoutCtrl', ['$scope', '$auth', '$location', '$rootScope', function($scope, $auth, $location, $rootScope) {
 
   if ($auth.isAuthenticated()) {
     $auth.logout();
+    $rootScope.isAuthenticated = $auth.isAuthenticated();
+    $rootScope.userName = null;
   }
 
   $location.url('/login');

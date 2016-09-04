@@ -22,13 +22,16 @@
     <script src="bower_components/satellizer/satellizer.min.js"></script>
     <script src="bower_components/angular-gravatar/build/angular-gravatar.min.js"></script>
     <script src="app/app.js"></script>
-    <script src="app/app/developer/developer.js"></script>
-    <script src="app/app/grant/grant.js"></script>
+    <script src="app/account/app/developer/developer.js"></script>
+    <script src="app/account/app/grant/grant.js"></script>
+    <script src="app/account/profile/profile.js"></script>
+    <script src="app/account/security/security.js"></script>
+    <script src="app/api/api.js"></script>
     <script src="app/auth/auth.js"></script>
+    <script src="app/documentation/documentation.js"></script>
     <script src="app/login/login.js"></script>
     <script src="app/logout/logout.js"></script>
-    <script src="app/profile/profile.js"></script>
-    <script src="app/security/security.js"></script>
+    <script src="app/overview/overview.js"></script>
     <script src="app/signup/signup.js"></script>
     <script type="text/javascript">
     fusioApp.config(function(fusioProvider) {
@@ -37,9 +40,20 @@
          * backend API. If not provided Fusio will try to guess the correct url
          * I.e.: http://127.0.0.1/projects/fusio/public/index.php/
          */
-        var fusioUrl = fusioProvider.guessFusioEndpointUrl(false);
+        var fusioUrl = 'http://127.0.0.1/projects/fusio/public/index.php/';
 
         fusioProvider.setBaseUrl(fusioUrl);
+
+        /**
+         * The documentation menu
+         */
+        fusioProvider.setDocumentationMenu({
+            'Overview': {
+                'Getting started': 'bootstrap',
+                'Authorization': 'authorization',
+                'Support': 'support'
+            }
+        });
     });
 
     /**
@@ -80,10 +94,28 @@
 <body>
 
 <header class="container-fluid fusio-header">
-    <span><a href="http://fusio-project.org">Fusio-Consumer</a> <span>({{ version }})</span></span>
+    <div class="navbar-header">
+        <a href="." class="navbar-brand">Developer</a>
+    </div>
+    <nav>
+        <ul class="nav navbar-nav">
+            <li><a href="./documentation"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
+            <li><a href="./api"><span class="glyphicon glyphicon-transfer" aria-hidden="true"></span> API</a></li>
+            <li ng-if="isAuthenticated"><a href="./account"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Account</a></li>
+            <li ng-if="isAuthenticated"><a href="./logout"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Logout</a></li>
+            <li ng-if="!isAuthenticated"><a href="./login"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> Login</a></li>
+        </ul>
+        <span ng-if="isAuthenticated && userName" class="fusio-header-loggedin pull-right">Logged in as {{ userName }}</span>
+    </nav>
 </header>
 
-<div ng-view></div>
+<div class="container-fluid fusio-main">
+    <div ng-view></div>
+</div>
+
+<footer class="container-fluid fusio-footer">
+    <span>powered by <a href="http://fusio-project.org">Fusio</a></span>
+</footer>
 
 </body>
 </html>

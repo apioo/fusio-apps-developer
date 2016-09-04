@@ -1,41 +1,12 @@
 
-.fusio-app-container
-{
-    margin-top: 32px;
-    border: 1px solid #aaa;
-    max-width: 1000px;
-}
-
-.fusio-app-container h1
-{
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #666;
-    margin: 0;
-    margin-bottom: 8px;
-}
-
-.fusio-app-container .col-md-10
-{
-    background-color: #eee;
-    padding-top: 16px;
-    padding-bottom: 32px;
-    border-left: 1px solid #aaa;
-    min-height: 400px;
-}
-
-@media (max-width:991px) {
-    .fusio-app-container .col-md-10
-    {
-        border-left: none;
-    }
-}
-
 .fusio-login-container
 {
     max-width: 400px;
     background-color: #eee;
-    margin-top: 32px;
+    margin:0 auto;
+    margin-top: 64px;
+    margin-bottom: 128px;
+    padding:12px;
     padding-top: 16px;
     padding-bottom: 32px;
     border: 1px solid #aaa;
@@ -58,27 +29,120 @@
 
 .fusio-header
 {
-    background-color: #444;
-    color: #eee;
-    padding: 8px;
-    font-size: 0.9em;
+    border-bottom:1px solid #ccc;
 }
 
-.fusio-header a
+.fusio-header-loggedin
 {
-    color: #eee;
+    padding:15px 0;
+}
+
+.fusio-footer
+{
+    padding:32px;
+    text-align:right;
+    border-top:1px solid #ccc;
+}
+
+.fusio-main
+{
+}
+
+.fusio-intro
+{
+    background-image:url(../img/header.jpg);
+    background-position:right top;
+    background-repeat:no-repeat;
+    margin:0 -15px;
+    height:400px;
+    padding-top:32px;
+    border-bottom:1px solid #ccc;
+}
+
+.fusio-intro h1
+{
+    font-size:3em;
+    margin-bottom:32px;
+}
+
+.fusio-intro p
+{
+    font-size:1.6em;
+    margin-bottom:32px;
+}
+
+.fusio-intro-subline
+{
+    background-color:#222;
+    color:#fff;
+    margin:0 -15px;
+    padding-top:20px;
+    padding-bottom:20px;
+}
+
+.fusio-intro-subline h2
+{
+    margin:0;
+    margin-bottom:8px;
+}
+
+.fusio-intro-column
+{
+    margin-top:32px;
+    margin-bottom:64px;
+    text-align:center;
+}
+
+.fusio-intro-column h3
+{
+
+}
+
+.fusio-intro-column-icon
+{
+    font-size:3em;
+}
+
+.fusio-sidebar
+{
+    background-color:#eee;
+    border-right:1px solid #ccc;
 }
 
 .fusio-nav
 {
-    margin-left: -15px;
-    margin-right: -15px;
+    min-height:600px;
+}
+
+@media (max-width:991px) {
+    .fusio-sidebar
+    {
+        border-bottom:1px solid #ccc;
+    }
+
+    .fusio-nav
+    {
+        min-height:0;
+    }
+
+    .fusio-intro
+    {
+        background-position:left top;
+    }
+}
+
+.fusio-nav h3
+{
+    font-size:1.2em;
+    font-weight:bold;
+    margin:0;
+    padding-top: 20px;
+    padding-bottom: 10px
 }
 
 .fusio-nav ul
 {
-    padding: 0;
-    margin: 0;
+    padding:0;
 }
 
 .fusio-nav li
@@ -88,11 +152,26 @@
 
 .fusio-nav li a
 {
-    background-color: #fff;
-    padding: 8px;
-    border-bottom: 1px solid #999;
     text-decoration: none;
+    padding:4px 0;
     display: block;
+}
+
+.fusio-nav li a:hover
+{
+    text-decoration:underline;
+}
+
+.fusio-nav-group
+{
+    padding-bottom:8px;
+}
+
+.fusio-content
+{
+    margin-top:8px;
+    margin-bottom:32px;
+    max-width:800px;
 }
 
 .fusio-code

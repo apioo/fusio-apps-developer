@@ -1,0 +1,39 @@
+
+<div class="row">
+    <div class="col-md-2 fusio-sidebar" ng-include src="'app/account/nav.html'"></div>
+    <div class="col-md-10">
+        <div class="fusio-content">
+            <uib-alert type="info">
+                List of applications which you have created. Click on the show button to see the app key and secret.
+            </uib-alert>
+
+            <table class="table">
+                <colgroup>
+                    <col width="*" />
+                    <col width="200" />
+                    <col width="200" />
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Create date</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="app in apps">
+                    <td>{{ app.name }}</td>
+                    <td>{{ app.date | date:'shortDate' }}</td>
+                    <td>
+                        <div class="btn-group pull-right" role="group">
+                            <button class="btn btn-default" ng-click="showApp(app)">Show</button>
+                            <button class="btn btn-danger" ng-click="deleteApp(app)">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a ng-click="createApp()" class="btn btn-primary" role="button">Create</a>
+        </div>
+    </div>
+</div>

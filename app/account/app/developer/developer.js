@@ -1,15 +1,15 @@
 'use strict';
 
-angular.module('fusioApp.app.developer', ['ngRoute'])
+angular.module('fusioApp.account.app.developer', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/app/developer', {
-    templateUrl: 'app/app/developer/developer.html',
-    controller: 'AppDeveloperCtrl'
+  $routeProvider.when('/account/app/developer', {
+    templateUrl: 'app/account/app/developer/developer.html',
+    controller: 'AccountAppDeveloperCtrl'
   });
 }])
 
-.controller('AppDeveloperCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+.controller('AccountAppDeveloperCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.apps = [];
 
@@ -28,8 +28,8 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
     var modalInstance = $uibModal.open({
       size: 'md',
       backdrop: 'static',
-      templateUrl: 'app/app/developer/create.html',
-      controller: 'AppDeveloperCreateCtrl'
+      templateUrl: 'app/account/app/developer/create.html',
+      controller: 'AccountAppDeveloperCreateCtrl'
     });
 
     modalInstance.result.then(function(response) {
@@ -42,8 +42,8 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
     var modalInstance = $uibModal.open({
       size: 'md',
       backdrop: 'static',
-      templateUrl: 'app/app/developer/detail.html',
-      controller: 'AppDeveloperDetailCtrl',
+      templateUrl: 'app/account/app/developer/detail.html',
+      controller: 'AccountAppDeveloperDetailCtrl',
       resolve: {
         app: function() {
           return app;
@@ -64,7 +64,7 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
 
 }])
 
-.controller('AppDeveloperCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
+.controller('AccountAppDeveloperCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
 
   $scope.app = {
     name: '',
@@ -107,7 +107,7 @@ angular.module('fusioApp.app.developer', ['ngRoute'])
 
 }])
 
-.controller('AppDeveloperDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, app, fusio) {
+.controller('AccountAppDeveloperDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, app, fusio) {
 
   $scope.app = app;
 
