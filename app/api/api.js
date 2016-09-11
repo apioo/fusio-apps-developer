@@ -34,7 +34,7 @@ angular.module('fusioApp.api', ['ngRoute'])
           if ($scope.api.methods.hasOwnProperty(methodName)) {
             var schema = $scope.getSchema(methodName, $scope.api.methods[methodName]);
             if (!schema) {
-              schema = '<div class="md-padding md-default-theme">This API method provides no schema informations.</div>';
+              schema = '<br><div class="alert alert-info">This API method provides no schema informations.</div>';
             }
 
             methods[methodName] = schema;
@@ -73,6 +73,12 @@ angular.module('fusioApp.api', ['ngRoute'])
           if (angular.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
               var found = false;
+
+              // exclude / route since we cant load it
+              if (data[i].path === '/') {
+                found = true;
+              }
+
               for (var j = 0; j < excludePaths.length; j++) {
                 if (data[i].path.indexOf(excludePaths[j]) === 0) {
                   found = true;
@@ -115,13 +121,15 @@ angular.module('fusioApp.api', ['ngRoute'])
     this.schema = definition.schema;
 
     this.getHtml = function(methodName, method) {
-      var html = '<div>';
+      var html = '<div class="fusio-endpoint-method">';
+      var isEmpty = true;
 
       // request
       var request = this.getRequest(method);
       if (request) {
-        html += '<md-subheader class="md-primary">' + methodName + ' Request</md-subheader>';
-        html += '<div class="evid-schema-table">' + request + '</div>';
+        isEmpty = false;
+        html += '<h3>' + methodName + ' Request</h3>';
+        html += '<div class="fusio-endpoint-schema fusio-endpoint-schema-request">' + request + '</div>';
       }
 
       // responses
@@ -129,14 +137,15 @@ angular.module('fusioApp.api', ['ngRoute'])
       for (var i = 0; i < statusCodes.length; i++) {
         var response = this.getResponse(method, statusCodes[i]);
         if (response) {
-          html += '<md-subheader class="md-primary">' + methodName + ' Response - ' + statusCodes[i] + '</md-subheader>';
-          html += '<div class="evid-schema-table">' + response + '</div>';
+          isEmpty = false;
+          html += '<h3>' + methodName + ' Response - ' + statusCodes[i] + '</h3>';
+          html += '<div class="fusio-endpoint-schema fusio-endpoint-schema-response">' + response + '</div>';
         }
       }
 
       html += '</div>';
 
-      return html;
+      return !isEmpty ? html : null;
     };
 
     this.getJsonSampleRequest = function(method) {
@@ -223,13 +232,13 @@ angular.module('fusioApp.api', ['ngRoute'])
           title = schema.title;
         }
 
-        html += '<md-subheader class="md-hue-1"><strong>' + title + '</strong></md-subheader>';
+        html += '<h4>' + title + '</h4>';
 
         if (schema.description) {
           html += '<p>' + schema.description + '</p>';
         }
 
-        html += '<table>';
+        html += '<table class="table">';
         html += '<colgroup>';
         html += '    <col width="20%">';
         html += '    <col width="20%">';
@@ -291,9 +300,9 @@ angular.module('fusioApp.api', ['ngRoute'])
             html += '<tr>';
 
             if (required) {
-              html += '<td><span class="evid-property-required" title="required">' + propertyName + '</span></td>';
+              html += '<td><span class="fusio-property fusio-property-required" title="required">' + propertyName + '</span></td>';
             } else {
-              html += '<td><span class="evid-property">' + propertyName + '</span></td>';
+              html += '<td><span class="fusio-property">' + propertyName + '</span></td>';
             }
 
             html += '<td>' + type + '</td>';

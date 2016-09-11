@@ -10,22 +10,12 @@
             </div>
         </nav>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-10 fusio-api">
         <h2>{{ api.path }}</h2>
-        <div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li ng-repeat="(methodName, schema) in methods" role="presentation"><a href="#{{ methodName }}" aria-controls="home" role="tab" data-toggle="tab">{{ methodName }}</a></li>
-            </ul>
-            <div class="tab-content">
-                <div ng-repeat="(methodName, schema) in methods" role="tabpanel" class="tab-pane" id="{{ methodName }}">
-                    <div ng-bind-html="schema"></div>
-                </div>
-            </div>
-        </div>
+        <uib-tabset>
+            <uib-tab ng-repeat="(methodName, schema) in methods" heading="{{ methodName }}">
+                <div ng-bind-html="schema"></div>
+            </uib-tab>
+        </uib-tabset>
     </div>
 </div>
-
-
-
-
-
