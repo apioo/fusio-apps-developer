@@ -22,6 +22,11 @@ angular.module('fusioApp.api', ['ngRoute'])
   $scope.loadRoutings = function() {
     routings.getRoutings().then(function(result) {
       $scope.routings = result;
+
+      // load default
+      if (!$routeParams.path && result[0].path) {
+        $scope.loadDetails(result[0].path);
+      }
     });
   };
 

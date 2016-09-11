@@ -11,11 +11,16 @@
         </nav>
     </div>
     <div class="col-md-10 fusio-api">
-        <h2>{{ api.path }}</h2>
-        <uib-tabset>
-            <uib-tab ng-repeat="(methodName, schema) in methods" heading="{{ methodName }}">
-                <div ng-bind-html="schema"></div>
-            </uib-tab>
-        </uib-tabset>
+        <div ng-if="api.path">
+            <h2>{{ api.path }}</h2>
+            <uib-tabset>
+                <uib-tab ng-repeat="(methodName, schema) in methods" heading="{{ methodName }}">
+                    <div ng-bind-html="schema"></div>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+        <div ng-if="!api.path">
+            <h2>/</h2>
+        </div>
     </div>
 </div>
