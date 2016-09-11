@@ -172,9 +172,18 @@
 
 .fusio-content
 {
-    margin-top:8px;
-    margin-bottom:32px;
+    margin-top:0;
+    margin-bottom:64px;
     max-width:800px;
+}
+
+.fusio-content h2
+{
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    padding-top: 20px;
+    padding-bottom: 10px;
 }
 
 .fusio-api
