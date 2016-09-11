@@ -107,6 +107,8 @@
 {
     background-color:#eee;
     border-right:1px solid #ccc;
+    position: fixed;
+    height: 100%;
 }
 
 .fusio-nav
