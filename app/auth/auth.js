@@ -52,7 +52,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
       redirectUri: redirectUri,
       scope: scope,
       state: state,
-      allow: allow
+      allow: !!allow
     };
 
     $scope.error = null;
