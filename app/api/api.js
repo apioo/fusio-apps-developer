@@ -66,7 +66,7 @@ angular.module('fusioApp.api', ['ngRoute'])
 
 .service('routings', ['$http', '$q', 'fusio', function definition($http, $q, fusio) {
   var routings = null;
-  var excludePaths = ['/consumer/', '/backend/'];
+  var excludePaths = ['/authorization/', '/consumer/', '/backend/'];
 
   this.getRoutings = function() {
     if (routings === null) {
