@@ -5,8 +5,7 @@
 
 This is a sample Fusio consumer application which provides a basic account page
 to grant apps access to your account and to manage basic account data and app 
-grants/credentials. Note this is only a sample normally you would embed this 
-into your application. More informations about Fusio at http://fusio-project.org
+grants/credentials. More information about Fusio at https://fusio-project.org
 
 ## Configuration
 
@@ -25,9 +24,30 @@ use clean urls i.e.:
 To correctly configure the html 5 mode you have to set a correct base tag in the 
 `/index.html` file. Also you have to configure the webserver so that all 
 requests are redirected to the index.html. I.e. for Apache you could use the 
-following directives:
+following htaccess directives:
 
     DirectoryIndex index.html
     FallbackResource /consumer/index.html
+
+## Docs
+
+The `docs/` folder contains example content which should help your users to get
+started with the API. You need to adjust the content accodring to your use case.
+It is also easy possible to extend the documentation menu with new entries, 
+therefor you only need to extend the `setDocumentationMenu` Method call at the 
+`index.html` with new entries.
+
+```
+fusioProvider.setDocumentationMenu({
+    'Overview': {
+        'Getting started': 'bootstrap',
+        'API': 'api',
+        'Authorization': 'authorization',
+        'Support': 'support'
+    }
+});
+```
+
+The app will then try to load the fitting html files from the `docs/` folder.
 
 [Html5Mode]: https://docs.angularjs.org/api/ng/provider/$locationProvider#html5Mode
