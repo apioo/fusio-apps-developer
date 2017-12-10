@@ -11,7 +11,6 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.account.app.grant',
   'fusioApp.account.profile',
   'fusioApp.account.security',
-  'fusioApp.api',
   'fusioApp.auth',
   'fusioApp.documentation',
   'fusioApp.login',
@@ -20,7 +19,7 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.signup'
 ]);
 
-fusioApp.value('version', 'v0.2');
+fusioApp.value('version', 'v0.3');
 
 fusioApp.provider('fusio', function() {
   var baseUrl = null;
