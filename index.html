@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fusio-Consumer</title>
-    <base href="/projects/fusio-consumer/">
+    <base href="/projects/fusio-apps/consumer/">
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
     <link href="bower_components/Ionicons/css/ionicons.min.css" rel="stylesheet" media="screen">
@@ -26,7 +26,6 @@
     <script src="app/account/app/grant/grant.js"></script>
     <script src="app/account/profile/profile.js"></script>
     <script src="app/account/security/security.js"></script>
-    <script src="app/api/api.js"></script>
     <script src="app/auth/auth.js"></script>
     <script src="app/documentation/documentation.js"></script>
     <script src="app/login/login.js"></script>
@@ -50,6 +49,7 @@
         fusioProvider.setDocumentationMenu({
             'Overview': {
                 'Getting started': 'bootstrap',
+                'API': 'api',
                 'Authorization': 'authorization',
                 'Support': 'support'
             }
@@ -87,7 +87,7 @@
      * secret key in the Fusio backend configuration
      */
     fusioApp.config(['noCAPTCHAProvider', function(noCaptchaProvider) {
-        noCaptchaProvider.setSiteKey('');
+        noCaptchaProvider.setSiteKey('6LcscCUTAAAAAIwW5Vw6KwoqoyQKSUgOwAob2v4v');
     }]);
     </script>
 </head>
@@ -99,13 +99,12 @@
     </div>
     <nav>
         <ul class="nav navbar-nav">
-            <li><a href="./documentation"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
-            <li><a href="./api"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> API</a></li>
-            <li ng-if="isAuthenticated"><a href="./account"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Account</a></li>
-            <li ng-if="isAuthenticated"><a href="./logout"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Logout</a></li>
-            <li ng-if="!isAuthenticated"><a href="./login"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> Login</a></li>
+            <li><a href="./documentation"><span class="ion-document-text" aria-hidden="true"></span> Documentation</a></li>
+            <li ng-if="isAuthenticated"><a href="./account"><span class="ion-person" aria-hidden="true"></span> Account</a></li>
+            <li ng-if="isAuthenticated"><a href="./logout"><span class="ion-log-out" aria-hidden="true"></span> Logout</a></li>
+            <li ng-if="!isAuthenticated"><a href="./login"><span class="ion-log-in" aria-hidden="true"></span> Login</a></li>
         </ul>
-        <span ng-if="isAuthenticated && userName" class="fusio-header-loggedin pull-right">Logged in as {{ userName }}</span>
+        <span ng-if="isAuthenticated && userName" class="fusio-header-loggedin pull-right">Logged in as <a href="./account">{{ userName }}</a></span>
     </nav>
 </header>
 
@@ -114,7 +113,7 @@
 </div>
 
 <footer class="container-fluid fusio-footer">
-    <span>powered by <a href="http://fusio-project.org">Fusio</a></span>
+    <span>powered by <a href="https://fusio-project.org">Fusio</a></span>
 </footer>
 
 </body>
