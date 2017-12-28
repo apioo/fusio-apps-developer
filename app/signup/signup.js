@@ -24,13 +24,12 @@ angular.module('fusioApp.signup', ['ngRoute'])
     delete data.passwordRepeat;
 
     $http.post(fusio.baseUrl + 'consumer/register', data)
-      .success(function(data) {
-        $scope.response = data;
-      })
-      .error(function(data) {
+      .then(function(response) {
+        $scope.response = response.data;
+      }, function(response) {
         $scope.user.password = '';
         $scope.user.passwordRepeat = '';
-        $scope.response = data;
+        $scope.response = response.data;
       });
   };
 
