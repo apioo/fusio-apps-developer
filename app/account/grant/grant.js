@@ -20,8 +20,20 @@ angular.module('fusioApp.account.grant', ['ngRoute'])
     return;
   }
 
-  $http.get(fusio.baseUrl + 'consumer/app/grant').then(function(response) {
-    $scope.grants = response.data.entry;
-  });
+  $scope.load = function() {
+    $http.get(fusio.baseUrl + 'consumer/grant').then(function(response) {
+      $scope.grants = response.data.entry;
+    });
+  };
+
+  $scope.deleteGrant = function(grant) {
+    if (confirm('Do you really want to delete the grant?')) {
+      $http.delete(fusio.baseUrl + 'consumer/grant/' + grant.id).then(function(response) {
+        $scope.load();
+      });
+    }
+  };
+
+  $scope.load();
 
 }]);

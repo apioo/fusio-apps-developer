@@ -26,7 +26,7 @@
                     <td>{{ grant.app.name }}</td>
                     <td>{{ grant.createDate | date:'shortDate' }}</td>
                     <td>
-                        <button class="btn btn-danger pull-right fusio-btn-grant-revoke" data-grant-id="{{ app.id }}">Revoke</button>
+                        <button class="btn btn-danger pull-right" ng-click="deleteGrant(grant)">Revoke</button>
                     </td>
                 </tr>
                 </tbody>
