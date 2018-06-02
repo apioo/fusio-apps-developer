@@ -1,11 +1,11 @@
 
 <div class="container fusio-login-container">
-    <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+    <div uib-alert ng-class="'alert-danger'" close="closeResponse()" ng-if="response.success === false">
         {{response.message}}
-    </uib-alert>
-    <uib-alert type="success" close="closeResponse()" ng-if="response.success === true">
+    </div>
+    <div uib-alert ng-class="'alert-success'" close="closeResponse()" ng-if="response.success === true">
         Registration successful. We have send you an activation link to the provided email address.
-    </uib-alert>
+    </div>
 
     <form id="registerForm" method="POST" ng-submit="register(user)" ng-hide="response.success == true">
         <h1>Sign up</h1>
@@ -26,7 +26,7 @@
             <span class="ion-key form-control-feedback"></span>
         </div>
         <div class="form-group">
-            <no-captcha g-recaptcha-response="user.captcha" theme="light" control="noCaptchaControl"></no-captcha>
+            <div vc-recaptcha ng-model="user.captcha" theme="light"></div>
         </div>
         <div class="form-group has-feedback">
             <button type="submit" ng-disabled="user.name == '' || user.email == '' || user.password == '' || user.password != user.passwordRepeat || user.captcha == ''" class="btn btn-block btn-default">Register</button>

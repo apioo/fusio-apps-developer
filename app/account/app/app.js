@@ -1,15 +1,17 @@
 'use strict';
 
-angular.module('fusioApp.account.app.developer', ['ngRoute'])
+var angular = require('angular');
+
+angular.module('fusioApp.account.app', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/app/developer', {
-    templateUrl: 'app/account/app/developer/developer.html',
-    controller: 'AccountAppDeveloperCtrl'
+  $routeProvider.when('/account/app', {
+    templateUrl: 'app/account/app/app.html',
+    controller: 'AccountAppCtrl'
   });
 }])
 
-.controller('AccountAppDeveloperCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+.controller('AccountAppCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
 
   $scope.apps = [];
 
@@ -19,7 +21,7 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
   }
 
   $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/app/developer').then(function(response) {
+    $http.get(fusio.baseUrl + 'consumer/app').then(function(response) {
       $scope.apps = response.data.entry;
     });
   };
@@ -28,8 +30,8 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
     var modalInstance = $uibModal.open({
       size: 'md',
       backdrop: 'static',
-      templateUrl: 'app/account/app/developer/create.html',
-      controller: 'AccountAppDeveloperCreateCtrl'
+      templateUrl: 'app/account/app/create.html',
+      controller: 'AccountAppCreateCtrl'
     });
 
     modalInstance.result.then(function(response) {
@@ -42,8 +44,8 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
     var modalInstance = $uibModal.open({
       size: 'md',
       backdrop: 'static',
-      templateUrl: 'app/account/app/developer/detail.html',
-      controller: 'AccountAppDeveloperDetailCtrl',
+      templateUrl: 'app/account/app/detail.html',
+      controller: 'AccountAppDetailCtrl',
       resolve: {
         app: function() {
           return app;
@@ -54,7 +56,7 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
 
   $scope.deleteApp = function(app) {
     if (confirm('Do you really want to delete the app?')) {
-      $http.delete(fusio.baseUrl + 'consumer/app/developer/' + app.id).then(function(response) {
+      $http.delete(fusio.baseUrl + 'consumer/app/' + app.id).then(function(response) {
         $scope.load();
       });
     }
@@ -64,7 +66,7 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
 
 }])
 
-.controller('AccountAppDeveloperCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
+.controller('AccountAppCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
 
   $scope.app = {
     name: '',
@@ -87,7 +89,7 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
       });
     }
 
-    $http.post(fusio.baseUrl + 'consumer/app/developer', data).then(function(response) {
+    $http.post(fusio.baseUrl + 'consumer/app', data).then(function(response) {
       $scope.response = response.data;
       if (response.data.success === true) {
         $uibModalInstance.close();
@@ -107,11 +109,11 @@ angular.module('fusioApp.account.app.developer', ['ngRoute'])
 
 }])
 
-.controller('AccountAppDeveloperDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, app, fusio) {
+.controller('AccountAppDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, app, fusio) {
 
   $scope.app = app;
 
-  $http.get(fusio.baseUrl + 'consumer/app/developer/' + app.id).then(function(response) {
+  $http.get(fusio.baseUrl + 'consumer/app/' + app.id).then(function(response) {
     $scope.app = response.data;
   });
 

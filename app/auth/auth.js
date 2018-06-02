@@ -1,5 +1,7 @@
 'use strict';
 
+var angular = require('angular');
+
 angular.module('fusioApp.auth', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
@@ -38,10 +40,10 @@ angular.module('fusioApp.auth', ['ngRoute'])
       return;
     }
 
-    $http.get(fusio.baseUrl + 'consumer/app/meta?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function(response) {
+    $http.get(fusio.baseUrl + 'consumer/authorize?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function(response) {
       $scope.app = response.data;
     }, function(response) {
-      $scope.error = 'Could not request app informations';
+      $scope.error = 'Could not request app information';
     });
   }
 

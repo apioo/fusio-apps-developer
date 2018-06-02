@@ -4,12 +4,12 @@
     <div class="col-md-10 col-md-offset-2">
         <div class="fusio-content">
             <h2>Security</h2>
-            <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+            <div uib-alert ng-class="'alert-danger'" close="closeResponse()" ng-if="response.success === false">
                 {{response.message}}
-            </uib-alert>
-            <uib-alert type="success" close="closeResponse()" ng-if="response.success === true">
+            </div>
+            <div uib-alert ng-class="'alert-success'" close="closeResponse()" ng-if="response.success === true">
                 {{response.message}}
-            </uib-alert>
+            </div>
 
             <form style="max-width:400px;" ng-submit="update(account)">
                 <div class="form-group">

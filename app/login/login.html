@@ -1,8 +1,8 @@
 
 <div class="fusio-login-container">
-    <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+    <div uib-alert ng-class="'alert-danger'" close="closeResponse()" ng-if="response.success === false">
         {{response.message}}
-    </uib-alert>
+    </div>
 
     <form id="loginForm" method="POST" ng-submit="login(user)">
         <h1>Login</h1>

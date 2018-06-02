@@ -1,5 +1,7 @@
 'use strict';
 
+var angular = require('angular');
+
 angular.module('fusioApp.login', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {

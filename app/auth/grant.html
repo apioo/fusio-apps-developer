@@ -1,18 +1,18 @@
 
 <div class="container fusio-login-container">
     <h1>Authorization</h1>
-    <uib-alert type="danger" ng-if="error">
+    <div uib-alert ng-class="'alert-danger'" ng-if="error">
         {{error}}
-    </uib-alert>
-    <uib-alert type="info" ng-if="info">
+    </div>
+    <div uib-alert ng-class="'alert-info'" ng-if="info">
         {{info}}
-    </uib-alert>
+    </div>
 
     <div ng-if="response.code">
-        <uib-alert type="info">
+        <div uib-alert ng-class="'alert-info'">
             You have granted the application access. Provide the following
             authorization code in order to complete the authentication process.
-        </uib-alert>
+        </div>
         <p><b>Authorization code:</b></p>
         <div class="fusio-code">{{ response.code }}</div>
     </div>

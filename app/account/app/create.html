@@ -4,16 +4,16 @@
 </div>
 
 <div class="modal-body">
-    <uib-alert type="danger" close="closeResponse()" ng-if="response.success === false">
+    <div uib-alert ng-class="'alert-danger'" close="closeResponse()" ng-if="response.success === false">
         {{ response.message }}
-    </uib-alert>
-    <div class="form-group">
-        <label for="name" class="control-label">Name:</label>
-        <input type="text" ng-model="app.name" class="form-control" id="name">
     </div>
     <div class="form-group">
-        <label for="url" class="control-label">Url:</label>
-        <input type="text" ng-model="app.url" class="form-control" id="url">
+        <label for="name">Name:</label>
+        <input type="text" id="name" ng-model="app.name" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="url">Url:</label>
+        <input type="url" id="url" ng-model="app.url" required class="form-control">
     </div>
     <div class="checkbox" ng-repeat="scope in scopes">
         <label><input type="checkbox" ng-model="app.scopes[$index]" ng-true-value="'{{scope.name}}'" ng-false-value="''"> {{ scope.description }}</label>

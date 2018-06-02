@@ -1,16 +1,18 @@
 'use strict';
 
+var angular = require('angular');
 var fusioApp = angular.module('fusioApp', [
   'ngRoute',
   'ngSanitize',
   'ui.bootstrap',
   'ui.gravatar',
   'satellizer',
-  'noCAPTCHA',
-  'fusioApp.account.app.developer',
-  'fusioApp.account.app.grant',
+  'vcRecaptcha',
+  'fusioApp.account.app',
+  'fusioApp.account.grant',
   'fusioApp.account.profile',
   'fusioApp.account.security',
+  'fusioApp.account.subscription',
   'fusioApp.auth',
   'fusioApp.documentation',
   'fusioApp.login',
@@ -19,7 +21,27 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.signup'
 ]);
 
-fusioApp.value('version', 'v0.3');
+require('angular-route');
+require('angular-sanitize');
+require('angular-animate');
+require('angular-ui-bootstrap');
+require('angular-highlightjs');
+require('angular-recaptcha');
+require('angular-gravatar');
+require('satellizer');
+require('./account/app/app');
+require('./account/grant/grant');
+require('./account/profile/profile');
+require('./account/security/security');
+require('./account/subscription/subscription');
+require('./auth/auth');
+require('./documentation/documentation');
+require('./login/login');
+require('./logout/logout');
+require('./overview/overview');
+require('./signup/signup');
+
+fusioApp.value('version', 'v0.4');
 
 fusioApp.provider('fusio', function() {
   var baseUrl = null;
@@ -112,3 +134,9 @@ fusioApp.run(function($rootScope, $window, $location, $http, $auth, version) {
   }
   $rootScope.version = version;
 });
+
+if (window) {
+  window.fusioApp = fusioApp;
+}
+
+module.exports = fusioApp;
