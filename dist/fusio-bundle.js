@@ -365,7 +365,7 @@ angular.module('fusioApp.account.subscription', ['ngRoute'])
 
 }])
 
-.controller('AccountSubscriptionDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, subscription, fusio) {
+.controller('AccountSubscriptionDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'subscription', 'fusio', function($scope, $http, $uibModalInstance, subscription, fusio) {
 
   $scope.subscription = subscription;
 
