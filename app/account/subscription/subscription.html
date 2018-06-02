@@ -5,7 +5,8 @@
         <div class="fusio-content">
             <h2>Subscriptions</h2>
             <div uib-alert ng-class="'alert-info'">
-                List of subscriptions. The endpoints receive a HTTP call in case a specific event occurs.
+                List of subscriptions. The API provider can define specific events which you can subscribe to. If such
+                an event occurs the endpoint will receive an HTTP POST request with the provided payload.
             </div>
 
             <table class="table">
@@ -27,6 +28,7 @@
                     <td>{{ subscription.endpoint }}</td>
                     <td>
                         <div class="btn-group pull-right" role="group">
+                            <button class="btn btn-default" ng-click="showSubscription(subscription)">Show</button>
                             <button class="btn btn-danger" ng-click="deleteSubscription(subscription)">Delete</button>
                         </div>
                     </td>
