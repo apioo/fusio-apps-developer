@@ -13,6 +13,7 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.account.profile',
   'fusioApp.account.security',
   'fusioApp.account.subscription',
+  'fusioApp.account.payment',
   'fusioApp.auth',
   'fusioApp.documentation',
   'fusioApp.login',
@@ -34,6 +35,7 @@ require('./account/grant/grant');
 require('./account/profile/profile');
 require('./account/security/security');
 require('./account/subscription/subscription');
+require('./account/payment/payment');
 require('./auth/auth');
 require('./documentation/documentation');
 require('./login/login');
