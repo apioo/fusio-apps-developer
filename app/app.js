@@ -112,9 +112,9 @@ fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function($auth) {
   return {
     request: function(request) {
       if ($auth.isAuthenticated()) {
-        var payload = $auth.getPayload();
-        if (payload && payload.sub) {
-          request.headers['Authorization'] = 'Bearer ' + payload.sub;
+        var token = $auth.getToken();
+        if (token) {
+          request.headers['Authorization'] = 'Bearer ' + token;
         }
       }
       return request;
