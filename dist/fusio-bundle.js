@@ -41,7 +41,7 @@ angular.module('fusioApp.account.app', ['ngRoute'])
     }
 
     $scope.showApp = function (app) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/app/detail.html',
@@ -147,7 +147,7 @@ angular.module('fusioApp.account.contract', ['ngRoute'])
     }
 
     $scope.showContract = function (contract) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/contract/detail.html',
@@ -544,7 +544,7 @@ angular.module('fusioApp.account.subscription', ['ngRoute'])
     }
 
     $scope.showSubscription = function (subscription) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/subscription/detail.html',
@@ -792,7 +792,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
     var scope = params.scope
     var state = params.state
 
-    if (responseType != 'token' && responseType != 'code') {
+    if (responseType !== 'token' && responseType !== 'code') {
       $scope.error = 'Invalid response type'
     } else if (!clientId) {
       $scope.error = 'Client id missing'
@@ -833,7 +833,7 @@ angular.module('fusioApp.auth', ['ngRoute'])
       $scope.info = null
 
       $http.post(fusio.baseUrl + 'consumer/authorize', data).then(function (response) {
-        if (response.data.redirectUri === '' || response.data.redirectUri == '#') {
+        if (response.data.redirectUri === '' || response.data.redirectUri === '#') {
           if (allow === 0) {
             $scope.info = 'The access was denied. There is nothing more todo here.'
           }
