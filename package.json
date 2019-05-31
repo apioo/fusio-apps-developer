@@ -5,6 +5,9 @@
   "main": "Gruntfile.js",
   "author": "Christoph Kappestein",
   "license": "MIT",
+  "scripts": {
+    "cs": "standard \"app/**/*.js\" --fix"
+  },
   "dependencies": {
     "angular": "^1.7.5",
     "angular-animate": "^1.7.5",
