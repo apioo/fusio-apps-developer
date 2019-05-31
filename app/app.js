@@ -11,6 +11,7 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.account.app',
   'fusioApp.account.contract',
   'fusioApp.account.grant',
+  'fusioApp.account.invoice',
   'fusioApp.account.plan',
   'fusioApp.account.profile',
   'fusioApp.account.security',
@@ -34,6 +35,7 @@ require('satellizer');
 require('./account/app/app');
 require('./account/contract/contract');
 require('./account/grant/grant');
+require('./account/invoice/invoice');
 require('./account/plan/plan');
 require('./account/profile/profile');
 require('./account/security/security');
