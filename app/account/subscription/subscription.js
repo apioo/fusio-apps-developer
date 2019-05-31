@@ -40,7 +40,7 @@ angular.module('fusioApp.account.subscription', ['ngRoute'])
     }
 
     $scope.showSubscription = function (subscription) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/subscription/detail.html',

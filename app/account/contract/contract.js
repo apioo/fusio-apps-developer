@@ -26,7 +26,7 @@ angular.module('fusioApp.account.contract', ['ngRoute'])
     }
 
     $scope.showContract = function (contract) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/contract/detail.html',

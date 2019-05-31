@@ -40,7 +40,7 @@ angular.module('fusioApp.account.app', ['ngRoute'])
     }
 
     $scope.showApp = function (app) {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         size: 'md',
         backdrop: 'static',
         templateUrl: 'app/account/app/detail.html',
