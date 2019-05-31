@@ -1,35 +1,33 @@
-'use strict';
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.account.security', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/security', {
-    templateUrl: 'app/account/security/security.html',
-    controller: 'AccountSecurityCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/security', {
+      templateUrl: 'app/account/security/security.html',
+      controller: 'AccountSecurityCtrl'
+    })
+  }])
 
-.controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.account = {}
 
-  $scope.account = {};
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
 
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
+    $scope.update = function (account) {
+      $http.put(fusio.baseUrl + 'consumer/account/change_password', account).then(function (response) {
+        $scope.response = response.data
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
 
-  $scope.update = function(account) {
-    $http.put(fusio.baseUrl + 'consumer/account/change_password', account).then(function(response) {
-      $scope.response = response.data;
-    }, function(response) {
-      $scope.response = response.data;
-    });
-  };
-
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
-
-}]);
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+  }])
