@@ -12,8 +12,9 @@
                 <colgroup>
                     <col width="*" />
                     <col width="150" />
-                    <col width="150" />
-                    <col width="200" />
+                    <col width="100" />
+                    <col width="100" />
+                    <col width="100" />
                     <col width="50" />
                 </colgroup>
                 <thead>
@@ -21,7 +22,9 @@
                     <th>Plan</th>
                     <th>Period</th>
                     <th>Amount</th>
+                    <th>Points</th>
                     <th>Date</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,7 +40,8 @@
                       </span>
                     </td>
                     <td>{{ contract.amount | currency : symbol : 2 }}</td>
-                    <td>{{ contract.insertDate | date: 'short' }}</td>
+                    <td>{{ contract.points }}</td>
+                    <td>{{ contract.insertDate | date: 'shortDate' }}</td>
                     <td>
                       <button class="btn btn-default" ng-click="showContract(contract)">Show</button>
                     </td>

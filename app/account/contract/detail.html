@@ -7,19 +7,18 @@
   <table class="table">
     <colgroup>
       <col width="100" />
-      <col width="200" />
       <col width="*" />
-      <col width="150" />
-      <col width="150" />
-      <col width="200" />
+      <col width="100" />
+      <col width="100" />
+      <col width="50" />
     </colgroup>
     <thead>
     <tr>
       <th>Status</th>
       <th>Invoice-Id</th>
       <th>Amount</th>
-      <th>Points</th>
       <th>Date</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
@@ -33,8 +32,10 @@
       </td>
       <td>{{invoice.displayId}}</td>
       <td>{{invoice.amount | currency : symbol : 2}}</td>
-      <td>{{invoice.points}}</td>
-      <td>{{invoice.insertDate | date: 'short'}}</td>
+      <td>{{invoice.insertDate | date: 'shortDate'}}</td>
+      <td>
+        <button class="btn btn-default" ng-disabled="invoice.status != 0 || loading" ng-click="payInvoice(provider, invoice)">Pay</button>
+      </td>
     </tr>
     </tbody>
   </table>
