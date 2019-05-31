@@ -9,11 +9,12 @@ var fusioApp = angular.module('fusioApp', [
   'satellizer',
   'vcRecaptcha',
   'fusioApp.account.app',
+  'fusioApp.account.contract',
   'fusioApp.account.grant',
+  'fusioApp.account.plan',
   'fusioApp.account.profile',
   'fusioApp.account.security',
   'fusioApp.account.subscription',
-  'fusioApp.account.payment',
   'fusioApp.auth',
   'fusioApp.documentation',
   'fusioApp.login',
@@ -31,11 +32,12 @@ require('angular-recaptcha');
 require('angular-gravatar');
 require('satellizer');
 require('./account/app/app');
+require('./account/contract/contract');
 require('./account/grant/grant');
+require('./account/plan/plan');
 require('./account/profile/profile');
 require('./account/security/security');
 require('./account/subscription/subscription');
-require('./account/payment/payment');
 require('./auth/auth');
 require('./documentation/documentation');
 require('./login/login');
@@ -43,7 +45,7 @@ require('./logout/logout');
 require('./overview/overview');
 require('./signup/signup');
 
-fusioApp.value('version', 'v0.4');
+fusioApp.value('version', 'v0.5');
 
 fusioApp.provider('fusio', function() {
   var baseUrl = null;
