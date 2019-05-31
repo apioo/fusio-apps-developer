@@ -1,390 +1,629 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict';
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.account.app', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/app', {
-    templateUrl: 'app/account/app/app.html',
-    controller: 'AccountAppCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/app', {
+      templateUrl: 'app/account/app/app.html',
+      controller: 'AccountAppCtrl'
+    })
+  }])
 
-.controller('AccountAppCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountAppCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.apps = []
 
-  $scope.apps = [];
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
 
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/app').then(function (response) {
+        $scope.apps = response.data.entry
+      })
+    }
 
-  $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/app').then(function(response) {
-      $scope.apps = response.data.entry;
-    });
-  };
+    $scope.createApp = function () {
+      var modalInstance = $uibModal.open({
+        size: 'md',
+        backdrop: 'static',
+        templateUrl: 'app/account/app/create.html',
+        controller: 'AccountAppCreateCtrl'
+      })
 
-  $scope.createApp = function() {
-    var modalInstance = $uibModal.open({
-      size: 'md',
-      backdrop: 'static',
-      templateUrl: 'app/account/app/create.html',
-      controller: 'AccountAppCreateCtrl'
-    });
+      modalInstance.result.then(function (response) {
+        $scope.load()
+      }, function () {
+      })
+    }
 
-    modalInstance.result.then(function(response) {
-      $scope.load();
-    }, function() {
-    });
-  };
-
-  $scope.showApp = function(app) {
-    var modalInstance = $uibModal.open({
-      size: 'md',
-      backdrop: 'static',
-      templateUrl: 'app/account/app/detail.html',
-      controller: 'AccountAppDetailCtrl',
-      resolve: {
-        app: function() {
-          return app;
+    $scope.showApp = function (app) {
+      var modalInstance = $uibModal.open({
+        size: 'md',
+        backdrop: 'static',
+        templateUrl: 'app/account/app/detail.html',
+        controller: 'AccountAppDetailCtrl',
+        resolve: {
+          app: function () {
+            return app
+          }
         }
-      }
-    });
-  };
-
-  $scope.deleteApp = function(app) {
-    if (confirm('Do you really want to delete the app?')) {
-      $http.delete(fusio.baseUrl + 'consumer/app/' + app.id).then(function(response) {
-        $scope.load();
-      });
-    }
-  };
-
-  $scope.load();
-
-}])
-
-.controller('AccountAppCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
-
-  $scope.app = {
-    name: '',
-    url: '',
-    scopes: []
-  };
-  $scope.scopes = [];
-
-  $http.get(fusio.baseUrl + 'consumer/scope').then(function(response) {
-    $scope.scopes = response.data.entry;
-  });
-
-  $scope.create = function(app) {
-    var data = angular.copy(app);
-
-    // filter scopes
-    if (data.scopes && angular.isArray(data.scopes)) {
-      data.scopes = data.scopes.filter(function(value) {
-        return value !== null && value !== undefined;
-      });
+      })
     }
 
-    $http.post(fusio.baseUrl + 'consumer/app', data).then(function(response) {
-      $scope.response = response.data;
-      if (response.data.success === true) {
-        $uibModalInstance.close();
+    $scope.deleteApp = function (app) {
+      if (confirm('Do you really want to delete the app?')) {
+        $http.delete(fusio.baseUrl + 'consumer/app/' + app.id).then(function (response) {
+          $scope.load()
+        })
       }
-    }, function(response) {
-      $scope.response = response.data;
-    });
-  };
+    }
 
-  $scope.close = function() {
-    $uibModalInstance.dismiss('cancel');
-  };
+    $scope.load()
+  }])
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
+  .controller('AccountAppCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function ($scope, $http, $uibModalInstance, fusio) {
+    $scope.app = {
+      name: '',
+      url: '',
+      scopes: []
+    }
+    $scope.scopes = []
 
-}])
+    $http.get(fusio.baseUrl + 'consumer/scope').then(function (response) {
+      $scope.scopes = response.data.entry
+    })
 
-.controller('AccountAppDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function($scope, $http, $uibModalInstance, app, fusio) {
+    $scope.create = function (app) {
+      var data = angular.copy(app)
 
-  $scope.app = app;
+      // filter scopes
+      if (data.scopes && angular.isArray(data.scopes)) {
+        data.scopes = data.scopes.filter(function (value) {
+          return value !== null && value !== undefined
+        })
+      }
 
-  $http.get(fusio.baseUrl + 'consumer/app/' + app.id).then(function(response) {
-    $scope.app = response.data;
-  });
+      $http.post(fusio.baseUrl + 'consumer/app', data).then(function (response) {
+        $scope.response = response.data
+        if (response.data.success === true) {
+          $uibModalInstance.close()
+        }
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
 
-  $scope.close = function() {
-    $uibModalInstance.dismiss('cancel');
-  };
+    $scope.close = function () {
+      $uibModalInstance.dismiss('cancel')
+    }
 
-}]);
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+  }])
 
+  .controller('AccountAppDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'app', 'fusio', function ($scope, $http, $uibModalInstance, app, fusio) {
+    $scope.app = app
 
+    $http.get(fusio.baseUrl + 'consumer/app/' + app.id).then(function (response) {
+      $scope.app = response.data
+    })
 
-},{"angular":26}],2:[function(require,module,exports){
-'use strict';
+    $scope.close = function () {
+      $uibModalInstance.dismiss('cancel')
+    }
+  }])
 
-var angular = require('angular');
+},{"angular":29}],2:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
+
+angular.module('fusioApp.account.contract', ['ngRoute'])
+
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/contract', {
+      templateUrl: 'app/account/contract/contract.html',
+      controller: 'AccountContractCtrl'
+    })
+  }])
+
+  .controller('AccountContractCtrl', ['$scope', '$http', '$auth', '$uibModal', '$location', '$window', '$routeParams', 'fusio', function ($scope, $http, $auth, $uibModal, $location, $window, $routeParams, fusio) {
+    $scope.contracts = []
+
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
+
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/plan/contract').then(function (response) {
+        $scope.contracts = response.data.entry
+      })
+    }
+
+    $scope.showContract = function (contract) {
+      var modalInstance = $uibModal.open({
+        size: 'md',
+        backdrop: 'static',
+        templateUrl: 'app/account/contract/detail.html',
+        controller: 'AccountContractDetailCtrl',
+        resolve: {
+          contract: function () {
+            return contract
+          }
+        }
+      })
+    }
+
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+
+    $scope.load()
+  }])
+
+  .controller('AccountContractDetailCtrl', ['$scope', '$http', '$uibModalInstance', '$location', '$window', 'contract', 'fusio', function ($scope, $http, $uibModalInstance, $location, $window, contract, fusio) {
+    $scope.provider = 'paypal'
+    $scope.contract = contract
+    $scope.invoices = []
+    $scope.loading = false
+
+    $http.get(fusio.baseUrl + 'consumer/plan/invoice?contractId=' + contract.id).then(function (response) {
+      $scope.invoices = response.data.entry
+    })
+
+    $scope.payInvoice = function (provider, invoice) {
+      if ($scope.loading) {
+        return
+      }
+
+      $scope.loading = true
+
+      var returnUrl = $location.absUrl()
+      returnUrl = returnUrl.substr(0, returnUrl.indexOf('/account') + 8)
+      returnUrl = returnUrl + '/plan/{transaction_id}'
+
+      var data = {
+        invoiceId: invoice.id,
+        returnUrl: returnUrl
+      }
+
+      $http.post(fusio.baseUrl + 'consumer/transaction/prepare/' + provider, data).then(function (response) {
+        var approvalUrl = response.data.approvalUrl
+        if (approvalUrl) {
+          $window.location.href = approvalUrl
+        }
+
+        $scope.response = response.data
+        $scope.loading = false
+      }, function (response) {
+        $scope.response = response.data
+        $scope.loading = false
+      })
+    }
+
+    $scope.close = function () {
+      $uibModalInstance.dismiss('cancel')
+    }
+  }])
+
+},{"angular":29}],3:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
 
 angular.module('fusioApp.account.grant', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/grant', {
-    templateUrl: 'app/account/grant/grant.html',
-    controller: 'AccountGrantCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/grant', {
+      templateUrl: 'app/account/grant/grant.html',
+      controller: 'AccountGrantCtrl'
+    })
+  }])
 
-.controller('AccountGrantCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountGrantCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.grants = []
 
-  $scope.grants = [];
-
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
-
-  $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/grant').then(function(response) {
-      $scope.grants = response.data.entry;
-    });
-  };
-
-  $scope.deleteGrant = function(grant) {
-    if (confirm('Do you really want to delete the grant?')) {
-      $http.delete(fusio.baseUrl + 'consumer/grant/' + grant.id).then(function(response) {
-        $scope.load();
-      });
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
     }
-  };
 
-  $scope.load();
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/grant').then(function (response) {
+        $scope.grants = response.data.entry
+      })
+    }
 
-}]);
+    $scope.deleteGrant = function (grant) {
+      if (confirm('Do you really want to delete the grant?')) {
+        $http.delete(fusio.baseUrl + 'consumer/grant/' + grant.id).then(function (response) {
+          $scope.load()
+        })
+      }
+    }
 
-},{"angular":26}],3:[function(require,module,exports){
-'use strict';
+    $scope.load()
+  }])
 
-var angular = require('angular');
+},{"angular":29}],4:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
+
+angular.module('fusioApp.account.invoice', ['ngRoute'])
+
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/invoice', {
+      templateUrl: 'app/account/invoice/invoice.html',
+      controller: 'AccountInvoiceCtrl'
+    })
+  }])
+
+  .controller('AccountInvoiceCtrl', ['$scope', '$http', '$auth', '$uibModal', '$location', '$window', '$routeParams', 'fusio', function ($scope, $http, $auth, $uibModal, $location, $window, $routeParams, fusio) {
+    $scope.provider = 'paypal'
+    $scope.invoices = []
+    $scope.loading = false
+
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
+
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/plan/invoice').then(function (response) {
+        $scope.invoices = response.data.entry
+      })
+    }
+
+    $scope.payInvoice = function (provider, invoice) {
+      if ($scope.loading) {
+        return
+      }
+
+      $scope.loading = true
+
+      var returnUrl = $location.absUrl()
+      returnUrl = returnUrl.substr(0, returnUrl.indexOf('/account') + 8)
+      returnUrl = returnUrl + '/plan/{transaction_id}'
+
+      var data = {
+        invoiceId: invoice.id,
+        returnUrl: returnUrl
+      }
+
+      $http.post(fusio.baseUrl + 'consumer/transaction/prepare/' + provider, data).then(function (response) {
+        var approvalUrl = response.data.approvalUrl
+        if (approvalUrl) {
+          $window.location.href = approvalUrl
+        }
+
+        $scope.response = response.data
+        $scope.loading = false
+      }, function (response) {
+        $scope.response = response.data
+        $scope.loading = false
+      })
+    }
+
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+
+    $scope.load()
+  }])
+
+},{"angular":29}],5:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
+
+angular.module('fusioApp.account.plan', ['ngRoute'])
+
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/plan', {
+      templateUrl: 'app/account/plan/plan.html',
+      controller: 'AccountPlanCtrl'
+    })
+    $routeProvider.when('/account/plan/:transaction_id?', {
+      templateUrl: 'app/account/plan/plan.html',
+      controller: 'AccountPlanCtrl'
+    })
+  }])
+
+  .controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', 'fusio', function ($scope, $http, $auth, $location, $window, $routeParams, fusio) {
+    $scope.STATUS_PREPARED = 0
+    $scope.STATUS_CREATED = 1
+    $scope.STATUS_APPROVED = 2
+    $scope.STATUS_FAILED = 3
+    $scope.STATUS_UNKNOWN = 4
+
+    $scope.provider = 'paypal'
+    $scope.transactions = []
+    $scope.plans = []
+    $scope.loading = false
+
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
+
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/plan').then(function (response) {
+        $scope.plans = response.data.entry
+      })
+    }
+
+    $scope.createContract = function (provider, planId) {
+      if ($scope.loading) {
+        return
+      }
+
+      var data = {
+        planId: planId
+      }
+
+      $http.post(fusio.baseUrl + 'consumer/plan/contract', data).then(function (response) {
+        var invoiceId = response.data.invoiceId
+
+        $scope.response = response.data
+        $scope.prepareTransaction(provider, invoiceId)
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
+
+    $scope.prepareTransaction = function (provider, invoiceId) {
+      if ($scope.loading) {
+        return
+      }
+
+      $scope.loading = true
+
+      var data = {
+        invoiceId: invoiceId,
+        returnUrl: $location.absUrl() + '/{transaction_id}'
+      }
+
+      $http.post(fusio.baseUrl + 'consumer/transaction/prepare/' + provider, data).then(function (response) {
+        var approvalUrl = response.data.approvalUrl
+        if (approvalUrl) {
+          $window.location.href = approvalUrl
+        }
+
+        $scope.response = response.data
+        $scope.loading = false
+      }, function (response) {
+        $scope.response = response.data
+        $scope.loading = false
+      })
+    }
+
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+
+    $scope.load()
+
+    // check transaction id if available
+    if ($routeParams.transaction_id) {
+      $http.get(fusio.baseUrl + 'consumer/transaction/' + $routeParams.transaction_id).then(function (response) {
+        $scope.transaction = response.data
+      })
+    }
+  }])
+
+},{"angular":29}],6:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
 
 angular.module('fusioApp.account.profile', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account', {
-    templateUrl: 'app/account/profile/profile.html',
-    controller: 'AccountProfileCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account', {
+      templateUrl: 'app/account/profile/profile.html',
+      controller: 'AccountProfileCtrl'
+    })
+  }])
 
-.controller('AccountProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.account = {}
+    $scope.email = null
 
-  $scope.account = {};
-  $scope.email = null;
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
 
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
+    $scope.update = function (account) {
+      $http.put(fusio.baseUrl + 'consumer/account', account).then(function (response) {
+        $scope.response = response.data
+        $scope.load()
+      })
+    }
 
-  $scope.update = function(account) {
-    $http.put(fusio.baseUrl + 'consumer/account', account).then(function(response) {
-      $scope.response = response.data;
-      $scope.load();
-    });
-  };
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/account').then(function (response) {
+        $scope.account = response.data
+        if (response.data.email) {
+          $scope.email = response.data.email
+        }
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
 
-  $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/account').then(function(response) {
-      $scope.account = response.data;
-      if (response.data.email) {
-        $scope.email = response.data.email;
-      }
-    }, function(response) {
-      $scope.response = response.data;
-    });
-  };
+    $scope.load()
+  }])
 
-  $scope.load();
+},{"angular":29}],7:[function(require,module,exports){
+'use strict'
 
-}]);
-
-},{"angular":26}],4:[function(require,module,exports){
-'use strict';
-
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.account.security', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/security', {
-    templateUrl: 'app/account/security/security.html',
-    controller: 'AccountSecurityCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/security', {
+      templateUrl: 'app/account/security/security.html',
+      controller: 'AccountSecurityCtrl'
+    })
+  }])
 
-.controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.account = {}
 
-  $scope.account = {};
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
 
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
+    $scope.update = function (account) {
+      $http.put(fusio.baseUrl + 'consumer/account/change_password', account).then(function (response) {
+        $scope.response = response.data
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
 
-  $scope.update = function(account) {
-    $http.put(fusio.baseUrl + 'consumer/account/change_password', account).then(function(response) {
-      $scope.response = response.data;
-    }, function(response) {
-      $scope.response = response.data;
-    });
-  };
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+  }])
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
+},{"angular":29}],8:[function(require,module,exports){
+'use strict'
 
-}]);
-
-},{"angular":26}],5:[function(require,module,exports){
-'use strict';
-
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.account.subscription', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/subscription', {
-    templateUrl: 'app/account/subscription/subscription.html',
-    controller: 'AccountSubscriptionCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/account/subscription', {
+      templateUrl: 'app/account/subscription/subscription.html',
+      controller: 'AccountSubscriptionCtrl'
+    })
+  }])
 
-.controller('AccountSubscriptionCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function($scope, $http, $uibModal, $auth, $location, fusio) {
+  .controller('AccountSubscriptionCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
+    $scope.subscriptions = []
 
-  $scope.subscriptions = [];
+    if (!$auth.isAuthenticated()) {
+      $location.path('/login')
+      return
+    }
 
-  if (!$auth.isAuthenticated()) {
-    $location.path('/login');
-    return;
-  }
+    $scope.load = function () {
+      $http.get(fusio.baseUrl + 'consumer/subscription').then(function (response) {
+        $scope.subscriptions = response.data.entry
+      })
+    }
 
-  $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/subscription').then(function(response) {
-      $scope.subscriptions = response.data.entry;
-    });
-  };
+    $scope.createSubscription = function () {
+      var modalInstance = $uibModal.open({
+        size: 'md',
+        backdrop: 'static',
+        templateUrl: 'app/account/subscription/create.html',
+        controller: 'AccountSubscriptionCreateCtrl'
+      })
 
-  $scope.createSubscription = function() {
-    var modalInstance = $uibModal.open({
-      size: 'md',
-      backdrop: 'static',
-      templateUrl: 'app/account/subscription/create.html',
-      controller: 'AccountSubscriptionCreateCtrl'
-    });
+      modalInstance.result.then(function (response) {
+        $scope.load()
+      }, function () {
+      })
+    }
 
-    modalInstance.result.then(function(response) {
-      $scope.load();
-    }, function() {
-    });
-  };
-
-  $scope.showSubscription = function(subscription) {
-    var modalInstance = $uibModal.open({
-      size: 'md',
-      backdrop: 'static',
-      templateUrl: 'app/account/subscription/detail.html',
-      controller: 'AccountSubscriptionDetailCtrl',
-      resolve: {
-        subscription: function() {
-          return subscription;
+    $scope.showSubscription = function (subscription) {
+      var modalInstance = $uibModal.open({
+        size: 'md',
+        backdrop: 'static',
+        templateUrl: 'app/account/subscription/detail.html',
+        controller: 'AccountSubscriptionDetailCtrl',
+        resolve: {
+          subscription: function () {
+            return subscription
+          }
         }
-      }
-    });
-  };
-
-  $scope.deleteSubscription = function(subscription) {
-    if (confirm('Do you really want to delete the subscription?')) {
-      $http.delete(fusio.baseUrl + 'consumer/subscription/' + subscription.id).then(function(response) {
-        $scope.load();
-      });
-    }
-  };
-
-  $scope.load();
-
-}])
-
-.controller('AccountSubscriptionCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function($scope, $http, $uibModalInstance, fusio) {
-
-  $scope.subscription = {
-    event: '',
-    endpoint: ''
-  };
-  $scope.events = [];
-
-  $http.get(fusio.baseUrl + 'consumer/event').then(function(response) {
-    $scope.events = response.data.entry;
-  });
-
-  $scope.create = function(subscription) {
-    var data = angular.copy(subscription);
-
-    // filter scopes
-    if (data.scopes && angular.isArray(data.scopes)) {
-      data.scopes = data.scopes.filter(function(value) {
-        return value !== null && value !== undefined;
-      });
+      })
     }
 
-    $http.post(fusio.baseUrl + 'consumer/subscription', data).then(function(response) {
-      $scope.response = response.data;
-      if (response.data.success === true) {
-        $uibModalInstance.close();
+    $scope.deleteSubscription = function (subscription) {
+      if (confirm('Do you really want to delete the subscription?')) {
+        $http.delete(fusio.baseUrl + 'consumer/subscription/' + subscription.id).then(function (response) {
+          $scope.load()
+        })
       }
-    }, function(response) {
-      $scope.response = response.data;
-    });
-  };
+    }
 
-  $scope.close = function() {
-    $uibModalInstance.dismiss('cancel');
-  };
+    $scope.load()
+  }])
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
+  .controller('AccountSubscriptionCreateCtrl', ['$scope', '$http', '$uibModalInstance', 'fusio', function ($scope, $http, $uibModalInstance, fusio) {
+    $scope.subscription = {
+      event: '',
+      endpoint: ''
+    }
+    $scope.events = []
 
-}])
+    $http.get(fusio.baseUrl + 'consumer/event').then(function (response) {
+      $scope.events = response.data.entry
+    })
 
-.controller('AccountSubscriptionDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'subscription', 'fusio', function($scope, $http, $uibModalInstance, subscription, fusio) {
+    $scope.create = function (subscription) {
+      var data = angular.copy(subscription)
 
-  $scope.subscription = subscription;
+      // filter scopes
+      if (data.scopes && angular.isArray(data.scopes)) {
+        data.scopes = data.scopes.filter(function (value) {
+          return value !== null && value !== undefined
+        })
+      }
 
-  $http.get(fusio.baseUrl + 'consumer/subscription/' + subscription.id).then(function(response) {
-    $scope.subscription = response.data;
-  });
+      $http.post(fusio.baseUrl + 'consumer/subscription', data).then(function (response) {
+        $scope.response = response.data
+        if (response.data.success === true) {
+          $uibModalInstance.close()
+        }
+      }, function (response) {
+        $scope.response = response.data
+      })
+    }
 
-  $scope.close = function() {
-    $uibModalInstance.dismiss('cancel');
-  };
+    $scope.close = function () {
+      $uibModalInstance.dismiss('cancel')
+    }
 
-}]);
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+  }])
 
+  .controller('AccountSubscriptionDetailCtrl', ['$scope', '$http', '$uibModalInstance', 'subscription', 'fusio', function ($scope, $http, $uibModalInstance, subscription, fusio) {
+    $scope.subscription = subscription
 
+    $http.get(fusio.baseUrl + 'consumer/subscription/' + subscription.id).then(function (response) {
+      $scope.subscription = response.data
+    })
 
-},{"angular":26}],6:[function(require,module,exports){
-'use strict';
+    $scope.close = function () {
+      $uibModalInstance.dismiss('cancel')
+    }
+  }])
 
-var angular = require('angular');
+},{"angular":29}],9:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
 var fusioApp = angular.module('fusioApp', [
   'ngRoute',
   'ngSanitize',
@@ -393,7 +632,10 @@ var fusioApp = angular.module('fusioApp', [
   'satellizer',
   'vcRecaptcha',
   'fusioApp.account.app',
+  'fusioApp.account.contract',
   'fusioApp.account.grant',
+  'fusioApp.account.invoice',
+  'fusioApp.account.plan',
   'fusioApp.account.profile',
   'fusioApp.account.security',
   'fusioApp.account.subscription',
@@ -403,423 +645,416 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.logout',
   'fusioApp.overview',
   'fusioApp.signup'
-]);
+])
 
-require('angular-route');
-require('angular-sanitize');
-require('angular-animate');
-require('angular-ui-bootstrap');
-require('angular-highlightjs');
-require('angular-recaptcha');
-require('angular-gravatar');
-require('satellizer');
-require('./account/app/app');
-require('./account/grant/grant');
-require('./account/profile/profile');
-require('./account/security/security');
-require('./account/subscription/subscription');
-require('./auth/auth');
-require('./documentation/documentation');
-require('./login/login');
-require('./logout/logout');
-require('./overview/overview');
-require('./signup/signup');
+require('angular-route')
+require('angular-sanitize')
+require('angular-animate')
+require('angular-ui-bootstrap')
+require('angular-highlightjs')
+require('angular-recaptcha')
+require('angular-gravatar')
+require('satellizer')
+require('./account/app/app')
+require('./account/contract/contract')
+require('./account/grant/grant')
+require('./account/invoice/invoice')
+require('./account/plan/plan')
+require('./account/profile/profile')
+require('./account/security/security')
+require('./account/subscription/subscription')
+require('./auth/auth')
+require('./documentation/documentation')
+require('./login/login')
+require('./logout/logout')
+require('./overview/overview')
+require('./signup/signup')
 
-fusioApp.value('version', 'v0.4');
+fusioApp.value('version', 'v0.5')
 
-fusioApp.provider('fusio', function() {
-  var baseUrl = null;
-  var documentationMenu = null;
+fusioApp.provider('fusio', function () {
+  var baseUrl = null
+  var documentationMenu = null
 
-  this.setBaseUrl = function(_baseUrl) {
-    baseUrl = _baseUrl;
-  };
+  this.setBaseUrl = function (_baseUrl) {
+    baseUrl = _baseUrl
+  }
 
-  this.getBaseUrl = function() {
-    return baseUrl;
-  };
+  this.getBaseUrl = function () {
+    return baseUrl
+  }
 
-  this.setDocumentationMenu = function(_documentationMenu) {
-    documentationMenu = _documentationMenu;
-  };
+  this.setDocumentationMenu = function (_documentationMenu) {
+    documentationMenu = _documentationMenu
+  }
 
-  this.getDocumentationMenu = function() {
-    return documentationMenu;
-  };
+  this.getDocumentationMenu = function () {
+    return documentationMenu
+  }
 
-  this.guessFusioEndpointUrl = function(urlRewrite) {
-    var url = window.location.href;
-    var removePart = function(url, sign) {
-      var count = (url.match(/\//g) || []).length;
-      var pos = url.lastIndexOf(sign);
+  this.guessFusioEndpointUrl = function (urlRewrite) {
+    var url = window.location.href
+    var removePart = function (url, sign) {
+      var count = (url.match(/\//g) || []).length
+      var pos = url.lastIndexOf(sign)
       if (count > 2 && pos !== -1) {
-          return url.substring(0, pos);
+        return url.substring(0, pos)
       }
-      return url;
-    };
-    var parts = ['#', '?', '/', '/'];
-    for (var i = 0; i < parts.length; i++) {
-      url = removePart(url, parts[i]);
+      return url
     }
-    return url + (urlRewrite ? '/' : '/index.php/');
-  };
+    var parts = ['#', '?', '/', '/']
+    for (var i = 0; i < parts.length; i++) {
+      url = removePart(url, parts[i])
+    }
+    return url + (urlRewrite ? '/' : '/index.php/')
+  }
 
-  this.$get = function() {
+  this.$get = function () {
     // BC workaround if the base url was not configured but the fusio_url is
     // available we use it else we guess the url
     if (baseUrl === null && typeof fusio_url !== 'undefined') {
-      baseUrl = fusio_url;
+      baseUrl = fusio_url
     } else if (baseUrl === null) {
-      baseUrl = this.guessFusioEndpointUrl(false);
+      baseUrl = this.guessFusioEndpointUrl(false)
     }
 
     return {
       baseUrl: baseUrl,
       documentationMenu: documentationMenu
-    };
-  };
-});
+    }
+  }
+})
 
-fusioApp.config(['$routeProvider', function($routeProvider) {
+fusioApp.config(['$routeProvider', function ($routeProvider) {
   $routeProvider.otherwise({
     redirectTo: '/'
-  });
-}]);
+  })
+}])
 
-fusioApp.config(['$locationProvider', function($locationProvider) {
-  $locationProvider.html5Mode(true);
-}]);
+fusioApp.config(['$locationProvider', function ($locationProvider) {
+  $locationProvider.html5Mode(true)
+}])
 
-fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function($auth) {
+fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function ($auth) {
   return {
-    request: function(request) {
+    request: function (request) {
       if ($auth.isAuthenticated()) {
-        var payload = $auth.getPayload();
-        if (payload && payload.sub) {
-          request.headers['Authorization'] = 'Bearer ' + payload.sub;
+        var token = $auth.getToken()
+        if (token) {
+          request.headers['Authorization'] = 'Bearer ' + token
         }
       }
-      return request;
+      return request
     }
-  };
-}]);
-
-fusioApp.config(['$httpProvider', function($httpProvider) {
-  $httpProvider.interceptors.push('fusioAuthenticate');
-}]);
-
-fusioApp.run(function($rootScope, $window, $location, $http, $auth, version) {
-  // set version
-  $rootScope.isAuthenticated = $auth.isAuthenticated();
-  $rootScope.userName = null;
-  var payload = $auth.getPayload();
-  if (payload && payload.name) {
-    $rootScope.userName = payload.name;
   }
-  $rootScope.version = version;
-});
+}])
+
+fusioApp.config(['$httpProvider', function ($httpProvider) {
+  $httpProvider.interceptors.push('fusioAuthenticate')
+}])
+
+fusioApp.run(function ($rootScope, $window, $location, $http, $auth, version) {
+  // set version
+  $rootScope.isAuthenticated = $auth.isAuthenticated()
+  $rootScope.userName = null
+  var payload = $auth.getPayload()
+  if (payload && payload.name) {
+    $rootScope.userName = payload.name
+  }
+  $rootScope.version = version
+})
 
 if (window) {
-  window.fusioApp = fusioApp;
+  window.fusioApp = fusioApp
 }
 
-module.exports = fusioApp;
+module.exports = fusioApp
 
-},{"./account/app/app":1,"./account/grant/grant":2,"./account/profile/profile":3,"./account/security/security":4,"./account/subscription/subscription":5,"./auth/auth":7,"./documentation/documentation":8,"./login/login":9,"./logout/logout":10,"./overview/overview":11,"./signup/signup":12,"angular":26,"angular-animate":14,"angular-gravatar":15,"angular-highlightjs":16,"angular-recaptcha":17,"angular-route":20,"angular-sanitize":22,"angular-ui-bootstrap":24,"satellizer":208}],7:[function(require,module,exports){
-'use strict';
+},{"./account/app/app":1,"./account/contract/contract":2,"./account/grant/grant":3,"./account/invoice/invoice":4,"./account/plan/plan":5,"./account/profile/profile":6,"./account/security/security":7,"./account/subscription/subscription":8,"./auth/auth":10,"./documentation/documentation":11,"./login/login":12,"./logout/logout":13,"./overview/overview":14,"./signup/signup":15,"angular":29,"angular-animate":17,"angular-gravatar":18,"angular-highlightjs":19,"angular-recaptcha":20,"angular-route":23,"angular-sanitize":25,"angular-ui-bootstrap":27,"satellizer":211}],10:[function(require,module,exports){
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.auth', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/auth', {
-    templateUrl: 'app/auth/grant.html',
-    controller: 'AuthCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/auth', {
+      templateUrl: 'app/auth/grant.html',
+      controller: 'AuthCtrl'
+    })
+  }])
 
-.controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', '$window', 'fusio', function($scope, $http, $auth, $location, $window, fusio) {
+  .controller('AuthCtrl', ['$scope', '$http', '$auth', '$location', '$window', 'fusio', function ($scope, $http, $auth, $location, $window, fusio) {
+    var params = $location.search()
+    var responseType = params.response_type
+    var clientId = params.client_id
+    var redirectUri = params.redirect_uri
+    var scope = params.scope
+    var state = params.state
 
-  var params = $location.search();
-  var responseType = params.response_type;
-  var clientId = params.client_id;
-  var redirectUri = params.redirect_uri;
-  var scope = params.scope;
-  var state = params.state;
+    if (responseType != 'token' && responseType != 'code') {
+      $scope.error = 'Invalid response type'
+    } else if (!clientId) {
+      $scope.error = 'Client id missing'
+    } else if (!scope) {
+      $scope.error = 'Scope missing'
+    } else {
+      if (!$auth.isAuthenticated()) {
+        var data = {
+          responseType: responseType,
+          clientId: clientId,
+          redirectUri: redirectUri,
+          scope: scope,
+          state: state
+        }
+        var auth = btoa(JSON.stringify(data))
+        $location.url('/login?auth=' + auth)
+        return
+      }
 
-  if (responseType != 'token' && responseType != 'code') {
-    $scope.error = 'Invalid response type';
-  } else if (!clientId) {
-    $scope.error = 'Client id missing';
-  } else if (!scope) {
-    $scope.error = 'Scope missing';
-  } else {
-    if (!$auth.isAuthenticated()) {
+      $http.get(fusio.baseUrl + 'consumer/authorize?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function (response) {
+        $scope.app = response.data
+      }, function (response) {
+        $scope.error = 'Could not request app information'
+      })
+    }
+
+    $scope.submitAccess = function (allow) {
       var data = {
         responseType: responseType,
         clientId: clientId,
         redirectUri: redirectUri,
         scope: scope,
-        state: state
-      };
-      var auth = btoa(JSON.stringify(data));
-      $location.url('/login?auth=' + auth);
-      return;
-    }
-
-    $http.get(fusio.baseUrl + 'consumer/authorize?client_id=' + encodeURIComponent(clientId) + '&scope=' + encodeURIComponent(scope)).then(function(response) {
-      $scope.app = response.data;
-    }, function(response) {
-      $scope.error = 'Could not request app information';
-    });
-  }
-
-  $scope.submitAccess = function(allow) {
-    var data = {
-      responseType: responseType,
-      clientId: clientId,
-      redirectUri: redirectUri,
-      scope: scope,
-      state: state,
-      allow: !!allow
-    };
-
-    $scope.error = null;
-    $scope.info = null;
-
-    $http.post(fusio.baseUrl + 'consumer/authorize', data).then(function(response) {
-      if (response.data.redirectUri === '' || response.data.redirectUri == '#') {
-        if (allow === 0) {
-          $scope.info = 'The access was denied. There is nothing more todo here.';
-        }
-
-        $scope.response = response.data;
-      } else {
-        $window.location.href = response.data.redirectUri;
+        state: state,
+        allow: !!allow
       }
-    }, function(response) {
-      $scope.error = response.data.message;
-    });
-  };
 
-}]);
+      $scope.error = null
+      $scope.info = null
 
-},{"angular":26}],8:[function(require,module,exports){
-'use strict';
+      $http.post(fusio.baseUrl + 'consumer/authorize', data).then(function (response) {
+        if (response.data.redirectUri === '' || response.data.redirectUri == '#') {
+          if (allow === 0) {
+            $scope.info = 'The access was denied. There is nothing more todo here.'
+          }
 
-var angular = require('angular');
+          $scope.response = response.data
+        } else {
+          $window.location.href = response.data.redirectUri
+        }
+      }, function (response) {
+        $scope.error = response.data.message
+      })
+    }
+  }])
+
+},{"angular":29}],11:[function(require,module,exports){
+'use strict'
+
+var angular = require('angular')
 
 angular.module('fusioApp.documentation', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/documentation/:doc?', {
-    templateUrl: 'app/documentation/documentation.html',
-    controller: 'DocumentationCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/documentation/:doc?', {
+      templateUrl: 'app/documentation/documentation.html',
+      controller: 'DocumentationCtrl'
+    })
+  }])
 
-.controller('DocumentationCtrl', ['$scope', '$auth', '$location', '$http', '$routeParams', 'fusio', function($scope, $auth, $location, $http, $routeParams, fusio) {
+  .controller('DocumentationCtrl', ['$scope', '$auth', '$location', '$http', '$routeParams', 'fusio', function ($scope, $auth, $location, $http, $routeParams, fusio) {
+    $scope.menu = fusio.documentationMenu
+    $scope.content = null
 
-  $scope.menu = fusio.documentationMenu;
-  $scope.content = null;
-
-  $scope.loadDoc = function(href) {
-    $http.get('docs/' + href + '.htm').then(function(response) {
-      $scope.content = response.data;
-    }, function() {
-      $scope.content = 'Could not load document';
-    });
-  };
-
-  $scope.getFirstObjectValue = function(object){
-    if (angular.isObject(object)) {
-      var key = Object.keys(object)[0];
-      return object[key] ? object[key] : null;
-    } else {
-      return null;
+    $scope.loadDoc = function (href) {
+      $http.get('docs/' + href + '.htm').then(function (response) {
+        $scope.content = response.data
+      }, function () {
+        $scope.content = 'Could not load document'
+      })
     }
-  };
 
-  if ($routeParams.doc) {
-    $scope.loadDoc($routeParams.doc);
-  } else {
-    var group = $scope.getFirstObjectValue($scope.menu);
-    var href = $scope.getFirstObjectValue(group);
-    $scope.loadDoc(href);
-  }
+    $scope.getFirstObjectValue = function (object) {
+      if (angular.isObject(object)) {
+        var key = Object.keys(object)[0]
+        return object[key] ? object[key] : null
+      } else {
+        return null
+      }
+    }
 
-}]);
+    if ($routeParams.doc) {
+      $scope.loadDoc($routeParams.doc)
+    } else {
+      var group = $scope.getFirstObjectValue($scope.menu)
+      var href = $scope.getFirstObjectValue(group)
+      $scope.loadDoc(href)
+    }
+  }])
 
-},{"angular":26}],9:[function(require,module,exports){
-'use strict';
+},{"angular":29}],12:[function(require,module,exports){
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.login', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/login', {
-    templateUrl: 'app/login/login.html',
-    controller: 'LoginCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/login', {
+      templateUrl: 'app/login/login.html',
+      controller: 'LoginCtrl'
+    })
+  }])
 
-.controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', '$route', '$rootScope', 'SatellizerConfig', function($scope, $http, $auth, $location, $route, $rootScope, SatellizerConfig) {
+  .controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', '$route', '$rootScope', 'SatellizerConfig', function ($scope, $http, $auth, $location, $route, $rootScope, SatellizerConfig) {
+    $scope.user = {
+      username: '',
+      password: ''
+    }
 
-  $scope.user = {
-    username: '',
-    password: ''
-  };
+    if ($auth.isAuthenticated()) {
+      $location.path('/profile')
+      return
+    }
 
-  if ($auth.isAuthenticated()) {
-    $location.path('/profile');
-    return;
-  }
+    $scope.authenticate = function (provider) {
+      $auth.authenticate(provider)
+    }
 
-  $scope.authenticate = function(provider) {
-    $auth.authenticate(provider);
-  };
+    $scope.isConfigured = function (provider) {
+      return SatellizerConfig.providers[provider] && SatellizerConfig.providers[provider].clientId
+    }
 
-  $scope.isConfigured = function(provider) {
-    return SatellizerConfig.providers[provider] && SatellizerConfig.providers[provider].clientId;
-  };
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
-
-  $scope.login = function(user) {
-    $auth.login(JSON.stringify(user))
-      .then(function() {
-        $rootScope.isAuthenticated = $auth.isAuthenticated();
-        $rootScope.userName = null;
-        var payload = $auth.getPayload();
-        if (payload && payload.name) {
-          $rootScope.userName = payload.name;
-        }
-
-        var params = $location.search();
-        if (params && params.auth) {
-          var allowedParams = {
-            responseType: 'response_type',
-            clientId: 'client_id',
-            redirectUri: 'redirect_uri',
-            scope: 'scope',
-            state: 'state'
-          };
-          var data = JSON.parse(atob(params.auth));
-          var parts = [];
-          for (var key in allowedParams) {
-            if (data[key]) {
-              parts.push(allowedParams[key] + '=' + encodeURIComponent(data[key]));
-            }
+    $scope.login = function (user) {
+      $auth.login(JSON.stringify(user))
+        .then(function () {
+          $rootScope.isAuthenticated = $auth.isAuthenticated()
+          $rootScope.userName = null
+          var payload = $auth.getPayload()
+          if (payload && payload.name) {
+            $rootScope.userName = payload.name
           }
 
-          $location.url('/auth?' + parts.join('&'));
-        } else {
-          $route.reload();
-        }
-      })
-      .catch(function(response) {
-        $scope.user.password = '';
-        $scope.response = response.data;
-      });
-  };
+          var params = $location.search()
+          if (params && params.auth) {
+            var allowedParams = {
+              responseType: 'response_type',
+              clientId: 'client_id',
+              redirectUri: 'redirect_uri',
+              scope: 'scope',
+              state: 'state'
+            }
+            var data = JSON.parse(atob(params.auth))
+            var parts = []
+            for (var key in allowedParams) {
+              if (data[key]) {
+                parts.push(allowedParams[key] + '=' + encodeURIComponent(data[key]))
+              }
+            }
 
-}]);
+            $location.url('/auth?' + parts.join('&'))
+          } else {
+            $route.reload()
+          }
+        })
+        .catch(function (response) {
+          $scope.user.password = ''
+          $scope.response = response.data
+        })
+    }
+  }])
 
-},{"angular":26}],10:[function(require,module,exports){
-'use strict';
+},{"angular":29}],13:[function(require,module,exports){
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.logout', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/logout', {
-    templateUrl: 'app/logout/logout.html',
-    controller: 'LogoutCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/logout', {
+      templateUrl: 'app/logout/logout.html',
+      controller: 'LogoutCtrl'
+    })
+  }])
 
-.controller('LogoutCtrl', ['$scope', '$auth', '$location', '$rootScope', function($scope, $auth, $location, $rootScope) {
+  .controller('LogoutCtrl', ['$scope', '$auth', '$location', '$rootScope', function ($scope, $auth, $location, $rootScope) {
+    if ($auth.isAuthenticated()) {
+      $auth.logout()
+      $rootScope.isAuthenticated = $auth.isAuthenticated()
+      $rootScope.userName = null
+    }
 
-  if ($auth.isAuthenticated()) {
-    $auth.logout();
-    $rootScope.isAuthenticated = $auth.isAuthenticated();
-    $rootScope.userName = null;
-  }
+    $location.url('/login')
+  }])
 
-  $location.url('/login');
+},{"angular":29}],14:[function(require,module,exports){
+'use strict'
 
-}]);
-
-},{"angular":26}],11:[function(require,module,exports){
-'use strict';
-
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.overview', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/', {
-    templateUrl: 'app/overview/overview.html',
-    controller: 'OverviewCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/', {
+      templateUrl: 'app/overview/overview.html',
+      controller: 'OverviewCtrl'
+    })
+  }])
 
-.controller('OverviewCtrl', ['$scope', '$auth', '$location', function($scope, $auth, $location) {
+  .controller('OverviewCtrl', ['$scope', '$auth', '$location', function ($scope, $auth, $location) {
 
-}]);
+  }])
 
-},{"angular":26}],12:[function(require,module,exports){
-'use strict';
+},{"angular":29}],15:[function(require,module,exports){
+'use strict'
 
-var angular = require('angular');
+var angular = require('angular')
 
 angular.module('fusioApp.signup', ['ngRoute'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/signup', {
-    templateUrl: 'app/signup/signup.html',
-    controller: 'SignupCtrl'
-  });
-}])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/signup', {
+      templateUrl: 'app/signup/signup.html',
+      controller: 'SignupCtrl'
+    })
+  }])
 
-.controller('SignupCtrl', ['$scope', '$http', '$auth', 'fusio', function($scope, $http, $auth, fusio) {
+  .controller('SignupCtrl', ['$scope', '$http', '$auth', 'fusio', function ($scope, $http, $auth, fusio) {
+    $scope.user = {
+      name: '',
+      email: '',
+      password: '',
+      passwordRepeat: '',
+      captcha: ''
+    }
 
-  $scope.user = {
-    name: '',
-    email: '',
-    password: '',
-    passwordRepeat: '',
-    captcha: ''
-  };
+    $scope.register = function (user) {
+      var data = angular.copy(user)
+      delete data.passwordRepeat
 
-  $scope.register = function(user) {
-    var data = angular.copy(user);
-    delete data.passwordRepeat;
+      $http.post(fusio.baseUrl + 'consumer/register', data)
+        .then(function (response) {
+          $scope.response = response.data
+        }, function (response) {
+          $scope.user.password = ''
+          $scope.user.passwordRepeat = ''
+          $scope.response = response.data
+        })
+    }
 
-    $http.post(fusio.baseUrl + 'consumer/register', data)
-      .then(function(response) {
-        $scope.response = response.data;
-      }, function(response) {
-        $scope.user.password = '';
-        $scope.user.passwordRepeat = '';
-        $scope.response = response.data;
-      });
-  };
+    $scope.closeResponse = function () {
+      $scope.response = null
+    }
+  }])
 
-  $scope.closeResponse = function() {
-    $scope.response = null;
-  };
-
-}]);
-
-},{"angular":26}],13:[function(require,module,exports){
+},{"angular":29}],16:[function(require,module,exports){
 /**
- * @license AngularJS v1.7.0
+ * @license AngularJS v1.7.5
  * (c) 2010-2018 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -1126,7 +1361,7 @@ function getDomNode(element) {
   return (element instanceof jqLite) ? element[0] : element;
 }
 
-function applyGeneratedPreparationClasses(element, event, options) {
+function applyGeneratedPreparationClasses($$jqLite, element, event, options) {
   var classes = '';
   if (event) {
     classes = pendClasses(event, EVENT_CLASS_PREFIX, true);
@@ -1634,33 +1869,6 @@ function getCssTransitionDurationStyle(duration, applyOnlyDuration) {
   return [style, value];
 }
 
-function createLocalCacheLookup() {
-  var cache = Object.create(null);
-  return {
-    flush: function() {
-      cache = Object.create(null);
-    },
-
-    count: function(key) {
-      var entry = cache[key];
-      return entry ? entry.total : 0;
-    },
-
-    get: function(key) {
-      var entry = cache[key];
-      return entry && entry.value;
-    },
-
-    put: function(key, value) {
-      if (!cache[key]) {
-        cache[key] = { total: 1, value: value };
-      } else {
-        cache[key].total++;
-      }
-    }
-  };
-}
-
 // we do not reassign an already present style value since
 // if we detect the style property value again we may be
 // detecting styles that were added via the `from` styles.
@@ -1679,26 +1887,16 @@ function registerRestorableStyles(backup, node, properties) {
 }
 
 var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animateProvider) {
-  var gcsLookup = createLocalCacheLookup();
-  var gcsStaggerLookup = createLocalCacheLookup();
 
-  this.$get = ['$window', '$$jqLite', '$$AnimateRunner', '$timeout',
+  this.$get = ['$window', '$$jqLite', '$$AnimateRunner', '$timeout', '$$animateCache',
                '$$forceReflow', '$sniffer', '$$rAFScheduler', '$$animateQueue',
-       function($window,   $$jqLite,   $$AnimateRunner,   $timeout,
+       function($window,   $$jqLite,   $$AnimateRunner,   $timeout,   $$animateCache,
                 $$forceReflow,   $sniffer,   $$rAFScheduler, $$animateQueue) {
 
     var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 
-    var parentCounter = 0;
-    function gcsHashFn(node, extraClasses) {
-      var KEY = '$$ngAnimateParentKey';
-      var parentNode = node.parentNode;
-      var parentID = parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
-      return parentID + '-' + node.getAttribute('class') + '-' + extraClasses;
-    }
-
-    function computeCachedCssStyles(node, className, cacheKey, properties) {
-      var timings = gcsLookup.get(cacheKey);
+    function computeCachedCssStyles(node, className, cacheKey, allowNoDuration, properties) {
+      var timings = $$animateCache.get(cacheKey);
 
       if (!timings) {
         timings = computeCssStyles($window, node, properties);
@@ -1707,20 +1905,26 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
         }
       }
 
+      // if a css animation has no duration we
+      // should mark that so that repeated addClass/removeClass calls are skipped
+      var hasDuration = allowNoDuration || (timings.transitionDuration > 0 || timings.animationDuration > 0);
+
       // we keep putting this in multiple times even though the value and the cacheKey are the same
       // because we're keeping an internal tally of how many duplicate animations are detected.
-      gcsLookup.put(cacheKey, timings);
+      $$animateCache.put(cacheKey, timings, hasDuration);
+
       return timings;
     }
 
     function computeCachedCssStaggerStyles(node, className, cacheKey, properties) {
       var stagger;
+      var staggerCacheKey = 'stagger-' + cacheKey;
 
       // if we have one or more existing matches of matching elements
       // containing the same parent + CSS styles (which is how cacheKey works)
       // then staggering is possible
-      if (gcsLookup.count(cacheKey) > 0) {
-        stagger = gcsStaggerLookup.get(cacheKey);
+      if ($$animateCache.count(cacheKey) > 0) {
+        stagger = $$animateCache.get(staggerCacheKey);
 
         if (!stagger) {
           var staggerClassName = pendClasses(className, '-stagger');
@@ -1735,7 +1939,7 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
 
           $$jqLite.removeClass(node, staggerClassName);
 
-          gcsStaggerLookup.put(cacheKey, stagger);
+          $$animateCache.put(staggerCacheKey, stagger, true);
         }
       }
 
@@ -1746,8 +1950,7 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
     function waitUntilQuiet(callback) {
       rafWaitQueue.push(callback);
       $$rAFScheduler.waitUntilQuiet(function() {
-        gcsLookup.flush();
-        gcsStaggerLookup.flush();
+        $$animateCache.flush();
 
         // DO NOT REMOVE THIS LINE OR REFACTOR OUT THE `pageWidth` variable.
         // PLEASE EXAMINE THE `$$forceReflow` service to understand why.
@@ -1762,8 +1965,8 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
       });
     }
 
-    function computeTimings(node, className, cacheKey) {
-      var timings = computeCachedCssStyles(node, className, cacheKey, DETECT_CSS_PROPERTIES);
+    function computeTimings(node, className, cacheKey, allowNoDuration) {
+      var timings = computeCachedCssStyles(node, className, cacheKey, allowNoDuration, DETECT_CSS_PROPERTIES);
       var aD = timings.animationDelay;
       var tD = timings.transitionDelay;
       timings.maxDelay = aD && tD
@@ -1850,7 +2053,6 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
 
       var preparationClasses = [structuralClassName, addRemoveClassName].join(' ').trim();
       var fullClassName = classes + ' ' + preparationClasses;
-      var activeClasses = pendClasses(preparationClasses, ACTIVE_CLASS_SUFFIX);
       var hasToStyles = styles.to && Object.keys(styles.to).length > 0;
       var containsKeyframeAnimation = (options.keyframeStyle || '').length > 0;
 
@@ -1863,7 +2065,12 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
         return closeAndReturnNoopAnimator();
       }
 
-      var cacheKey, stagger;
+      var stagger, cacheKey = $$animateCache.cacheKey(node, method, options.addClass, options.removeClass);
+      if ($$animateCache.containsCachedAnimationWithoutDuration(cacheKey)) {
+        preparationClasses = null;
+        return closeAndReturnNoopAnimator();
+      }
+
       if (options.stagger > 0) {
         var staggerVal = parseFloat(options.stagger);
         stagger = {
@@ -1873,7 +2080,6 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
           animationDuration: 0
         };
       } else {
-        cacheKey = gcsHashFn(node, fullClassName);
         stagger = computeCachedCssStaggerStyles(node, preparationClasses, cacheKey, DETECT_STAGGER_CSS_PROPERTIES);
       }
 
@@ -1907,7 +2113,7 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
       var itemIndex = stagger
           ? options.staggerIndex >= 0
               ? options.staggerIndex
-              : gcsLookup.count(cacheKey)
+              : $$animateCache.count(cacheKey)
           : 0;
 
       var isFirst = itemIndex === 0;
@@ -1922,7 +2128,7 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
         blockTransitions(node, SAFE_FAST_FORWARD_DURATION_VALUE);
       }
 
-      var timings = computeTimings(node, fullClassName, cacheKey);
+      var timings = computeTimings(node, fullClassName, cacheKey, !isStructural);
       var relativeDelay = timings.maxDelay;
       maxDelay = Math.max(relativeDelay, 0);
       maxDuration = timings.maxDuration;
@@ -1959,6 +2165,8 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
       if (maxDuration === 0 && !flags.recalculateTimingStyles) {
         return closeAndReturnNoopAnimator();
       }
+
+      var activeClasses = pendClasses(preparationClasses, ACTIVE_CLASS_SUFFIX);
 
       if (options.delay != null) {
         var delayStyle;
@@ -2047,10 +2255,13 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
         animationClosed = true;
         animationPaused = false;
 
-        if (!options.$$skipPreparationClasses) {
+        if (preparationClasses && !options.$$skipPreparationClasses) {
           $$jqLite.removeClass(element, preparationClasses);
         }
-        $$jqLite.removeClass(element, activeClasses);
+
+        if (activeClasses) {
+          $$jqLite.removeClass(element, activeClasses);
+        }
 
         blockKeyframeAnimations(node, false);
         blockTransitions(node, false);
@@ -2234,9 +2445,9 @@ var $AnimateCssProvider = ['$animateProvider', /** @this */ function($animatePro
 
           if (flags.recalculateTimingStyles) {
             fullClassName = node.getAttribute('class') + ' ' + preparationClasses;
-            cacheKey = gcsHashFn(node, fullClassName);
+            cacheKey = $$animateCache.cacheKey(node, method, options.addClass, options.removeClass);
 
-            timings = computeTimings(node, fullClassName, cacheKey);
+            timings = computeTimings(node, fullClassName, cacheKey, false);
             relativeDelay = timings.maxDelay;
             maxDelay = Math.max(relativeDelay, 0);
             maxDuration = timings.maxDuration;
@@ -2973,6 +3184,15 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
     join: []
   };
 
+  function getEventData(options) {
+    return {
+      addClass: options.addClass,
+      removeClass: options.removeClass,
+      from: options.from,
+      to: options.to
+    };
+  }
+
   function makeTruthyCssClassMap(classString) {
     if (!classString) {
       return null;
@@ -3070,6 +3290,10 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
     var activeAnimationsLookup = new $$Map();
     var disabledElementsLookup = new $$Map();
     var animationsEnabled = null;
+
+    function removeFromDisabledElementsLookup(evt) {
+      disabledElementsLookup.delete(evt.target);
+    }
 
     function postDigestTaskFactory() {
       var postDigestCalled = false;
@@ -3254,6 +3478,11 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
               bool = !disabledElementsLookup.get(node);
             } else {
               // (element, bool) - Element setter
+              if (!disabledElementsLookup.has(node)) {
+                // The element is added to the map for the first time.
+                // Create a listener to remove it on `$destroy` (to avoid memory leak).
+                jqLite(element).on('$destroy', removeFromDisabledElementsLookup);
+              }
               disabledElementsLookup.set(node, !bool);
             }
           }
@@ -3339,9 +3568,9 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
 
       if (skipAnimations) {
         // Callbacks should fire even if the document is hidden (regression fix for issue #14120)
-        if (documentHidden) notifyProgress(runner, event, 'start');
+        if (documentHidden) notifyProgress(runner, event, 'start', getEventData(options));
         close();
-        if (documentHidden) notifyProgress(runner, event, 'close');
+        if (documentHidden) notifyProgress(runner, event, 'close', getEventData(options));
         return runner;
       }
 
@@ -3398,7 +3627,7 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
             if (existingAnimation.state === RUNNING_STATE) {
               normalizeAnimationDetails(element, newAnimation);
             } else {
-              applyGeneratedPreparationClasses(element, isStructural ? event : null, options);
+              applyGeneratedPreparationClasses($$jqLite, element, isStructural ? event : null, options);
 
               event = newAnimation.event = existingAnimation.event;
               options = mergeAnimationDetails(element, existingAnimation, newAnimation);
@@ -3503,7 +3732,7 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
         // this will update the runner's flow-control events based on
         // the `realRunner` object.
         runner.setHost(realRunner);
-        notifyProgress(runner, event, 'start', {});
+        notifyProgress(runner, event, 'start', getEventData(options));
 
         realRunner.done(function(status) {
           close(!status);
@@ -3511,7 +3740,7 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
           if (animationDetails && animationDetails.counter === counter) {
             clearElementAnimationState(node);
           }
-          notifyProgress(runner, event, 'close', {});
+          notifyProgress(runner, event, 'close', getEventData(options));
         });
       });
 
@@ -3677,6 +3906,62 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
   }];
 }];
 
+/** @this */
+var $$AnimateCacheProvider = function() {
+
+  var KEY = '$$ngAnimateParentKey';
+  var parentCounter = 0;
+  var cache = Object.create(null);
+
+  this.$get = [function() {
+    return {
+      cacheKey: function(node, method, addClass, removeClass) {
+        var parentNode = node.parentNode;
+        var parentID = parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
+        var parts = [parentID, method, node.getAttribute('class')];
+        if (addClass) {
+          parts.push(addClass);
+        }
+        if (removeClass) {
+          parts.push(removeClass);
+        }
+        return parts.join(' ');
+      },
+
+      containsCachedAnimationWithoutDuration: function(key) {
+        var entry = cache[key];
+
+        // nothing cached, so go ahead and animate
+        // otherwise it should be a valid animation
+        return (entry && !entry.isValid) || false;
+      },
+
+      flush: function() {
+        cache = Object.create(null);
+      },
+
+      count: function(key) {
+        var entry = cache[key];
+        return entry ? entry.total : 0;
+      },
+
+      get: function(key) {
+        var entry = cache[key];
+        return entry && entry.value;
+      },
+
+      put: function(key, value, isValid) {
+        if (!cache[key]) {
+          cache[key] = { total: 1, value: value, isValid: isValid };
+        } else {
+          cache[key].total++;
+          cache[key].value = value;
+        }
+      }
+    };
+  }];
+};
+
 /* exported $$AnimationProvider */
 
 var $$AnimationProvider = ['$animateProvider', /** @this */ function($animateProvider) {
@@ -3685,6 +3970,7 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
   var drivers = this.drivers = [];
 
   var RUNNER_STORAGE_KEY = '$$animationRunner';
+  var PREPARE_CLASSES_KEY = '$$animatePrepareClasses';
 
   function setRunner(element, runner) {
     element.data(RUNNER_STORAGE_KEY, runner);
@@ -3698,8 +3984,8 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
     return element.data(RUNNER_STORAGE_KEY);
   }
 
-  this.$get = ['$$jqLite', '$rootScope', '$injector', '$$AnimateRunner', '$$Map', '$$rAFScheduler',
-       function($$jqLite,   $rootScope,   $injector,   $$AnimateRunner,   $$Map,   $$rAFScheduler) {
+  this.$get = ['$$jqLite', '$rootScope', '$injector', '$$AnimateRunner', '$$Map', '$$rAFScheduler', '$$animateCache',
+       function($$jqLite,   $rootScope,   $injector,   $$AnimateRunner,   $$Map,   $$rAFScheduler, $$animateCache) {
 
     var animationQueue = [];
     var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
@@ -3714,6 +4000,7 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
         var animation = animations[i];
         lookup.set(animation.domNode, animations[i] = {
           domNode: animation.domNode,
+          element: animation.element,
           fn: animation.fn,
           children: []
         });
@@ -3770,7 +4057,7 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
             result.push(row);
             row = [];
           }
-          row.push(entry.fn);
+          row.push(entry);
           entry.children.forEach(function(childEntry) {
             nextLevelEntries++;
             queue.push(childEntry);
@@ -3805,8 +4092,6 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
         return runner;
       }
 
-      setRunner(element, runner);
-
       var classes = mergeClasses(element.attr('class'), mergeClasses(options.addClass, options.removeClass));
       var tempClasses = options.tempClasses;
       if (tempClasses) {
@@ -3814,11 +4099,11 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
         options.tempClasses = null;
       }
 
-      var prepareClassName;
       if (isStructural) {
-        prepareClassName = 'ng-' + event + PREPARE_CLASS_SUFFIX;
-        $$jqLite.addClass(element, prepareClassName);
+        element.data(PREPARE_CLASSES_KEY, 'ng-' + event + PREPARE_CLASS_SUFFIX);
       }
+
+      setRunner(element, runner);
 
       animationQueue.push({
         // this data is used by the postDigest code and passed into
@@ -3859,15 +4144,30 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
         var toBeSortedAnimations = [];
 
         forEach(groupedAnimations, function(animationEntry) {
+          var element = animationEntry.from ? animationEntry.from.element : animationEntry.element;
+          var extraClasses = options.addClass;
+
+          extraClasses = (extraClasses ? (extraClasses + ' ') : '') + NG_ANIMATE_CLASSNAME;
+          var cacheKey = $$animateCache.cacheKey(element[0], animationEntry.event, extraClasses, options.removeClass);
+
           toBeSortedAnimations.push({
-            domNode: getDomNode(animationEntry.from ? animationEntry.from.element : animationEntry.element),
+            element: element,
+            domNode: getDomNode(element),
             fn: function triggerAnimationStart() {
+              var startAnimationFn, closeFn = animationEntry.close;
+
+              // in the event that we've cached the animation status for this element
+              // and it's in fact an invalid animation (something that has duration = 0)
+              // then we should skip all the heavy work from here on
+              if ($$animateCache.containsCachedAnimationWithoutDuration(cacheKey)) {
+                closeFn();
+                return;
+              }
+
               // it's important that we apply the `ng-animate` CSS class and the
               // temporary classes before we do any driver invoking since these
               // CSS classes may be required for proper CSS detection.
               animationEntry.beforeStart();
-
-              var startAnimationFn, closeFn = animationEntry.close;
 
               // in the event that the element was removed before the digest runs or
               // during the RAF sequencing then we should not trigger the animation.
@@ -3898,7 +4198,32 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
         // we need to sort each of the animations in order of parent to child
         // relationships. This ensures that the child classes are applied at the
         // right time.
-        $$rAFScheduler(sortAnimations(toBeSortedAnimations));
+        var finalAnimations = sortAnimations(toBeSortedAnimations);
+        for (var i = 0; i < finalAnimations.length; i++) {
+          var innerArray = finalAnimations[i];
+          for (var j = 0; j < innerArray.length; j++) {
+            var entry = innerArray[j];
+            var element = entry.element;
+
+            // the RAFScheduler code only uses functions
+            finalAnimations[i][j] = entry.fn;
+
+            // the first row of elements shouldn't have a prepare-class added to them
+            // since the elements are at the top of the animation hierarchy and they
+            // will be applied without a RAF having to pass...
+            if (i === 0) {
+              element.removeData(PREPARE_CLASSES_KEY);
+              continue;
+            }
+
+            var prepareClassName = element.data(PREPARE_CLASSES_KEY);
+            if (prepareClassName) {
+              $$jqLite.addClass(element, prepareClassName);
+            }
+          }
+        }
+
+        $$rAFScheduler(finalAnimations);
       });
 
       return runner;
@@ -4036,10 +4361,10 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
       }
 
       function beforeStart() {
-        element.addClass(NG_ANIMATE_CLASSNAME);
-        if (tempClasses) {
-          $$jqLite.addClass(element, tempClasses);
-        }
+        tempClasses = (tempClasses ? (tempClasses + ' ') : '') + NG_ANIMATE_CLASSNAME;
+        $$jqLite.addClass(element, tempClasses);
+
+        var prepareClassName = element.data(PREPARE_CLASSES_KEY);
         if (prepareClassName) {
           $$jqLite.removeClass(element, prepareClassName);
           prepareClassName = null;
@@ -4079,7 +4404,6 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
           $$jqLite.removeClass(element, tempClasses);
         }
 
-        element.removeClass(NG_ANIMATE_CLASSNAME);
         runner.complete(!rejected);
       }
     };
@@ -4173,7 +4497,7 @@ var $$AnimationProvider = ['$animateProvider', /** @this */ function($animatePro
  *  </file>
  * </example>
  */
-var ngAnimateSwapDirective = ['$animate', '$rootScope', function($animate, $rootScope) {
+var ngAnimateSwapDirective = ['$animate', function($animate) {
   return {
     restrict: 'A',
     transclude: 'element',
@@ -4190,10 +4514,10 @@ var ngAnimateSwapDirective = ['$animate', '$rootScope', function($animate, $root
           previousScope = null;
         }
         if (value || value === 0) {
-          previousScope = scope.$new();
-          $transclude(previousScope, function(element) {
-            previousElement = element;
-            $animate.enter(element, null, $element);
+          $transclude(function(clone, childScope) {
+            previousElement = clone;
+            previousScope = childScope;
+            $animate.enter(clone, null, $element);
           });
         }
       });
@@ -4218,20 +4542,28 @@ var ngAnimateSwapDirective = ['$animate', '$rootScope', function($animate, $root
  * ## Directive Support
  * The following directives are "animation aware":
  *
- * | Directive                                                                                                | Supported Animations                                                     |
- * |----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
- * | {@link ng.directive:ngRepeat#animations ngRepeat}                                                        | enter, leave and move                                                    |
- * | {@link ngRoute.directive:ngView#animations ngView}                                                       | enter and leave                                                          |
- * | {@link ng.directive:ngInclude#animations ngInclude}                                                      | enter and leave                                                          |
- * | {@link ng.directive:ngSwitch#animations ngSwitch}                                                        | enter and leave                                                          |
- * | {@link ng.directive:ngIf#animations ngIf}                                                                | enter and leave                                                          |
- * | {@link ng.directive:ngClass#animations ngClass}                                                          | add and remove (the CSS class(es) present)                               |
- * | {@link ng.directive:ngShow#animations ngShow} & {@link ng.directive:ngHide#animations ngHide}            | add and remove (the ng-hide class value)                                 |
- * | {@link ng.directive:form#animations form} & {@link ng.directive:ngModel#animations ngModel}    | add and remove (dirty, pristine, valid, invalid & all other validations) |
- * | {@link module:ngMessages#animations ngMessages}                                                          | add and remove (ng-active & ng-inactive)                                 |
- * | {@link module:ngMessages#animations ngMessage}                                                           | enter and leave                                                          |
+ * | Directive                                                                     | Supported Animations                                                      |
+ * |-------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+ * | {@link ng.directive:form#animations form / ngForm}                            | add and remove ({@link ng.directive:form#css-classes various classes})    |
+ * | {@link ngAnimate.directive:ngAnimateSwap#animations ngAnimateSwap}            | enter and leave                                                           |
+ * | {@link ng.directive:ngClass#animations ngClass / {{class&#125;&#8203;&#125;}  | add and remove                                                            |
+ * | {@link ng.directive:ngClassEven#animations ngClassEven}                       | add and remove                                                            |
+ * | {@link ng.directive:ngClassOdd#animations ngClassOdd}                         | add and remove                                                            |
+ * | {@link ng.directive:ngHide#animations ngHide}                                 | add and remove (the `ng-hide` class)                                      |
+ * | {@link ng.directive:ngIf#animations ngIf}                                     | enter and leave                                                           |
+ * | {@link ng.directive:ngInclude#animations ngInclude}                           | enter and leave                                                           |
+ * | {@link module:ngMessages#animations ngMessage / ngMessageExp}                 | enter and leave                                                           |
+ * | {@link module:ngMessages#animations ngMessages}                               | add and remove (the `ng-active`/`ng-inactive` classes)                    |
+ * | {@link ng.directive:ngModel#animations ngModel}                               | add and remove ({@link ng.directive:ngModel#css-classes various classes}) |
+ * | {@link ng.directive:ngRepeat#animations ngRepeat}                             | enter, leave, and move                                                    |
+ * | {@link ng.directive:ngShow#animations ngShow}                                 | add and remove (the `ng-hide` class)                                      |
+ * | {@link ng.directive:ngSwitch#animations ngSwitch}                             | enter and leave                                                           |
+ * | {@link ngRoute.directive:ngView#animations ngView}                            | enter and leave                                                           |
  *
- * (More information can be found by visiting each the documentation associated with each directive.)
+ * (More information can be found by visiting the documentation associated with each directive.)
+ *
+ * For a full breakdown of the steps involved during each animation event, refer to the
+ * {@link ng.$animate `$animate` API docs}.
  *
  * ## CSS-based Animations
  *
@@ -4468,8 +4800,21 @@ var ngAnimateSwapDirective = ['$animate', '$rootScope', function($animate, $root
  * .message.ng-enter-prepare {
  *   opacity: 0;
  * }
- *
  * ```
+ *
+ * ### Animating between value changes
+ *
+ * Sometimes you need to animate between different expression states, whose values
+ * don't necessary need to be known or referenced in CSS styles.
+ * Unless possible with another {@link ngAnimate#directive-support "animation aware" directive},
+ * that specific use case can always be covered with {@link ngAnimate.directive:ngAnimateSwap} as
+ * can be seen in {@link ngAnimate.directive:ngAnimateSwap#examples this example}.
+ *
+ * Note that {@link ngAnimate.directive:ngAnimateSwap} is a *structural directive*, which means it
+ * creates a new instance of the element (including any other/child directives it may have) and
+ * links it to a new scope every time *swap* happens. In some cases this might not be desirable
+ * (e.g. for performance reasons, or when you wish to retain internal state on the original
+ * element instance).
  *
  * ## JavaScript-based Animations
  *
@@ -4959,13 +5304,14 @@ angular.module('ngAnimate', [], function initAngularHelpers() {
   isFunction  = angular.isFunction;
   isElement   = angular.isElement;
 })
-  .info({ angularVersion: '1.7.0' })
+  .info({ angularVersion: '1.7.5' })
   .directive('ngAnimateSwap', ngAnimateSwapDirective)
 
   .directive('ngAnimateChildren', $$AnimateChildrenDirective)
   .factory('$$rAFScheduler', $$rAFSchedulerFactory)
 
   .provider('$$animateQueue', $$AnimateQueueProvider)
+  .provider('$$animateCache', $$AnimateCacheProvider)
   .provider('$$animation', $$AnimationProvider)
 
   .provider('$animateCss', $AnimateCssProvider)
@@ -4977,11 +5323,11 @@ angular.module('ngAnimate', [], function initAngularHelpers() {
 
 })(window, window.angular);
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 require('./angular-animate');
 module.exports = 'ngAnimate';
 
-},{"./angular-animate":13}],15:[function(require,module,exports){
+},{"./angular-animate":16}],18:[function(require,module,exports){
 /* jshint ignore:start */
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -5467,7 +5813,7 @@ angular.module('md5', []).constant('md5', (function() {
 
 }).call(this);
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /*! angular-highlightjs
 version: 0.6.3
 build date: 2017-01-04
@@ -5990,11 +6336,11 @@ includeDirFactory = function (dirName) {
 
   return "hljs";
 }));
-},{"angular":26,"highlight.js":30}],17:[function(require,module,exports){
+},{"angular":29,"highlight.js":33}],20:[function(require,module,exports){
 require('./release/angular-recaptcha.js');
 module.exports = 'vcRecaptcha';
 
-},{"./release/angular-recaptcha.js":18}],18:[function(require,module,exports){
+},{"./release/angular-recaptcha.js":21}],21:[function(require,module,exports){
 /**
  * @license angular-recaptcha build:2018-05-09
  * https://github.com/vividcortex/angular-recaptcha
@@ -6407,9 +6753,9 @@ module.exports = 'vcRecaptcha';
 
 }(angular));
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
- * @license AngularJS v1.7.0
+ * @license AngularJS v1.7.5
  * (c) 2010-2018 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -6442,6 +6788,52 @@ function shallowCopy(src, dst) {
   return dst || src;
 }
 
+/* global routeToRegExp: true */
+
+/**
+ * @param {string} path - The path to parse. (It is assumed to have query and hash stripped off.)
+ * @param {Object} opts - Options.
+ * @return {Object} - An object containing an array of path parameter names (`keys`) and a regular
+ *     expression (`regexp`) that can be used to identify a matching URL and extract the path
+ *     parameter values.
+ *
+ * @description
+ * Parses the given path, extracting path parameter names and a regular expression to match URLs.
+ *
+ * Originally inspired by `pathRexp` in `visionmedia/express/lib/utils.js`.
+ */
+function routeToRegExp(path, opts) {
+  var keys = [];
+
+  var pattern = path
+    .replace(/([().])/g, '\\$1')
+    .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function(_, slash, key, option) {
+      var optional = option === '?' || option === '*?';
+      var star = option === '*' || option === '*?';
+      keys.push({name: key, optional: optional});
+      slash = slash || '';
+      return (
+        (optional ? '(?:' + slash : slash + '(?:') +
+        (star ? '(.+?)' : '([^/]+)') +
+        (optional ? '?)?' : ')')
+      );
+    })
+    .replace(/([/$*])/g, '\\$1');
+
+  if (opts.ignoreTrailingSlashes) {
+    pattern = pattern.replace(/\/+$/, '') + '/*';
+  }
+
+  return {
+    keys: keys,
+    regexp: new RegExp(
+      '^' + pattern + '(?:[?#]|$)',
+      opts.caseInsensitiveMatch ? 'i' : ''
+    )
+  };
+}
+
+/* global routeToRegExp: false */
 /* global shallowCopy: false */
 
 // `isArray` and `isObject` are necessary for `shallowCopy()` (included via `src/shallowCopy.js`).
@@ -6465,7 +6857,7 @@ var noop;
 /* global -ngRouteModule */
 var ngRouteModule = angular.
   module('ngRoute', []).
-  info({ angularVersion: '1.7.0' }).
+  info({ angularVersion: '1.7.5' }).
   provider('$route', $RouteProvider).
   // Ensure `$route` will be instantiated in time to capture the initial `$locationChangeSuccess`
   // event (unless explicitly disabled). This is necessary in case `ngView` is included in an
@@ -6625,11 +7017,22 @@ function $RouteProvider() {
    *      `redirectTo` takes precedence over `resolveRedirectTo`, so specifying both on the same
    *      route definition, will cause the latter to be ignored.
    *
+   *    - `[reloadOnUrl=true]` - `{boolean=}` - reload route when any part of the URL changes
+   *      (including the path) even if the new URL maps to the same route.
+   *
+   *      If the option is set to `false` and the URL in the browser changes, but the new URL maps
+   *      to the same route, then a `$routeUpdate` event is broadcasted on the root scope (without
+   *      reloading the route).
+   *
    *    - `[reloadOnSearch=true]` - `{boolean=}` - reload route when only `$location.search()`
    *      or `$location.hash()` changes.
    *
-   *      If the option is set to `false` and url in the browser changes, then
-   *      `$routeUpdate` event is broadcasted on the root scope.
+   *      If the option is set to `false` and the URL in the browser changes, then a `$routeUpdate`
+   *      event is broadcasted on the root scope (without reloading the route).
+   *
+   *      <div class="alert alert-warning">
+   *        **Note:** This option has no effect if `reloadOnUrl` is set to `false`.
+   *      </div>
    *
    *    - `[caseInsensitiveMatch=false]` - `{boolean=}` - match routes without being case sensitive
    *
@@ -6644,6 +7047,9 @@ function $RouteProvider() {
   this.when = function(path, route) {
     //copy original route object to preserve params inherited from proto chain
     var routeCopy = shallowCopy(route);
+    if (angular.isUndefined(routeCopy.reloadOnUrl)) {
+      routeCopy.reloadOnUrl = true;
+    }
     if (angular.isUndefined(routeCopy.reloadOnSearch)) {
       routeCopy.reloadOnSearch = true;
     }
@@ -6652,7 +7058,8 @@ function $RouteProvider() {
     }
     routes[path] = angular.extend(
       routeCopy,
-      path && pathRegExp(path, routeCopy)
+      {originalPath: path},
+      path && routeToRegExp(path, routeCopy)
     );
 
     // create redirection for trailing slashes
@@ -6662,8 +7069,8 @@ function $RouteProvider() {
             : path + '/';
 
       routes[redirectPath] = angular.extend(
-        {redirectTo: path},
-        pathRegExp(redirectPath, routeCopy)
+        {originalPath: path, redirectTo: path},
+        routeToRegExp(redirectPath, routeCopy)
       );
     }
 
@@ -6680,47 +7087,6 @@ function $RouteProvider() {
    * algorithm. Defaults to `false`.
    */
   this.caseInsensitiveMatch = false;
-
-   /**
-    * @param path {string} path
-    * @param opts {Object} options
-    * @return {?Object}
-    *
-    * @description
-    * Normalizes the given path, returning a regular expression
-    * and the original path.
-    *
-    * Inspired by pathRexp in visionmedia/express/lib/utils.js.
-    */
-  function pathRegExp(path, opts) {
-    var insensitive = opts.caseInsensitiveMatch,
-        ret = {
-          originalPath: path,
-          regexp: path
-        },
-        keys = ret.keys = [];
-
-    path = path
-      .replace(/([().])/g, '\\$1')
-      .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function(_, slash, key, option) {
-        var optional = (option === '?' || option === '*?') ? '?' : null;
-        var star = (option === '*' || option === '*?') ? '*' : null;
-        keys.push({ name: key, optional: !!optional });
-        slash = slash || '';
-        return ''
-          + (optional ? '' : slash)
-          + '(?:'
-          + (optional ? slash : '')
-          + (star && '(.+?)' || '([^/]+)')
-          + (optional || '')
-          + ')'
-          + (optional || '');
-      })
-      .replace(/([/$*])/g, '\\$1');
-
-    ret.regexp = new RegExp('^' + path + '$', insensitive ? 'i' : '');
-    return ret;
-  }
 
   /**
    * @ngdoc method
@@ -6986,8 +7352,9 @@ function $RouteProvider() {
      * @name $route#$routeUpdate
      * @eventType broadcast on root scope
      * @description
-     * The `reloadOnSearch` property has been set to false, and we are reusing the same
-     * instance of the Controller.
+     * Broadcasted if the same instance of a route (including template, controller instance,
+     * resolved dependencies, etc.) is being reused. This can happen if either `reloadOnSearch` or
+     * `reloadOnUrl` has been set to `false`.
      *
      * @param {Object} angularEvent Synthetic event object
      * @param {Route} current Current/previous route information.
@@ -7095,9 +7462,7 @@ function $RouteProvider() {
       var lastRoute = $route.current;
 
       preparedRoute = parseRoute();
-      preparedRouteIsUpdateOnly = preparedRoute && lastRoute && preparedRoute.$$route === lastRoute.$$route
-          && angular.equals(preparedRoute.pathParams, lastRoute.pathParams)
-          && !preparedRoute.reloadOnSearch && !forceReload;
+      preparedRouteIsUpdateOnly = isNavigationUpdateOnly(preparedRoute, lastRoute);
 
       if (!preparedRouteIsUpdateOnly && (lastRoute || preparedRoute)) {
         if ($rootScope.$broadcast('$routeChangeStart', preparedRoute, lastRoute).defaultPrevented) {
@@ -7122,7 +7487,7 @@ function $RouteProvider() {
 
         var nextRoutePromise = $q.resolve(nextRoute);
 
-        $browser.$$incOutstandingRequestCount();
+        $browser.$$incOutstandingRequestCount('$route');
 
         nextRoutePromise.
           then(getRedirectionData).
@@ -7150,7 +7515,7 @@ function $RouteProvider() {
             // `outstandingRequestCount` to hit zero.  This is important in case we are redirecting
             // to a new route which also requires some asynchronous work.
 
-            $browser.$$completeOutstandingRequest(noop);
+            $browser.$$completeOutstandingRequest(noop, '$route');
           });
       }
     }
@@ -7275,6 +7640,29 @@ function $RouteProvider() {
       });
       // No route matched; fallback to "otherwise" route
       return match || routes[null] && inherit(routes[null], {params: {}, pathParams:{}});
+    }
+
+    /**
+     * @param {Object} newRoute - The new route configuration (as returned by `parseRoute()`).
+     * @param {Object} oldRoute - The previous route configuration (as returned by `parseRoute()`).
+     * @returns {boolean} Whether this is an "update-only" navigation, i.e. the URL maps to the same
+     *                    route and it can be reused (based on the config and the type of change).
+     */
+    function isNavigationUpdateOnly(newRoute, oldRoute) {
+      // IF this is not a forced reload
+      return !forceReload
+          // AND both `newRoute`/`oldRoute` are defined
+          && newRoute && oldRoute
+          // AND they map to the same Route Definition Object
+          && (newRoute.$$route === oldRoute.$$route)
+          // AND `reloadOnUrl` is disabled
+          && (!newRoute.reloadOnUrl
+              // OR `reloadOnSearch` is disabled
+              || (!newRoute.reloadOnSearch
+                  // AND both routes have the same path params
+                  && angular.equals(newRoute.pathParams, oldRoute.pathParams)
+              )
+          );
     }
 
     /**
@@ -7633,13 +8021,13 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 require('./angular-route');
 module.exports = 'ngRoute';
 
-},{"./angular-route":19}],21:[function(require,module,exports){
+},{"./angular-route":22}],24:[function(require,module,exports){
 /**
- * @license AngularJS v1.7.0
+ * @license AngularJS v1.7.5
  * (c) 2010-2018 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -8351,7 +8739,7 @@ function sanitizeText(chars) {
 // define ngSanitize module and register $sanitize service
 angular.module('ngSanitize', [])
   .provider('$sanitize', $SanitizeProvider)
-  .info({ angularVersion: '1.7.0' });
+  .info({ angularVersion: '1.7.5' });
 
 /**
  * @ngdoc filter
@@ -8552,11 +8940,11 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 
 })(window, window.angular);
 
-},{}],22:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 require('./angular-sanitize');
 module.exports = 'ngSanitize';
 
-},{"./angular-sanitize":21}],23:[function(require,module,exports){
+},{"./angular-sanitize":24}],26:[function(require,module,exports){
 /*
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
@@ -16360,14 +16748,14 @@ angular.module('ui.bootstrap.datepickerPopup').run(function() {!angular.$$csp().
 angular.module('ui.bootstrap.tooltip').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTooltipCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>'); angular.$$uibTooltipCss = true; });
 angular.module('ui.bootstrap.timepicker').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTimepickerCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-time input{width:50px;}</style>'); angular.$$uibTimepickerCss = true; });
 angular.module('ui.bootstrap.typeahead').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTypeaheadCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-typeahead-popup].dropdown-menu{display:block;}</style>'); angular.$$uibTypeaheadCss = true; });
-},{}],24:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 require('./dist/ui-bootstrap-tpls');
 
 module.exports = 'ui.bootstrap';
 
-},{"./dist/ui-bootstrap-tpls":23}],25:[function(require,module,exports){
+},{"./dist/ui-bootstrap-tpls":26}],28:[function(require,module,exports){
 /**
- * @license AngularJS v1.7.0
+ * @license AngularJS v1.7.5
  * (c) 2010-2018 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -16380,7 +16768,8 @@ module.exports = 'ui.bootstrap';
 */
 
 var minErrConfig = {
-  objectMaxDepth: 5
+  objectMaxDepth: 5,
+  urlErrorParamsEnabled: true
 };
 
 /**
@@ -16403,11 +16792,20 @@ var minErrConfig = {
  * * `objectMaxDepth`  **{Number}** - The max depth for stringifying objects. Setting to a
  *   non-positive or non-numeric value, removes the max depth limit.
  *   Default: 5
+ *
+ * * `urlErrorParamsEnabled`  **{Boolean}** - Specifies wether the generated error url will
+ *   contain the parameters of the thrown error. Disabling the parameters can be useful if the
+ *   generated error url is very long.
+ *
+ *   Default: true. When used without argument, it returns the current value.
  */
 function errorHandlingConfig(config) {
   if (isObject(config)) {
     if (isDefined(config.objectMaxDepth)) {
       minErrConfig.objectMaxDepth = isValidObjectMaxDepth(config.objectMaxDepth) ? config.objectMaxDepth : NaN;
+    }
+    if (isDefined(config.urlErrorParamsEnabled) && isBoolean(config.urlErrorParamsEnabled)) {
+      minErrConfig.urlErrorParamsEnabled = config.urlErrorParamsEnabled;
     }
   } else {
     return minErrConfig;
@@ -16422,6 +16820,7 @@ function errorHandlingConfig(config) {
 function isValidObjectMaxDepth(maxDepth) {
   return isNumber(maxDepth) && maxDepth > 0;
 }
+
 
 /**
  * @description
@@ -16456,7 +16855,7 @@ function isValidObjectMaxDepth(maxDepth) {
 function minErr(module, ErrorConstructor) {
   ErrorConstructor = ErrorConstructor || Error;
 
-  var url = 'https://errors.angularjs.org/1.7.0/';
+  var url = 'https://errors.angularjs.org/1.7.5/';
   var regex = url.replace('.', '\\.') + '[\\s\\S]*';
   var errRegExp = new RegExp(regex, 'g');
 
@@ -16486,8 +16885,10 @@ function minErr(module, ErrorConstructor) {
 
     message += '\n' + url + (module ? module + '/' : '') + code;
 
-    for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
-      message += paramPrefix + 'p' + i + '=' + encodeURIComponent(templateArgs[i]);
+    if (minErrConfig.urlErrorParamsEnabled) {
+      for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
+        message += paramPrefix + 'p' + i + '=' + encodeURIComponent(templateArgs[i]);
+      }
     }
 
     return new ErrorConstructor(message);
@@ -17286,15 +17687,16 @@ function arrayRemove(array, value) {
  * * If `source` is identical to `destination` an exception will be thrown.
  *
  * <br />
+ *
  * <div class="alert alert-warning">
  *   Only enumerable properties are taken into account. Non-enumerable properties (both on `source`
  *   and on `destination`) will be ignored.
  * </div>
  *
- * @param {*} source The source that will be used to make a copy.
- *                   Can be any type, including primitives, `null`, and `undefined`.
- * @param {(Object|Array)=} destination Destination into which the source is copied. If
- *     provided, must be of the same type as `source`.
+ * @param {*} source The source that will be used to make a copy. Can be any type, including
+ *     primitives, `null`, and `undefined`.
+ * @param {(Object|Array)=} destination Destination into which the source is copied. If provided,
+ *     must be of the same type as `source`.
  * @returns {*} The copy or updated `destination`, if `destination` was specified.
  *
  * @example
@@ -18189,8 +18591,13 @@ function angularInit(element, bootstrap) {
   });
   if (appElement) {
     if (!isAutoBootstrapAllowed) {
-      window.console.error('AngularJS: disabling automatic bootstrap. <script> protocol indicates ' +
+      try {
+        window.console.error('AngularJS: disabling automatic bootstrap. <script> protocol indicates ' +
           'an extension, document.location.href does not match.');
+      } catch (e) {
+        // Support: Safari 11 w/ Webdriver
+        // The console.error will throw and make the test fail
+      }
       return;
     }
     config.strictDi = getNgAttribute(appElement, 'strict-di') !== null;
@@ -18403,7 +18810,7 @@ function bindJQuery() {
   jqLite.cleanData = function(elems) {
     var events;
     for (var i = 0, elem; (elem = elems[i]) != null; i++) {
-      events = jqLite._data(elem).events;
+      events = (jqLite._data(elem) || {}).events;
       if (events && events.$destroy) {
         jqLite(elem).triggerHandler('$destroy');
       }
@@ -19045,6 +19452,7 @@ function toDebugString(obj, maxDepth) {
   ngInitDirective,
   ngNonBindableDirective,
   ngPluralizeDirective,
+  ngRefDirective,
   ngRepeatDirective,
   ngShowDirective,
   ngStyleDirective,
@@ -19086,6 +19494,7 @@ function toDebugString(obj, maxDepth) {
   $FilterProvider,
   $$ForceReflowProvider,
   $InterpolateProvider,
+  $$IntervalFactoryProvider,
   $IntervalProvider,
   $HttpProvider,
   $HttpParamSerializerProvider,
@@ -19104,6 +19513,7 @@ function toDebugString(obj, maxDepth) {
   $SceProvider,
   $SceDelegateProvider,
   $SnifferProvider,
+  $$TaskTrackerFactoryProvider,
   $TemplateCacheProvider,
   $TemplateRequestProvider,
   $$TestabilityProvider,
@@ -19133,11 +19543,11 @@ function toDebugString(obj, maxDepth) {
 var version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
-  full: '1.7.0',
+  full: '1.7.5',
   major: 1,
   minor: 7,
-  dot: 0,
-  codeName: 'nonexistent-physiology'
+  dot: 5,
+  codeName: 'anti-prettification'
 };
 
 
@@ -19211,6 +19621,7 @@ function publishExternalAPI(angular) {
             ngInit: ngInitDirective,
             ngNonBindable: ngNonBindableDirective,
             ngPluralize: ngPluralizeDirective,
+            ngRef: ngRefDirective,
             ngRepeat: ngRepeatDirective,
             ngShow: ngShowDirective,
             ngStyle: ngStyleDirective,
@@ -19256,6 +19667,7 @@ function publishExternalAPI(angular) {
         $$forceReflow: $$ForceReflowProvider,
         $interpolate: $InterpolateProvider,
         $interval: $IntervalProvider,
+        $$intervalFactory: $$IntervalFactoryProvider,
         $http: $HttpProvider,
         $httpParamSerializer: $HttpParamSerializerProvider,
         $httpParamSerializerJQLike: $HttpParamSerializerJQLikeProvider,
@@ -19271,6 +19683,7 @@ function publishExternalAPI(angular) {
         $sce: $SceProvider,
         $sceDelegate: $SceDelegateProvider,
         $sniffer: $SnifferProvider,
+        $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
         $templateCache: $TemplateCacheProvider,
         $templateRequest: $TemplateRequestProvider,
         $$testability: $$TestabilityProvider,
@@ -19283,7 +19696,7 @@ function publishExternalAPI(angular) {
       });
     }
   ])
-  .info({ angularVersion: '1.7.0' });
+  .info({ angularVersion: '1.7.5' });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -20463,11 +20876,10 @@ function NgMapShim() {
 }
 NgMapShim.prototype = {
   _idx: function(key) {
-    if (key === this._lastKey) {
-      return this._lastIndex;
+    if (key !== this._lastKey) {
+      this._lastKey = key;
+      this._lastIndex = this._keys.indexOf(key);
     }
-    this._lastKey = key;
-    this._lastIndex = this._keys.indexOf(key);
     return this._lastIndex;
   },
   _transformKey: function(key) {
@@ -20479,6 +20891,11 @@ NgMapShim.prototype = {
     if (idx !== -1) {
       return this._values[idx];
     }
+  },
+  has: function(key) {
+    key = this._transformKey(key);
+    var idx = this._idx(key);
+    return idx !== -1;
   },
   set: function(key, value) {
     key = this._transformKey(key);
@@ -22133,14 +22550,39 @@ var $AnimateProvider = ['$provide', /** @this */ function($provide) {
        * );
        * ```
        *
+       * <div class="alert alert-warning">
+       * **Note**: Generally, the events that are fired correspond 1:1 to `$animate` method names,
+       * e.g. {@link ng.$animate#addClass addClass()} will fire `addClass`, and {@link ng.ngClass}
+       * will fire `addClass` if classes are added, and `removeClass` if classes are removed.
+       * However, there are two exceptions:
+       *
+       * <ul>
+       *   <li>if both an {@link ng.$animate#addClass addClass()} and a
+       *   {@link ng.$animate#removeClass removeClass()} action are performed during the same
+       *   animation, the event fired will be `setClass`. This is true even for `ngClass`.</li>
+       *   <li>an {@link ng.$animate#animate animate()} call that adds and removes classes will fire
+       *   the `setClass` event, but if it either removes or adds classes,
+       *   it will fire `animate` instead.</li>
+       * </ul>
+       *
+       * </div>
+       *
        * @param {string} event the animation event that will be captured (e.g. enter, leave, move, addClass, removeClass, etc...)
        * @param {DOMElement} container the container element that will capture each of the animation events that are fired on itself
        *     as well as among its children
-       * @param {Function} callback the callback function that will be fired when the listener is triggered
+       * @param {Function} callback the callback function that will be fired when the listener is triggered.
        *
        * The arguments present in the callback function are:
        * * `element` - The captured DOM element that the animation was fired on.
        * * `phase` - The phase of the animation. The two possible phases are **start** (when the animation starts) and **close** (when it ends).
+       * * `data` - an object with these properties:
+       *     * addClass - `{string|null}` - space-separated CSS classes to add to the element
+       *     * removeClass - `{string|null}` - space-separated CSS classes to remove from the element
+       *     * from - `{Object|null}` - CSS properties & values at the beginning of the animation
+       *     * to - `{Object|null}` - CSS properties & values at the end of the animation
+       *
+       * Note that the callback does not trigger a scope digest. Wrap your call into a
+       * {@link $rootScope.Scope#$apply scope.$apply} to propagate changes to the scope.
        */
       on: $$animateQueue.on,
 
@@ -22408,9 +22850,8 @@ var $AnimateProvider = ['$provide', /** @this */ function($provide) {
        * @param {object=} options an optional collection of options/styles that will be applied to the element.
        *   The object can have the following properties:
        *
-       *   - **addClass** - `{string}` - space-separated CSS classes to add to element
-       *   - **from** - `{Object}` - CSS properties & values at the beginning of animation. Must have matching `to`
        *   - **removeClass** - `{string}` - space-separated CSS classes to remove from element
+       *   - **from** - `{Object}` - CSS properties & values at the beginning of animation. Must have matching `to`
        *   - **to** - `{Object}` - CSS properties & values at end of animation. Must have matching `from`
        *
        * @return {Runner} animationRunner the animation runner
@@ -22440,7 +22881,6 @@ var $AnimateProvider = ['$provide', /** @this */ function($provide) {
        *
        *   - **addClass** - `{string}` - space-separated CSS classes to add to element
        *   - **from** - `{Object}` - CSS properties & values at the beginning of animation. Must have matching `to`
-       *   - **removeClass** - `{string}` - space-separated CSS classes to remove from element
        *   - **to** - `{Object}` - CSS properties & values at end of animation. Must have matching `from`
        *
        * @return {Runner} the animation runner
@@ -22470,8 +22910,8 @@ var $AnimateProvider = ['$provide', /** @this */ function($provide) {
        *   The object can have the following properties:
        *
        *   - **addClass** - `{string}` - space-separated CSS classes to add to element
-       *   - **from** - `{Object}` - CSS properties & values at the beginning of animation. Must have matching `to`
        *   - **removeClass** - `{string}` - space-separated CSS classes to remove from element
+       *   - **from** - `{Object}` - CSS properties & values at the beginning of animation. Must have matching `to`
        *   - **to** - `{Object}` - CSS properties & values at end of animation. Must have matching `from`
        *
        * @return {Runner} the animation runner
@@ -22798,7 +23238,16 @@ var $CoreAnimateCssProvider = function() {
   }];
 };
 
-/* global stripHash: true */
+/* global getHash: true, stripHash: false */
+
+function getHash(url) {
+  var index = url.indexOf('#');
+  return index === -1 ? '' : url.substr(index);
+}
+
+function trimEmptyHash(url) {
+  return url.replace(/#$/, '');
+}
 
 /**
  * ! This is a private undocumented service !
@@ -22821,61 +23270,27 @@ var $CoreAnimateCssProvider = function() {
  * @param {object} $log window.console or an object with the same interface.
  * @param {object} $sniffer $sniffer service
  */
-function Browser(window, document, $log, $sniffer) {
+function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
   var self = this,
       location = window.location,
       history = window.history,
       setTimeout = window.setTimeout,
       clearTimeout = window.clearTimeout,
-      pendingDeferIds = {};
+      pendingDeferIds = {},
+      taskTracker = $$taskTrackerFactory($log);
 
   self.isMock = false;
 
-  var outstandingRequestCount = 0;
-  var outstandingRequestCallbacks = [];
+  //////////////////////////////////////////////////////////////
+  // Task-tracking API
+  //////////////////////////////////////////////////////////////
 
   // TODO(vojta): remove this temporary api
-  self.$$completeOutstandingRequest = completeOutstandingRequest;
-  self.$$incOutstandingRequestCount = function() { outstandingRequestCount++; };
+  self.$$completeOutstandingRequest = taskTracker.completeTask;
+  self.$$incOutstandingRequestCount = taskTracker.incTaskCount;
 
-  /**
-   * Executes the `fn` function(supports currying) and decrements the `outstandingRequestCallbacks`
-   * counter. If the counter reaches 0, all the `outstandingRequestCallbacks` are executed.
-   */
-  function completeOutstandingRequest(fn) {
-    try {
-      fn.apply(null, sliceArgs(arguments, 1));
-    } finally {
-      outstandingRequestCount--;
-      if (outstandingRequestCount === 0) {
-        while (outstandingRequestCallbacks.length) {
-          try {
-            outstandingRequestCallbacks.pop()();
-          } catch (e) {
-            $log.error(e);
-          }
-        }
-      }
-    }
-  }
-
-  function getHash(url) {
-    var index = url.indexOf('#');
-    return index === -1 ? '' : url.substr(index);
-  }
-
-  /**
-   * @private
-   * TODO(vojta): prefix this method with $$ ?
-   * @param {function()} callback Function that will be called when no outstanding request
-   */
-  self.notifyWhenNoOutstandingRequests = function(callback) {
-    if (outstandingRequestCount === 0) {
-      callback();
-    } else {
-      outstandingRequestCallbacks.push(callback);
-    }
-  };
+  // TODO(vojta): prefix this method with $$ ?
+  self.notifyWhenNoOutstandingRequests = taskTracker.notifyWhenNoPendingTasks;
 
   //////////////////////////////////////////////////////////////
   // URL API
@@ -22900,20 +23315,21 @@ function Browser(window, document, $log, $sniffer) {
    *
    * @description
    * GETTER:
-   * Without any argument, this method just returns current value of location.href.
+   * Without any argument, this method just returns current value of `location.href` (with a
+   * trailing `#` stripped of if the hash is empty).
    *
    * SETTER:
    * With at least one argument, this method sets url to new value.
-   * If html5 history api supported, pushState/replaceState is used, otherwise
-   * location.href/location.replace is used.
-   * Returns its own instance to allow chaining
+   * If html5 history api supported, `pushState`/`replaceState` is used, otherwise
+   * `location.href`/`location.replace` is used.
+   * Returns its own instance to allow chaining.
    *
-   * NOTE: this api is intended for use only by the $location service. Please use the
+   * NOTE: this api is intended for use only by the `$location` service. Please use the
    * {@link ng.$location $location service} to change url.
    *
    * @param {string} url New url (when used as setter)
    * @param {boolean=} replace Should new url replace current history record?
-   * @param {object=} state object to use with pushState/replaceState
+   * @param {object=} state State object to use with `pushState`/`replaceState`
    */
   self.url = function(url, replace, state) {
     // In modern browsers `history.state` is `null` by default; treating it separately
@@ -22971,7 +23387,7 @@ function Browser(window, document, $log, $sniffer) {
       // - pendingLocation is needed as browsers don't allow to read out
       //   the new location.href if a reload happened or if there is a bug like in iOS 9 (see
       //   https://openradar.appspot.com/22186109).
-      return pendingLocation || location.href;
+      return trimEmptyHash(pendingLocation || location.href);
     }
   };
 
@@ -23106,7 +23522,8 @@ function Browser(window, document, $log, $sniffer) {
   /**
    * @name $browser#defer
    * @param {function()} fn A function, who's execution should be deferred.
-   * @param {number=} [delay=0] of milliseconds to defer the function execution.
+   * @param {number=} [delay=0] Number of milliseconds to defer the function execution.
+   * @param {string=} [taskType=DEFAULT_TASK_TYPE] The type of task that is deferred.
    * @returns {*} DeferId that can be used to cancel the task via `$browser.defer.cancel()`.
    *
    * @description
@@ -23117,14 +23534,19 @@ function Browser(window, document, $log, $sniffer) {
    * via `$browser.defer.flush()`.
    *
    */
-  self.defer = function(fn, delay) {
+  self.defer = function(fn, delay, taskType) {
     var timeoutId;
-    outstandingRequestCount++;
+
+    delay = delay || 0;
+    taskType = taskType || taskTracker.DEFAULT_TASK_TYPE;
+
+    taskTracker.incTaskCount(taskType);
     timeoutId = setTimeout(function() {
       delete pendingDeferIds[timeoutId];
-      completeOutstandingRequest(fn);
-    }, delay || 0);
-    pendingDeferIds[timeoutId] = true;
+      taskTracker.completeTask(fn, taskType);
+    }, delay);
+    pendingDeferIds[timeoutId] = taskType;
+
     return timeoutId;
   };
 
@@ -23140,10 +23562,11 @@ function Browser(window, document, $log, $sniffer) {
    *                    canceled.
    */
   self.defer.cancel = function(deferId) {
-    if (pendingDeferIds[deferId]) {
+    if (pendingDeferIds.hasOwnProperty(deferId)) {
+      var taskType = pendingDeferIds[deferId];
       delete pendingDeferIds[deferId];
       clearTimeout(deferId);
-      completeOutstandingRequest(noop);
+      taskTracker.completeTask(noop, taskType);
       return true;
     }
     return false;
@@ -23153,10 +23576,10 @@ function Browser(window, document, $log, $sniffer) {
 
 /** @this */
 function $BrowserProvider() {
-  this.$get = ['$window', '$log', '$sniffer', '$document',
-      function($window, $log, $sniffer, $document) {
-        return new Browser($window, $document, $log, $sniffer);
-      }];
+  this.$get = ['$window', '$log', '$sniffer', '$document', '$$taskTrackerFactory',
+       function($window,   $log,   $sniffer,   $document,   $$taskTrackerFactory) {
+    return new Browser($window, $document, $log, $sniffer, $$taskTrackerFactory);
+  }];
 }
 
 /**
@@ -23905,6 +24328,11 @@ function $TemplateCacheProvider() {
  *   One-way binding is useful if you do not plan to propagate changes to your isolated scope bindings
  *   back to the parent. However, it does not make this completely impossible.
  *
+ *   By default, the {@link ng.$rootScope.Scope#$watch `$watch`}
+ *   method is used for tracking changes, and the equality check is based on object identity.
+ *   It's also possible to watch the evaluated value shallowly with
+ *   {@link ng.$rootScope.Scope#$watchCollection `$watchCollection`}: use `<*` or `<*attr`
+ *
  * * `&` or `&attr` - provides a way to execute an expression in the context of the parent scope. If
  *   no `attr` name is specified then the attribute name is assumed to be the same as the local name.
  *   Given `<my-component my-attr="count = count + value">` and the isolate scope definition `scope: {
@@ -24591,8 +25019,7 @@ function $TemplateCacheProvider() {
  *
  * See issue [#2573](https://github.com/angular/angular.js/issues/2573).
  *
- * #### `transclude: element` in the replace template root can have
- * unexpected effects
+ * #### `transclude: element` in the replace template root can have unexpected effects
  *
  * When the replace template has a directive at the root node that uses
  * {@link $compile#-transclude- `transclude: element`}, e.g.
@@ -24604,6 +25031,325 @@ function $TemplateCacheProvider() {
  * - Different DOM between `template` and `templateUrl`:
  * [#10612](https://github.com/angular/angular.js/issues/14326)
  *
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngProp
+ * @restrict A
+ * @element ANY
+ *
+ * @usage
+ *
+ * ```html
+ * <ANY ng-prop-propname="expression">
+ * </ANY>
+ * ```
+ *
+ * or with uppercase letters in property (e.g. "propName"):
+ *
+ *
+ * ```html
+ * <ANY ng-prop-prop_name="expression">
+ * </ANY>
+ * ```
+ *
+ *
+ * @description
+ * The `ngProp` directive binds an expression to a DOM element property.
+ * `ngProp` allows writing to arbitrary properties by including
+ * the property name in the attribute, e.g. `ng-prop-value="'my value'"` binds 'my value' to
+ * the `value` property.
+ *
+ * Usually, it's not necessary to write to properties in AngularJS, as the built-in directives
+ * handle the most common use cases (instead of the above example, you would use {@link ngValue}).
+ *
+ * However, [custom elements](https://developer.mozilla.org/docs/Web/Web_Components/Using_custom_elements)
+ * often use custom properties to hold data, and `ngProp` can be used to provide input to these
+ * custom elements.
+ *
+ * ## Binding to camelCase properties
+ *
+ * Since HTML attributes are case-insensitive, camelCase properties like `innerHTML` must be escaped.
+ * AngularJS uses the underscore (_) in front of a character to indicate that it is uppercase, so
+ * `innerHTML`  must be written as `ng-prop-inner_h_t_m_l="expression"` (Note that this is just an
+ * example, and for binding HTML {@link ngBindHtml} should be used.
+ *
+ * ## Security
+ *
+ * Binding expressions to arbitrary properties poses a security risk, as  properties like `innerHTML`
+ * can insert potentially dangerous HTML into the application, e.g. script tags that execute
+ * malicious code.
+ * For this reason, `ngProp` applies Strict Contextual Escaping with the {@link ng.$sce $sce service}.
+ * This means vulnerable properties require their content to be "trusted", based on the
+ * context of the property. For example, the `innerHTML` is in the `HTML` context, and the
+ * `iframe.src` property is in the `RESOURCE_URL` context, which requires that values written to
+ * this property are trusted as a `RESOURCE_URL`.
+ *
+ * This can be set explicitly by calling $sce.trustAs(type, value) on the value that is
+ * trusted before passing it to the `ng-prop-*` directive. There are exist shorthand methods for
+ * each context type in the form of {@link ng.$sce#trustAsResourceUrl $sce.trustAsResourceUrl()} et al.
+ *
+ * In some cases you can also rely upon automatic sanitization of untrusted values - see below.
+ *
+ * Based on the context, other options may exist to mark a value as trusted / configure the behavior
+ * of {@link ng.$sce}. For example, to restrict the `RESOURCE_URL` context to specific origins, use
+ * the {@link $sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist()}
+ * and {@link $sceDelegateProvider#resourceUrlBlacklist resourceUrlBlacklist()}.
+ *
+ * {@link ng.$sce#what-trusted-context-types-are-supported- Find out more about the different context types}.
+ *
+ * ### HTML Sanitization
+ *
+ * By default, `$sce` will throw an error if it detects untrusted HTML content, and will not bind the
+ * content.
+ * However, if you include the {@link ngSanitize ngSanitize module}, it will try to sanitize the
+ * potentially dangerous HTML, e.g. strip non-whitelisted tags and attributes when binding to
+ * `innerHTML`.
+ *
+ * @example
+ * ### Binding to different contexts
+ *
+ * <example name="ngProp" module="exampleNgProp">
+ *   <file name="app.js">
+ *     angular.module('exampleNgProp', [])
+ *       .component('main', {
+ *         templateUrl: 'main.html',
+ *         controller: function($sce) {
+ *           this.safeContent = '<strong>Safe content</strong>';
+ *           this.unsafeContent = '<button onclick="alert(\'Hello XSS!\')">Click for XSS</button>';
+ *           this.trustedUnsafeContent = $sce.trustAsHtml(this.unsafeContent);
+ *         }
+ *       });
+ *   </file>
+ *   <file name="main.html">
+ *     <div>
+ *       <div class="prop-unit">
+ *         Binding to a property without security context:
+ *         <div class="prop-binding" ng-prop-inner_text="$ctrl.safeContent"></div>
+ *         <span class="prop-note">innerText</span> (safeContent)
+ *       </div>
+ *
+ *       <div class="prop-unit">
+ *         "Safe" content that requires a security context will throw because the contents could potentially be dangerous ...
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.safeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (safeContent)
+ *       </div>
+ *
+ *       <div class="prop-unit">
+ *         ... so that actually dangerous content cannot be executed:
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.unsafeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (unsafeContent)
+ *       </div>
+ *
+ *       <div class="prop-unit">
+ *         ... but unsafe Content that has been trusted explicitly works - only do this if you are 100% sure!
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.trustedUnsafeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (trustedUnsafeContent)
+ *       </div>
+ *     </div>
+ *   </file>
+ *   <file name="index.html">
+ *     <main></main>
+ *   </file>
+ *   <file name="styles.css">
+ *     .prop-unit {
+ *       margin-bottom: 10px;
+ *     }
+ *
+ *     .prop-binding {
+ *       min-height: 30px;
+ *       border: 1px solid blue;
+ *     }
+ *
+ *     .prop-note {
+ *       font-family: Monospace;
+ *     }
+ *   </file>
+ * </example>
+ *
+ *
+ * @example
+ * ### Binding to innerHTML with ngSanitize
+ *
+ * <example name="ngProp" module="exampleNgProp" deps="angular-sanitize.js">
+ *   <file name="app.js">
+ *     angular.module('exampleNgProp', ['ngSanitize'])
+ *       .component('main', {
+ *         templateUrl: 'main.html',
+ *         controller: function($sce) {
+ *           this.safeContent = '<strong>Safe content</strong>';
+ *           this.unsafeContent = '<button onclick="alert(\'Hello XSS!\')">Click for XSS</button>';
+ *           this.trustedUnsafeContent = $sce.trustAsHtml(this.unsafeContent);
+ *         }
+ *       });
+ *   </file>
+ *   <file name="main.html">
+ *     <div>
+ *       <div class="prop-unit">
+ *         "Safe" content will be sanitized ...
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.safeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (safeContent)
+ *       </div>
+ *
+ *       <div class="prop-unit">
+ *         ... as will dangerous content:
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.unsafeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (unsafeContent)
+ *       </div>
+ *
+ *       <div class="prop-unit">
+ *         ... and content that has been trusted explicitly works the same as without ngSanitize:
+ *         <div class="prop-binding" ng-prop-inner_h_t_m_l="$ctrl.trustedUnsafeContent"></div>
+ *         <span class="prop-note">innerHTML</span> (trustedUnsafeContent)
+ *       </div>
+ *     </div>
+ *   </file>
+ *   <file name="index.html">
+ *     <main></main>
+ *   </file>
+ *   <file name="styles.css">
+ *     .prop-unit {
+ *       margin-bottom: 10px;
+ *     }
+ *
+ *     .prop-binding {
+ *       min-height: 30px;
+ *       border: 1px solid blue;
+ *     }
+ *
+ *     .prop-note {
+ *       font-family: Monospace;
+ *     }
+ *   </file>
+ * </example>
+ *
+ */
+
+/** @ngdoc directive
+ * @name ngOn
+ * @restrict A
+ * @element ANY
+ *
+ * @usage
+ *
+ * ```html
+ * <ANY ng-on-eventname="expression">
+ * </ANY>
+ * ```
+ *
+ * or with uppercase letters in property (e.g. "eventName"):
+ *
+ *
+ * ```html
+ * <ANY ng-on-event_name="expression">
+ * </ANY>
+ * ```
+ *
+ * @description
+ * The `ngOn` directive adds an event listener to a DOM element via
+ * {@link angular.element angular.element().on()}, and evaluates an expression when the event is
+ * fired.
+ * `ngOn` allows adding listeners for arbitrary events by including
+ * the event name in the attribute, e.g. `ng-on-drop="onDrop()"` executes the 'onDrop()' expression
+ * when the `drop` event is fired.
+ *
+ * AngularJS provides specific directives for many events, such as {@link ngClick}, so in most
+ * cases it is not necessary to use `ngOn`. However, AngularJS does not support all events
+ * (e.g. the `drop` event in the example above), and new events might be introduced in later DOM
+ * standards.
+ *
+ * Another use-case for `ngOn` is listening to
+ * [custom events](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
+ * fired by
+ * [custom elements](https://developer.mozilla.org/docs/Web/Web_Components/Using_custom_elements).
+ *
+ * ## Binding to camelCase properties
+ *
+ * Since HTML attributes are case-insensitive, camelCase properties like `myEvent` must be escaped.
+ * AngularJS uses the underscore (_) in front of a character to indicate that it is uppercase, so
+ * `myEvent` must be written as `ng-on-my_event="expression"`.
+ *
+ * @example
+ * ### Bind to built-in DOM events
+ *
+ * <example name="ngOn" module="exampleNgOn">
+ *   <file name="app.js">
+ *     angular.module('exampleNgOn', [])
+ *       .component('main', {
+ *         templateUrl: 'main.html',
+ *         controller: function() {
+ *           this.clickCount = 0;
+ *           this.mouseoverCount = 0;
+ *
+ *           this.loadingState = 0;
+ *         }
+ *       });
+ *   </file>
+ *   <file name="main.html">
+ *     <div>
+ *       This is equivalent to `ngClick` and `ngMouseover`:<br>
+ *       <button
+ *         ng-on-click="$ctrl.clickCount = $ctrl.clickCount + 1"
+ *         ng-on-mouseover="$ctrl.mouseoverCount = $ctrl.mouseoverCount + 1">Click or mouseover</button><br>
+ *       clickCount: {{$ctrl.clickCount}}<br>
+ *       mouseover: {{$ctrl.mouseoverCount}}
+ *
+ *       <hr>
+ *
+ *       For the `error` and `load` event on images no built-in AngularJS directives exist:<br>
+ *       <img src="thisimagedoesnotexist.png" ng-on-error="$ctrl.loadingState = -1" ng-on-load="$ctrl.loadingState = 1"><br>
+ *       <div ng-switch="$ctrl.loadingState">
+ *         <span ng-switch-when="0">Image is loading</span>
+ *         <span ng-switch-when="-1">Image load error</span>
+ *         <span ng-switch-when="1">Image loaded successfully</span>
+ *       </div>
+ *     </div>
+ *   </file>
+ *   <file name="index.html">
+ *     <main></main>
+ *   </file>
+ * </example>
+ *
+ *
+ * @example
+ * ### Bind to custom DOM events
+ *
+ * <example name="ngOnCustom" module="exampleNgOn">
+ *   <file name="app.js">
+ *     angular.module('exampleNgOn', [])
+ *       .component('main', {
+ *         templateUrl: 'main.html',
+ *         controller: function() {
+ *           this.eventLog = '';
+ *
+ *           this.listener = function($event) {
+ *             this.eventLog = 'Event with type "' + $event.type + '" fired at ' + $event.detail;
+ *           };
+ *         }
+ *       })
+ *       .component('childComponent', {
+ *         templateUrl: 'child.html',
+ *         controller: function($element) {
+ *           this.fireEvent = function() {
+ *             var event = new CustomEvent('customtype', { detail: new Date()});
+ *
+ *             $element[0].dispatchEvent(event);
+ *           };
+ *         }
+ *       });
+ *   </file>
+ *   <file name="main.html">
+ *     <child-component ng-on-customtype="$ctrl.listener($event)"></child-component><br>
+ *     <span>Event log: {{$ctrl.eventLog}}</span>
+ *   </file>
+ *   <file name="child.html">
+      <button ng-click="$ctrl.fireEvent()">Fire custom event</button>
+ *   </file>
+ *   <file name="index.html">
+ *     <main></main>
+ *   </file>
+ * </example>
  */
 
 var $compileMinErr = minErr('$compile');
@@ -24634,7 +25380,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
   var bindingCache = createMap();
 
   function parseIsolateBindings(scope, directiveName, isController) {
-    var LOCAL_REGEXP = /^([@&<]|=(\*?))(\??)\s*([\w$]*)$/;
+    var LOCAL_REGEXP = /^([@&]|[=<](\*?))(\??)\s*([\w$]*)$/;
 
     var bindings = createMap();
 
@@ -25148,6 +25894,91 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     return cssClassDirectivesEnabledConfig;
   };
 
+
+  /**
+   * The security context of DOM Properties.
+   * @private
+   */
+  var PROP_CONTEXTS = createMap();
+
+  /**
+   * @ngdoc method
+   * @name $compileProvider#addPropertySecurityContext
+   * @description
+   *
+   * Defines the security context for DOM properties bound by ng-prop-*.
+   *
+   * @param {string} elementName The element name or '*' to match any element.
+   * @param {string} propertyName The DOM property name.
+   * @param {string} ctx The {@link $sce} security context in which this value is safe for use, e.g. `$sce.URL`
+   * @returns {object} `this` for chaining
+   */
+  this.addPropertySecurityContext = function(elementName, propertyName, ctx) {
+    var key = (elementName.toLowerCase() + '|' + propertyName.toLowerCase());
+
+    if (key in PROP_CONTEXTS && PROP_CONTEXTS[key] !== ctx) {
+      throw $compileMinErr('ctxoverride', 'Property context \'{0}.{1}\' already set to \'{2}\', cannot override to \'{3}\'.', elementName, propertyName, PROP_CONTEXTS[key], ctx);
+    }
+
+    PROP_CONTEXTS[key] = ctx;
+    return this;
+  };
+
+  /* Default property contexts.
+   *
+   * Copy of https://github.com/angular/angular/blob/6.0.6/packages/compiler/src/schema/dom_security_schema.ts#L31-L58
+   * Changing:
+   * - SecurityContext.* => SCE_CONTEXTS/$sce.*
+   * - STYLE => CSS
+   * - various URL => MEDIA_URL
+   * - *|formAction, form|action URL => RESOURCE_URL (like the attribute)
+   */
+  (function registerNativePropertyContexts() {
+    function registerContext(ctx, values) {
+      forEach(values, function(v) { PROP_CONTEXTS[v.toLowerCase()] = ctx; });
+    }
+
+    registerContext(SCE_CONTEXTS.HTML, [
+      'iframe|srcdoc',
+      '*|innerHTML',
+      '*|outerHTML'
+    ]);
+    registerContext(SCE_CONTEXTS.CSS, ['*|style']);
+    registerContext(SCE_CONTEXTS.URL, [
+      'area|href',       'area|ping',
+      'a|href',          'a|ping',
+      'blockquote|cite',
+      'body|background',
+      'del|cite',
+      'input|src',
+      'ins|cite',
+      'q|cite'
+    ]);
+    registerContext(SCE_CONTEXTS.MEDIA_URL, [
+      'audio|src',
+      'img|src',    'img|srcset',
+      'source|src', 'source|srcset',
+      'track|src',
+      'video|src',  'video|poster'
+    ]);
+    registerContext(SCE_CONTEXTS.RESOURCE_URL, [
+      '*|formAction',
+      'applet|code',      'applet|codebase',
+      'base|href',
+      'embed|src',
+      'frame|src',
+      'form|action',
+      'head|profile',
+      'html|manifest',
+      'iframe|src',
+      'link|href',
+      'media|src',
+      'object|codebase',  'object|data',
+      'script|src'
+    ]);
+  })();
+
+
   this.$get = [
             '$injector', '$interpolate', '$exceptionHandler', '$templateRequest', '$parse',
             '$controller', '$rootScope', '$sce', '$animate',
@@ -25190,6 +26021,57 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       } finally {
         onChangesTtl++;
       }
+    }
+
+
+    function sanitizeSrcset(value, invokeType) {
+      if (!value) {
+        return value;
+      }
+      if (!isString(value)) {
+        throw $compileMinErr('srcset', 'Can\'t pass trusted values to `{0}`: "{1}"', invokeType, value.toString());
+      }
+
+      // Such values are a bit too complex to handle automatically inside $sce.
+      // Instead, we sanitize each of the URIs individually, which works, even dynamically.
+
+      // It's not possible to work around this using `$sce.trustAsMediaUrl`.
+      // If you want to programmatically set explicitly trusted unsafe URLs, you should use
+      // `$sce.trustAsHtml` on the whole `img` tag and inject it into the DOM using the
+      // `ng-bind-html` directive.
+
+      var result = '';
+
+      // first check if there are spaces because it's not the same pattern
+      var trimmedSrcset = trim(value);
+      //                (   999x   ,|   999w   ,|   ,|,   )
+      var srcPattern = /(\s+\d+x\s*,|\s+\d+w\s*,|\s+,|,\s+)/;
+      var pattern = /\s/.test(trimmedSrcset) ? srcPattern : /(,)/;
+
+      // split srcset into tuple of uri and descriptor except for the last item
+      var rawUris = trimmedSrcset.split(pattern);
+
+      // for each tuples
+      var nbrUrisWith2parts = Math.floor(rawUris.length / 2);
+      for (var i = 0; i < nbrUrisWith2parts; i++) {
+        var innerIdx = i * 2;
+        // sanitize the uri
+        result += $sce.getTrustedMediaUrl(trim(rawUris[innerIdx]));
+        // add the descriptor
+        result += ' ' + trim(rawUris[innerIdx + 1]);
+      }
+
+      // split the last item into uri and descriptor
+      var lastTuple = trim(rawUris[i * 2]).split(/\s/);
+
+      // sanitize the last uri
+      result += $sce.getTrustedMediaUrl(trim(lastTuple[0]));
+
+      // and add the last descriptor if any
+      if (lastTuple.length === 2) {
+        result += (' ' + trim(lastTuple[1]));
+      }
+      return result;
     }
 
 
@@ -25329,51 +26211,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         nodeName = nodeName_(this.$$element);
 
         // Sanitize img[srcset] values.
-        if (nodeName === 'img' && key === 'srcset' && value) {
-          if (!isString(value)) {
-            throw $compileMinErr('srcset', 'Can\'t pass trusted values to `$set(\'srcset\', value)`: "{0}"', value.toString());
-          }
-
-          // Such values are a bit too complex to handle automatically inside $sce.
-          // Instead, we sanitize each of the URIs individually, which works, even dynamically.
-
-          // It's not possible to work around this using `$sce.trustAsMediaUrl`.
-          // If you want to programmatically set explicitly trusted unsafe URLs, you should use
-          // `$sce.trustAsHtml` on the whole `img` tag and inject it into the DOM using the
-          // `ng-bind-html` directive.
-
-          var result = '';
-
-          // first check if there are spaces because it's not the same pattern
-          var trimmedSrcset = trim(value);
-          //                (   999x   ,|   999w   ,|   ,|,   )
-          var srcPattern = /(\s+\d+x\s*,|\s+\d+w\s*,|\s+,|,\s+)/;
-          var pattern = /\s/.test(trimmedSrcset) ? srcPattern : /(,)/;
-
-          // split srcset into tuple of uri and descriptor except for the last item
-          var rawUris = trimmedSrcset.split(pattern);
-
-          // for each tuples
-          var nbrUrisWith2parts = Math.floor(rawUris.length / 2);
-          for (var i = 0; i < nbrUrisWith2parts; i++) {
-            var innerIdx = i * 2;
-            // sanitize the uri
-            result += $sce.getTrustedMediaUrl(trim(rawUris[innerIdx]));
-            // add the descriptor
-            result += ' ' + trim(rawUris[innerIdx + 1]);
-          }
-
-          // split the last item into uri and descriptor
-          var lastTuple = trim(rawUris[i * 2]).split(/\s/);
-
-          // sanitize the last uri
-          result += $sce.getTrustedMediaUrl(trim(lastTuple[0]));
-
-          // and add the last descriptor if any
-          if (lastTuple.length === 2) {
-            result += (' ' + trim(lastTuple[1]));
-          }
-          this[key] = value = result;
+        if (nodeName === 'img' && key === 'srcset') {
+          this[key] = value = sanitizeSrcset(value, '$set(\'srcset\', value)');
         }
 
         if (writeAttr !== false) {
@@ -25470,7 +26309,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             : function denormalizeTemplate(template) {
               return template.replace(/\{\{/g, startSymbol).replace(/}}/g, endSymbol);
         },
-        NG_ATTR_BINDING = /^ngAttr[A-Z]/;
+        NG_PREFIX_BINDING = /^ng(Attr|Prop|On)([A-Z].*)$/;
     var MULTI_ELEMENT_DIR_RE = /^(.+)Start$/;
 
     compile.$$addBindingInfo = debugInfoEnabled ? function $$addBindingInfo($element, binding) {
@@ -25806,43 +26645,66 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               directiveNormalize(nodeName), 'E', maxPriority, ignoreDirective);
 
           // iterate over the attributes
-          for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes,
+          for (var attr, name, nName, value, ngPrefixMatch, nAttrs = node.attributes,
                    j = 0, jj = nAttrs && nAttrs.length; j < jj; j++) {
             var attrStartName = false;
             var attrEndName = false;
+
+            var isNgAttr = false, isNgProp = false, isNgEvent = false;
+            var multiElementMatch;
 
             attr = nAttrs[j];
             name = attr.name;
             value = attr.value;
 
-            // support ngAttr attribute binding
-            ngAttrName = directiveNormalize(name);
-            isNgAttr = NG_ATTR_BINDING.test(ngAttrName);
-            if (isNgAttr) {
+            nName = directiveNormalize(name.toLowerCase());
+
+            // Support ng-attr-*, ng-prop-* and ng-on-*
+            if ((ngPrefixMatch = nName.match(NG_PREFIX_BINDING))) {
+              isNgAttr = ngPrefixMatch[1] === 'Attr';
+              isNgProp = ngPrefixMatch[1] === 'Prop';
+              isNgEvent = ngPrefixMatch[1] === 'On';
+
+              // Normalize the non-prefixed name
               name = name.replace(PREFIX_REGEXP, '')
-                .substr(8).replace(/_(.)/g, function(match, letter) {
+                .toLowerCase()
+                .substr(4 + ngPrefixMatch[1].length).replace(/_(.)/g, function(match, letter) {
                   return letter.toUpperCase();
                 });
-            }
 
-            var multiElementMatch = ngAttrName.match(MULTI_ELEMENT_DIR_RE);
-            if (multiElementMatch && directiveIsMultiElement(multiElementMatch[1])) {
+            // Support *-start / *-end multi element directives
+            } else if ((multiElementMatch = nName.match(MULTI_ELEMENT_DIR_RE)) && directiveIsMultiElement(multiElementMatch[1])) {
               attrStartName = name;
               attrEndName = name.substr(0, name.length - 5) + 'end';
               name = name.substr(0, name.length - 6);
             }
 
-            nName = directiveNormalize(name.toLowerCase());
-            attrsMap[nName] = name;
-            if (isNgAttr || !attrs.hasOwnProperty(nName)) {
+            if (isNgProp || isNgEvent) {
+              attrs[nName] = value;
+              attrsMap[nName] = attr.name;
+
+              if (isNgProp) {
+                addPropertyDirective(node, directives, nName, name);
+              } else {
+                addEventDirective(directives, nName, name);
+              }
+            } else {
+              // Update nName for cases where a prefix was removed
+              // NOTE: the .toLowerCase() is unnecessary and causes https://github.com/angular/angular.js/issues/16624 for ng-attr-*
+              nName = directiveNormalize(name.toLowerCase());
+              attrsMap[nName] = name;
+
+              if (isNgAttr || !attrs.hasOwnProperty(nName)) {
                 attrs[nName] = value;
                 if (getBooleanAttrName(node, nName)) {
                   attrs[nName] = true; // presence means true
                 }
+              }
+
+              addAttrInterpolateDirective(node, directives, value, nName, isNgAttr);
+              addDirective(directives, nName, 'A', maxPriority, ignoreDirective, attrStartName,
+                            attrEndName);
             }
-            addAttrInterpolateDirective(node, directives, value, nName, isNgAttr);
-            addDirective(directives, nName, 'A', maxPriority, ignoreDirective, attrStartName,
-                          attrEndName);
           }
 
           if (nodeName === 'input' && node.getAttribute('type') === 'hidden') {
@@ -26136,7 +26998,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
               // We have transclusion slots,
               // collect them up, compile them and store their transclusion functions
-              $template = [];
+              $template = window.document.createDocumentFragment();
 
               var slotMap = createMap();
               var filledSlots = createMap();
@@ -26164,10 +27026,10 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 var slotName = slotMap[directiveNormalize(nodeName_(node))];
                 if (slotName) {
                   filledSlots[slotName] = true;
-                  slots[slotName] = slots[slotName] || [];
-                  slots[slotName].push(node);
+                  slots[slotName] = slots[slotName] || window.document.createDocumentFragment();
+                  slots[slotName].appendChild(node);
                 } else {
-                  $template.push(node);
+                  $template.appendChild(node);
                 }
               });
 
@@ -26181,9 +27043,12 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               for (var slotName in slots) {
                 if (slots[slotName]) {
                   // Only define a transclusion function if the slot was filled
-                  slots[slotName] = compilationGenerator(mightHaveMultipleTransclusionError, slots[slotName], transcludeFn);
+                  var slotCompileNodes = jqLite(slots[slotName].childNodes);
+                  slots[slotName] = compilationGenerator(mightHaveMultipleTransclusionError, slotCompileNodes, transcludeFn);
                 }
               }
+
+              $template = jqLite($template.childNodes);
             }
 
             $compileNode.empty(); // clear contents
@@ -26519,7 +27384,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
         if (!value) {
           var dataName = '$' + name + 'Controller';
-          value = inheritType ? $element.inheritedData(dataName) : $element.data(dataName);
+
+          if (inheritType === '^^' && $element[0] && $element[0].nodeType === NODE_TYPE_DOCUMENT) {
+            // inheritedData() uses the documentElement when it finds the document, so we would
+            // require from the element itself.
+            value = null;
+          } else {
+            value = inheritType ? $element.inheritedData(dataName) : $element.data(dataName);
+          }
         }
 
         if (!value && !optional) {
@@ -26876,42 +27748,95 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     }
 
 
-    function getTrustedContext(node, attrNormalizedName) {
+    function getTrustedAttrContext(nodeName, attrNormalizedName) {
       if (attrNormalizedName === 'srcdoc') {
         return $sce.HTML;
       }
-      var tag = nodeName_(node);
-      // All tags with src attributes require a RESOURCE_URL value, except for
-      // img and various html5 media tags, which require the MEDIA_URL context.
+      // All nodes with src attributes require a RESOURCE_URL value, except for
+      // img and various html5 media nodes, which require the MEDIA_URL context.
       if (attrNormalizedName === 'src' || attrNormalizedName === 'ngSrc') {
-        if (['img', 'video', 'audio', 'source', 'track'].indexOf(tag) === -1) {
+        if (['img', 'video', 'audio', 'source', 'track'].indexOf(nodeName) === -1) {
           return $sce.RESOURCE_URL;
         }
         return $sce.MEDIA_URL;
       } else if (attrNormalizedName === 'xlinkHref') {
         // Some xlink:href are okay, most aren't
-        if (tag === 'image') return $sce.MEDIA_URL;
-        if (tag === 'a') return $sce.URL;
+        if (nodeName === 'image') return $sce.MEDIA_URL;
+        if (nodeName === 'a') return $sce.URL;
         return $sce.RESOURCE_URL;
       } else if (
           // Formaction
-          (tag === 'form' && attrNormalizedName === 'action') ||
+          (nodeName === 'form' && attrNormalizedName === 'action') ||
           // If relative URLs can go where they are not expected to, then
           // all sorts of trust issues can arise.
-          (tag === 'base' && attrNormalizedName === 'href') ||
+          (nodeName === 'base' && attrNormalizedName === 'href') ||
           // links can be stylesheets or imports, which can run script in the current origin
-          (tag === 'link' && attrNormalizedName === 'href')
+          (nodeName === 'link' && attrNormalizedName === 'href')
       ) {
         return $sce.RESOURCE_URL;
-      } else if (tag === 'a' && (attrNormalizedName === 'href' ||
+      } else if (nodeName === 'a' && (attrNormalizedName === 'href' ||
                                  attrNormalizedName === 'ngHref')) {
         return $sce.URL;
       }
     }
 
+    function getTrustedPropContext(nodeName, propNormalizedName) {
+      var prop = propNormalizedName.toLowerCase();
+      return PROP_CONTEXTS[nodeName + '|' + prop] || PROP_CONTEXTS['*|' + prop];
+    }
+
+    function sanitizeSrcsetPropertyValue(value) {
+      return sanitizeSrcset($sce.valueOf(value), 'ng-prop-srcset');
+    }
+    function addPropertyDirective(node, directives, attrName, propName) {
+      if (EVENT_HANDLER_ATTR_REGEXP.test(propName)) {
+        throw $compileMinErr('nodomevents', 'Property bindings for HTML DOM event properties are disallowed');
+      }
+
+      var nodeName = nodeName_(node);
+      var trustedContext = getTrustedPropContext(nodeName, propName);
+
+      var sanitizer = identity;
+      // Sanitize img[srcset] + source[srcset] values.
+      if (propName === 'srcset' && (nodeName === 'img' || nodeName === 'source')) {
+        sanitizer = sanitizeSrcsetPropertyValue;
+      } else if (trustedContext) {
+        sanitizer = $sce.getTrusted.bind($sce, trustedContext);
+      }
+
+      directives.push({
+        priority: 100,
+        compile: function ngPropCompileFn(_, attr) {
+          var ngPropGetter = $parse(attr[attrName]);
+          var ngPropWatch = $parse(attr[attrName], function sceValueOf(val) {
+            // Unwrap the value to compare the actual inner safe value, not the wrapper object.
+            return $sce.valueOf(val);
+          });
+
+          return {
+            pre: function ngPropPreLinkFn(scope, $element) {
+              function applyPropValue() {
+                var propValue = ngPropGetter(scope);
+                $element.prop(propName, sanitizer(propValue));
+              }
+
+              applyPropValue();
+              scope.$watch(ngPropWatch, applyPropValue);
+            }
+          };
+        }
+      });
+    }
+
+    function addEventDirective(directives, attrName, eventName) {
+      directives.push(
+        createEventDirective($parse, $rootScope, $exceptionHandler, attrName, eventName, /*forceAsync=*/false)
+      );
+    }
 
     function addAttrInterpolateDirective(node, directives, value, name, isNgAttr) {
-      var trustedContext = getTrustedContext(node, name);
+      var nodeName = nodeName_(node);
+      var trustedContext = getTrustedAttrContext(nodeName, name);
       var mustHaveExpression = !isNgAttr;
       var allOrNothing = ALL_OR_NOTHING_ATTRS[name] || isNgAttr;
 
@@ -26920,16 +27845,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       // no interpolation found -> ignore
       if (!interpolateFn) return;
 
-      if (name === 'multiple' && nodeName_(node) === 'select') {
+      if (name === 'multiple' && nodeName === 'select') {
         throw $compileMinErr('selmulti',
             'Binding to the \'multiple\' attribute is not supported. Element: {0}',
             startingTag(node));
       }
 
       if (EVENT_HANDLER_ATTR_REGEXP.test(name)) {
-        throw $compileMinErr('nodomevents',
-            'Interpolations for HTML DOM event attributes are disallowed.  Please use the ' +
-                'ng- versions (such as ng-click instead of onclick) instead.');
+        throw $compileMinErr('nodomevents', 'Interpolations for HTML DOM event attributes are disallowed');
       }
 
       directives.push({
@@ -27181,7 +28104,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             var initialValue = destination[scopeName] = parentGet(scope);
             initialChanges[scopeName] = new SimpleChange(_UNINITIALIZED_VALUE, destination[scopeName]);
 
-            removeWatch = scope.$watch(parentGet, function parentValueWatchAction(newValue, oldValue) {
+            removeWatch = scope[definition.collection ? '$watchCollection' : '$watch'](parentGet, function parentValueWatchAction(newValue, oldValue) {
               if (oldValue === newValue) {
                 if (oldValue === initialValue || (isLiteral && equals(oldValue, initialValue))) {
                   return;
@@ -28727,7 +29650,7 @@ function $HttpProvider() {
       config.paramSerializer = isString(config.paramSerializer) ?
           $injector.get(config.paramSerializer) : config.paramSerializer;
 
-      $browser.$$incOutstandingRequestCount();
+      $browser.$$incOutstandingRequestCount('$http');
 
       var requestInterceptors = [];
       var responseInterceptors = [];
@@ -28765,7 +29688,7 @@ function $HttpProvider() {
       }
 
       function completeOutstandingRequest() {
-        $browser.$$completeOutstandingRequest(noop);
+        $browser.$$completeOutstandingRequest(noop, '$http');
       }
 
       function executeHeaderFns(headers, config) {
@@ -29854,10 +30777,18 @@ var $intervalMinErr = minErr('$interval');
 
 /** @this */
 function $IntervalProvider() {
-  this.$get = ['$rootScope', '$window', '$q', '$$q', '$browser',
-       function($rootScope,   $window,   $q,   $$q,   $browser) {
+  this.$get = ['$$intervalFactory', '$window',
+       function($$intervalFactory,   $window) {
     var intervals = {};
-
+    var setIntervalFn = function(tick, delay, deferred) {
+      var id = $window.setInterval(tick, delay);
+      intervals[id] = deferred;
+      return id;
+    };
+    var clearIntervalFn = function(id) {
+      $window.clearInterval(id);
+      delete intervals[id];
+    };
 
     /**
      * @ngdoc service
@@ -29985,49 +30916,7 @@ function $IntervalProvider() {
      * </file>
      * </example>
      */
-    function interval(fn, delay, count, invokeApply) {
-      var hasParams = arguments.length > 4,
-          args = hasParams ? sliceArgs(arguments, 4) : [],
-          setInterval = $window.setInterval,
-          clearInterval = $window.clearInterval,
-          iteration = 0,
-          skipApply = (isDefined(invokeApply) && !invokeApply),
-          deferred = (skipApply ? $$q : $q).defer(),
-          promise = deferred.promise;
-
-      count = isDefined(count) ? count : 0;
-
-      promise.$$intervalId = setInterval(function tick() {
-        if (skipApply) {
-          $browser.defer(callback);
-        } else {
-          $rootScope.$evalAsync(callback);
-        }
-        deferred.notify(iteration++);
-
-        if (count > 0 && iteration >= count) {
-          deferred.resolve(iteration);
-          clearInterval(promise.$$intervalId);
-          delete intervals[promise.$$intervalId];
-        }
-
-        if (!skipApply) $rootScope.$apply();
-
-      }, delay);
-
-      intervals[promise.$$intervalId] = deferred;
-
-      return promise;
-
-      function callback() {
-        if (!hasParams) {
-          fn(iteration);
-        } else {
-          fn.apply(null, args);
-        }
-      }
-    }
-
+    var interval = $$intervalFactory(setIntervalFn, clearIntervalFn);
 
     /**
      * @ngdoc method
@@ -30055,13 +30944,59 @@ function $IntervalProvider() {
       // Interval cancels should not report an unhandled promise.
       markQExceptionHandled(deferred.promise);
       deferred.reject('canceled');
-      $window.clearInterval(id);
-      delete intervals[id];
+      clearIntervalFn(id);
 
       return true;
     };
 
     return interval;
+  }];
+}
+
+/** @this */
+function $$IntervalFactoryProvider() {
+  this.$get = ['$browser', '$q', '$$q', '$rootScope',
+       function($browser,   $q,   $$q,   $rootScope) {
+    return function intervalFactory(setIntervalFn, clearIntervalFn) {
+      return function intervalFn(fn, delay, count, invokeApply) {
+        var hasParams = arguments.length > 4,
+            args = hasParams ? sliceArgs(arguments, 4) : [],
+            iteration = 0,
+            skipApply = isDefined(invokeApply) && !invokeApply,
+            deferred = (skipApply ? $$q : $q).defer(),
+            promise = deferred.promise;
+
+        count = isDefined(count) ? count : 0;
+
+        function callback() {
+          if (!hasParams) {
+            fn(iteration);
+          } else {
+            fn.apply(null, args);
+          }
+        }
+
+        function tick() {
+          if (skipApply) {
+            $browser.defer(callback);
+          } else {
+            $rootScope.$evalAsync(callback);
+          }
+          deferred.notify(iteration++);
+
+          if (count > 0 && iteration >= count) {
+            deferred.resolve(iteration);
+            clearIntervalFn(promise.$$intervalId);
+          }
+
+          if (!skipApply) $rootScope.$apply();
+        }
+
+        promise.$$intervalId = setIntervalFn(tick, delay, deferred, skipApply);
+
+        return promise;
+      };
+    };
   }];
 }
 
@@ -30157,6 +31092,8 @@ var $jsonpCallbacksProvider = /** @this */ function() {
  * * `id` – `{string}` – locale id formatted as `languageId-countryId` (e.g. `en-us`)
  */
 
+/* global stripHash: true */
+
 var PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/,
     DEFAULT_PORTS = {'http': 80, 'https': 443, 'ftp': 21};
 var $locationMinErr = minErr('$location');
@@ -30193,6 +31130,14 @@ function decodePath(path, html5Mode) {
   }
 
   return segments.join('/');
+}
+
+function normalizePath(pathValue, searchValue, hashValue) {
+  var search = toKeyValue(searchValue),
+    hash = hashValue ? '#' + encodeUriSegment(hashValue) : '',
+    path = encodePath(pathValue);
+
+  return path + (search ? '?' + search : '') + hash;
 }
 
 function parseAbsoluteUrl(absoluteUrl, locationObj) {
@@ -30243,16 +31188,10 @@ function stripBaseUrl(base, url) {
   }
 }
 
-
 function stripHash(url) {
   var index = url.indexOf('#');
   return index === -1 ? url : url.substr(0, index);
 }
-
-function trimEmptyHash(url) {
-  return url.replace(/(#.+)|#$/, '$1');
-}
-
 
 function stripFile(url) {
   return url.substr(0, stripHash(url).lastIndexOf('/') + 1);
@@ -30300,18 +31239,8 @@ function LocationHtml5Url(appBase, appBaseNoFile, basePrefix) {
     this.$$compose();
   };
 
-  /**
-   * Compose url and update `absUrl` property
-   * @private
-   */
-  this.$$compose = function() {
-    var search = toKeyValue(this.$$search),
-        hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
-
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
-    this.$$absUrl = appBaseNoFile + this.$$url.substr(1); // first char is always '/'
-
-    this.$$urlUpdatedByLocation = true;
+  this.$$normalizeUrl = function(url) {
+    return appBaseNoFile + url.substr(1); // first char is always '/'
   };
 
   this.$$parseLinkUrl = function(url, relHref) {
@@ -30435,18 +31364,8 @@ function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
     }
   };
 
-  /**
-   * Compose hashbang URL and update `absUrl` property
-   * @private
-   */
-  this.$$compose = function() {
-    var search = toKeyValue(this.$$search),
-        hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
-
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
-    this.$$absUrl = appBase + (this.$$url ? hashPrefix + this.$$url : '');
-
-    this.$$urlUpdatedByLocation = true;
+  this.$$normalizeUrl = function(url) {
+    return appBase + (url ? hashPrefix + url : '');
   };
 
   this.$$parseLinkUrl = function(url, relHref) {
@@ -30497,17 +31416,10 @@ function LocationHashbangInHtml5Url(appBase, appBaseNoFile, hashPrefix) {
     return !!rewrittenUrl;
   };
 
-  this.$$compose = function() {
-    var search = toKeyValue(this.$$search),
-        hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
-
-    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
+  this.$$normalizeUrl = function(url) {
     // include hashPrefix in $$absUrl when $$url is empty so IE9 does not reload page because of removal of '#'
-    this.$$absUrl = appBase + hashPrefix + this.$$url;
-
-    this.$$urlUpdatedByLocation = true;
+    return appBase + hashPrefix + url;
   };
-
 }
 
 
@@ -30530,6 +31442,16 @@ var locationPrototype = {
    * @private
    */
   $$replace: false,
+
+  /**
+   * Compose url and update `url` and `absUrl` property
+   * @private
+   */
+  $$compose: function() {
+    this.$$url = normalizePath(this.$$path, this.$$search, this.$$hash);
+    this.$$absUrl = this.$$normalizeUrl(this.$$url);
+    this.$$urlUpdatedByLocation = true;
+  },
 
   /**
    * @ngdoc method
@@ -31036,6 +31958,13 @@ function $LocationProvider() {
 
     var IGNORE_URI_REGEXP = /^\s*(javascript|mailto):/i;
 
+    // Determine if two URLs are equal despite potentially having different encoding/normalizing
+    //  such as $location.absUrl() vs $browser.url()
+    // See https://github.com/angular/angular.js/issues/16592
+    function urlsEqual(a, b) {
+      return a === b || urlResolve(a).href === urlResolve(b).href;
+    }
+
     function setBrowserUrlWithFallback(url, replace, state) {
       var oldUrl = $location.url();
       var oldState = $location.$$state;
@@ -31102,7 +32031,7 @@ function $LocationProvider() {
 
 
     // rewrite hashbang url <> html5 url
-    if (trimEmptyHash($location.absUrl()) !== trimEmptyHash(initialUrl)) {
+    if ($location.absUrl() !== initialUrl) {
       $browser.url($location.absUrl(), true);
     }
 
@@ -31121,7 +32050,6 @@ function $LocationProvider() {
         var oldUrl = $location.absUrl();
         var oldState = $location.$$state;
         var defaultPrevented;
-        newUrl = trimEmptyHash(newUrl);
         $location.$$parse(newUrl);
         $location.$$state = newState;
 
@@ -31149,11 +32077,11 @@ function $LocationProvider() {
       if (initializing || $location.$$urlUpdatedByLocation) {
         $location.$$urlUpdatedByLocation = false;
 
-        var oldUrl = trimEmptyHash($browser.url());
-        var newUrl = trimEmptyHash($location.absUrl());
+        var oldUrl = $browser.url();
+        var newUrl = $location.absUrl();
         var oldState = $browser.state();
         var currentReplace = $location.$$replace;
-        var urlOrStateChanged = oldUrl !== newUrl ||
+        var urlOrStateChanged = !urlsEqual(oldUrl, newUrl) ||
           ($location.$$html5 && $sniffer.history && oldState !== $location.$$state);
 
         if (initializing || urlOrStateChanged) {
@@ -35222,7 +36150,7 @@ function $RootScopeProvider() {
             if (asyncQueue.length) {
               $rootScope.$digest();
             }
-          });
+          }, null, '$evalAsync');
         }
 
         asyncQueue.push({scope: this, fn: $parse(expr), locals: locals});
@@ -35593,7 +36521,7 @@ function $RootScopeProvider() {
       if (applyAsyncId === null) {
         applyAsyncId = $browser.defer(function() {
           $rootScope.$apply(flushApplyAsync);
-        });
+        }, null, '$applyAsync');
       }
     }
   }];
@@ -36135,7 +37063,7 @@ function $SceDelegateProvider() {
       // If we get here, then we will either sanitize the value or throw an exception.
       if (type === SCE_CONTEXTS.MEDIA_URL || type === SCE_CONTEXTS.URL) {
         // we attempt to sanitize non-resource URLs
-        return $$sanitizeUri(maybeTrusted, type === SCE_CONTEXTS.MEDIA_URL);
+        return $$sanitizeUri(maybeTrusted.toString(), type === SCE_CONTEXTS.MEDIA_URL);
       } else if (type === SCE_CONTEXTS.RESOURCE_URL) {
         if (isResourceUrlAllowedByPolicy(maybeTrusted)) {
           return maybeTrusted;
@@ -36318,7 +37246,7 @@ function $SceDelegateProvider() {
  * | `$sce.CSS`          | For CSS that's safe to source into the application.  Currently unused.  Feel free to use it in your own directives. |
  * | `$sce.MEDIA_URL`    | For URLs that are safe to render as media. Is automatically converted from string by sanitizing when needed. |
  * | `$sce.URL`          | For URLs that are safe to follow as links. Is automatically converted from string by sanitizing when needed. Note that `$sce.URL` makes a stronger statement about the URL than `$sce.MEDIA_URL` does and therefore contexts requiring values trusted for `$sce.URL` can be used anywhere that values trusted for `$sce.MEDIA_URL` are required.|
- * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` or `$sce.MEDIA_URL` do and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` or `$sce.MEDIA_URL` are required. |
+ * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` or `$sce.MEDIA_URL` do and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` or `$sce.MEDIA_URL` are required. <br><br> The {@link $sceDelegateProvider#resourceUrlWhitelist $sceDelegateProvider#resourceUrlWhitelist()} and {@link $sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider#resourceUrlBlacklist()} can be used to restrict trusted origins for `RESOURCE_URL` |
  * | `$sce.JS`           | For JavaScript that is safe to execute in your application's context.  Currently unused.  Feel free to use it in your own directives. |
  *
  *
@@ -36960,6 +37888,127 @@ function $SnifferProvider() {
   }];
 }
 
+/**
+ * ! This is a private undocumented service !
+ *
+ * @name $$taskTrackerFactory
+ * @description
+ * A function to create `TaskTracker` instances.
+ *
+ * A `TaskTracker` can keep track of pending tasks (grouped by type) and can notify interested
+ * parties when all pending tasks (or tasks of a specific type) have been completed.
+ *
+ * @param {$log} log - A logger instance (such as `$log`). Used to log error during callback
+ *     execution.
+ *
+ * @this
+ */
+function $$TaskTrackerFactoryProvider() {
+  this.$get = valueFn(function(log) { return new TaskTracker(log); });
+}
+
+function TaskTracker(log) {
+  var self = this;
+  var taskCounts = {};
+  var taskCallbacks = [];
+
+  var ALL_TASKS_TYPE = self.ALL_TASKS_TYPE = '$$all$$';
+  var DEFAULT_TASK_TYPE = self.DEFAULT_TASK_TYPE = '$$default$$';
+
+  /**
+   * Execute the specified function and decrement the appropriate `taskCounts` counter.
+   * If the counter reaches 0, all corresponding `taskCallbacks` are executed.
+   *
+   * @param {Function} fn - The function to execute.
+   * @param {string=} [taskType=DEFAULT_TASK_TYPE] - The type of task that is being completed.
+   */
+  self.completeTask = completeTask;
+
+  /**
+   * Increase the task count for the specified task type (or the default task type if non is
+   * specified).
+   *
+   * @param {string=} [taskType=DEFAULT_TASK_TYPE] - The type of task whose count will be increased.
+   */
+  self.incTaskCount = incTaskCount;
+
+  /**
+   * Execute the specified callback when all pending tasks have been completed.
+   *
+   * If there are no pending tasks, the callback is executed immediately. You can optionally limit
+   * the tasks that will be waited for to a specific type, by passing a `taskType`.
+   *
+   * @param {function} callback - The function to call when there are no pending tasks.
+   * @param {string=} [taskType=ALL_TASKS_TYPE] - The type of tasks that will be waited for.
+   */
+  self.notifyWhenNoPendingTasks = notifyWhenNoPendingTasks;
+
+  function completeTask(fn, taskType) {
+    taskType = taskType || DEFAULT_TASK_TYPE;
+
+    try {
+      fn();
+    } finally {
+      decTaskCount(taskType);
+
+      var countForType = taskCounts[taskType];
+      var countForAll = taskCounts[ALL_TASKS_TYPE];
+
+      // If at least one of the queues (`ALL_TASKS_TYPE` or `taskType`) is empty, run callbacks.
+      if (!countForAll || !countForType) {
+        var getNextCallback = !countForAll ? getLastCallback : getLastCallbackForType;
+        var nextCb;
+
+        while ((nextCb = getNextCallback(taskType))) {
+          try {
+            nextCb();
+          } catch (e) {
+            log.error(e);
+          }
+        }
+      }
+    }
+  }
+
+  function decTaskCount(taskType) {
+    taskType = taskType || DEFAULT_TASK_TYPE;
+    if (taskCounts[taskType]) {
+      taskCounts[taskType]--;
+      taskCounts[ALL_TASKS_TYPE]--;
+    }
+  }
+
+  function getLastCallback() {
+    var cbInfo = taskCallbacks.pop();
+    return cbInfo && cbInfo.cb;
+  }
+
+  function getLastCallbackForType(taskType) {
+    for (var i = taskCallbacks.length - 1; i >= 0; --i) {
+      var cbInfo = taskCallbacks[i];
+      if (cbInfo.type === taskType) {
+        taskCallbacks.splice(i, 1);
+        return cbInfo.cb;
+      }
+    }
+  }
+
+  function incTaskCount(taskType) {
+    taskType = taskType || DEFAULT_TASK_TYPE;
+    taskCounts[taskType] = (taskCounts[taskType] || 0) + 1;
+    taskCounts[ALL_TASKS_TYPE] = (taskCounts[ALL_TASKS_TYPE] || 0) + 1;
+  }
+
+  function notifyWhenNoPendingTasks(callback, taskType) {
+    taskType = taskType || ALL_TASKS_TYPE;
+    if (!taskCounts[taskType]) {
+      callback();
+    } else {
+      taskCallbacks.push({type: taskType, cb: callback});
+    }
+  }
+}
+
 var $templateRequestMinErr = minErr('$templateRequest');
 
 /**
@@ -37186,7 +38235,15 @@ function $$TestabilityProvider() {
      * @name $$testability#whenStable
      *
      * @description
-     * Calls the callback when $timeout and $http requests are completed.
+     * Calls the callback when all pending tasks are completed.
+     *
+     * Types of tasks waited for include:
+     * - Pending timeouts (via {@link $timeout}).
+     * - Pending HTTP requests (via {@link $http}).
+     * - In-progress route transitions (via {@link $route}).
+     * - Pending tasks scheduled via {@link $rootScope#$applyAsync}.
+     * - Pending tasks scheduled via {@link $rootScope#$evalAsync}.
+     *   These include tasks scheduled via `$evalAsync()` indirectly (such as {@link $q} promises).
      *
      * @param {function} callback
      */
@@ -37261,7 +38318,7 @@ function $TimeoutProvider() {
         }
 
         if (!skipApply) $rootScope.$apply();
-      }, delay);
+      }, delay, '$timeout');
 
       promise.$$timeoutId = timeoutId;
       deferreds[timeoutId] = deferred;
@@ -40098,6 +41155,7 @@ forEach(['src', 'srcset', 'href'], function(attrName) {
  */
 var nullFormCtrl = {
   $addControl: noop,
+  $getControls: valueFn([]),
   $$renameControl: nullFormRenameControl,
   $removeControl: noop,
   $setValidity: noop,
@@ -40251,6 +41309,30 @@ FormController.prototype = {
     }
 
     control.$$parentForm = this;
+  },
+
+  /**
+   * @ngdoc method
+   * @name form.FormController#$getControls
+   * @returns {Array} the controls that are currently part of this form
+   *
+   * @description
+   * This method returns a **shallow copy** of the controls that are currently part of this form.
+   * The controls can be instances of {@link form.FormController `FormController`}
+   * ({@link ngForm "child-forms"}) and of {@link ngModel.NgModelController `NgModelController`}.
+   * If you need access to the controls of child-forms, you have to call `$getControls()`
+   * recursively on them.
+   * This can be used for example to iterate over all controls to validate them.
+   *
+   * The controls can be accessed normally, but adding to, or removing controls from the array has
+   * no effect on the form. Instead, use {@link form.FormController#$addControl `$addControl()`} and
+   * {@link form.FormController#$removeControl `$removeControl()`} for this use-case.
+   * Likewise, adding a control to, or removing a control from the form is not reflected
+   * in the shallow copy. That means you should get a fresh copy from `$getControls()` every time
+   * you need access to the controls.
+   */
+  $getControls: function() {
+    return shallowCopy(this.$$controls);
   },
 
   // Private API: rename a form control
@@ -41050,6 +42132,10 @@ var inputType = {
     * The timezone to be used to read/write the `Date` instance in the model can be defined using
     * {@link ng.directive:ngModelOptions ngModelOptions}. By default, this is the timezone of the browser.
     *
+    * The format of the displayed time can be adjusted with the
+    * {@link ng.directive:ngModelOptions#ngModelOptions-arguments ngModelOptions} `timeSecondsFormat`
+    * and `timeStripZeroSeconds`.
+    *
     * @param {string} ngModel Assignable AngularJS expression to data-bind to.
     * @param {string=} name Property name of the form under which the control is published.
     * @param {string=} min Sets the `min` validation error key if the value entered is less than `min`.
@@ -41151,7 +42237,12 @@ var inputType = {
    * Invalid `Date` objects (dates whose `getTime()` is `NaN`) will be rendered as an empty string.
    *
    * The timezone to be used to read/write the `Date` instance in the model can be defined using
-   * {@link ng.directive:ngModelOptions ngModelOptions}. By default, this is the timezone of the browser.
+   * {@link ng.directive:ngModelOptions#ngModelOptions-arguments ngModelOptions}. By default,
+   * this is the timezone of the browser.
+   *
+   * The format of the displayed time can be adjusted with the
+   * {@link ng.directive:ngModelOptions#ngModelOptions-arguments ngModelOptions} `timeSecondsFormat`
+   * and `timeStripZeroSeconds`.
    *
    * @param {string} ngModel Assignable AngularJS expression to data-bind to.
    * @param {string=} name Property name of the form under which the control is published.
@@ -41465,7 +42556,11 @@ var inputType = {
    * error docs for more information and an example of how to convert your model if necessary.
    * </div>
    *
-   * ## Issues with HTML5 constraint validation
+   *
+   *
+   * @knownIssue
+   *
+   * ### HTML5 constraint validation and `allowInvalid`
    *
    * In browsers that follow the
    * [HTML5 specification](https://html.spec.whatwg.org/multipage/forms.html#number-state-%28type=number%29),
@@ -41474,6 +42569,17 @@ var inputType = {
    * which means the view / model values in `ngModel` and subsequently the scope value
    * will also be an empty string.
    *
+   * @knownIssue
+   *
+   * ### Large numbers and `step` validation
+   *
+   * The `step` validation will not work correctly for very large numbers (e.g. 9999999999) due to
+   * Javascript's arithmetic limitations. If you need to handle large numbers, purpose-built
+   * libraries (e.g. https://github.com/MikeMcl/big.js/), can be included into AngularJS by
+   * {@link guide/forms#modifying-built-in-validators overwriting the validators}
+   * for `number` and / or `step`, or by {@link guide/forms#custom-validation applying custom validators}
+   * to an `input[text]` element. The source for `input[number]` type can be used as a starting
+   * point for both implementations.
    *
    * @param {string} ngModel Assignable AngularJS expression to data-bind to.
    * @param {string=} name Property name of the form under which the control is published.
@@ -42271,6 +43377,8 @@ function createDateInputType(type, regexp, parseDate, format) {
   return function dynamicDateInputType(scope, element, attr, ctrl, $sniffer, $browser, $filter) {
     badInputChecker(scope, element, attr, ctrl, type);
     baseInputType(scope, element, attr, ctrl, $sniffer, $browser);
+
+    var isTimeType = type === 'time' || type === 'datetimelocal';
     var previousDate;
     var previousTimezone;
 
@@ -42294,11 +43402,13 @@ function createDateInputType(type, regexp, parseDate, format) {
       if (isValidDate(value)) {
         previousDate = value;
         var timezone = ctrl.$options.getOption('timezone');
+
         if (timezone) {
           previousTimezone = timezone;
           previousDate = convertTimezoneToLocal(previousDate, timezone, true);
         }
-        return $filter('date')(value, format, timezone);
+
+        return formatter(value, timezone);
       } else {
         previousDate = null;
         previousTimezone = null;
@@ -42352,6 +43462,24 @@ function createDateInputType(type, regexp, parseDate, format) {
         parsedDate = convertTimezoneToLocal(parsedDate, timezone);
       }
       return parsedDate;
+    }
+
+    function formatter(value, timezone) {
+      var targetFormat = format;
+
+      if (isTimeType && isString(ctrl.$options.getOption('timeSecondsFormat'))) {
+        targetFormat = format
+          .replace('ss.sss', ctrl.$options.getOption('timeSecondsFormat'))
+          .replace(/:$/, '');
+      }
+
+      var formatted =  $filter('date')(value, targetFormat, timezone);
+
+      if (isTimeType && ctrl.$options.getOption('timeStripZeroSeconds')) {
+        formatted = formatted.replace(/(?::00)?(?:\.000)?$/, '');
+      }
+
+      return formatted;
     }
   };
 }
@@ -43446,6 +44574,8 @@ function classDirective(name, selector) {
   }
 
   function toClassString(classValue) {
+    if (!classValue) return classValue;
+
     var classString = classValue;
 
     if (isArray(classValue)) {
@@ -43454,6 +44584,8 @@ function classDirective(name, selector) {
       classString = Object.keys(classValue).
         filter(function(key) { return classValue[key]; }).
         join(' ');
+    } else if (!isString(classValue)) {
+      classString = classValue + '';
     }
 
     return classString;
@@ -43499,6 +44631,7 @@ function classDirective(name, selector) {
  * |----------------------------------|-------------------------------------|
  * | {@link ng.$animate#addClass addClass}       | just before the class is applied to the element   |
  * | {@link ng.$animate#removeClass removeClass} | just before the class is removed from the element |
+ * | {@link ng.$animate#setClass setClass} | just before classes are added and classes are removed from the element at the same time |
  *
  * ### ngClass and pre-existing CSS3 Transitions/Animations
    The ngClass directive still supports CSS3 Transitions/Animations even if they do not follow the ngAnimate CSS naming structure.
@@ -44417,32 +45550,43 @@ forEach(
   'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
   function(eventName) {
     var directiveName = directiveNormalize('ng-' + eventName);
-    ngEventDirectives[directiveName] = ['$parse', '$rootScope', function($parse, $rootScope) {
-      return {
-        restrict: 'A',
-        compile: function($element, attr) {
-          // NOTE:
-          // We expose the powerful `$event` object on the scope that provides access to the Window,
-          // etc. This is OK, because expressions are not sandboxed any more (and the expression
-          // sandbox was never meant to be a security feature anyway).
-          var fn = $parse(attr[directiveName]);
-          return function ngEventHandler(scope, element) {
-            element.on(eventName, function(event) {
-              var callback = function() {
-                fn(scope, {$event: event});
-              };
-              if (forceAsyncEvents[eventName] && $rootScope.$$phase) {
-                scope.$evalAsync(callback);
-              } else {
-                scope.$apply(callback);
-              }
-            });
-          };
-        }
-      };
+    ngEventDirectives[directiveName] = ['$parse', '$rootScope', '$exceptionHandler', function($parse, $rootScope, $exceptionHandler) {
+      return createEventDirective($parse, $rootScope, $exceptionHandler, directiveName, eventName, forceAsyncEvents[eventName]);
     }];
   }
 );
+
+function createEventDirective($parse, $rootScope, $exceptionHandler, directiveName, eventName, forceAsync) {
+  return {
+    restrict: 'A',
+    compile: function($element, attr) {
+      // NOTE:
+      // We expose the powerful `$event` object on the scope that provides access to the Window,
+      // etc. This is OK, because expressions are not sandboxed any more (and the expression
+      // sandbox was never meant to be a security feature anyway).
+      var fn = $parse(attr[directiveName]);
+      return function ngEventHandler(scope, element) {
+        element.on(eventName, function(event) {
+          var callback = function() {
+            fn(scope, {$event: event});
+          };
+
+          if (!$rootScope.$$phase) {
+            scope.$apply(callback);
+          } else if (forceAsync) {
+            scope.$evalAsync(callback);
+          } else {
+            try {
+              callback();
+            } catch (error) {
+              $exceptionHandler(error);
+            }
+          }
+        });
+      };
+    }
+  };
+}
 
 /**
  * @ngdoc directive
@@ -45791,6 +46935,7 @@ function NgModelController($scope, $exceptionHandler, $attr, $element, $parse, $
   this.$$currentValidationRunId = 0;
 
   this.$$scope = $scope;
+  this.$$rootScope = $scope.$root;
   this.$$attr = $attr;
   this.$$element = $element;
   this.$$animate = $animate;
@@ -46368,7 +47513,7 @@ NgModelController.prototype = {
       this.$$pendingDebounce = this.$$timeout(function() {
         that.$commitViewValue();
       }, debounceDelay);
-    } else if (this.$$scope.$root.$$phase) {
+    } else if (this.$$rootScope.$$phase) {
       this.$commitViewValue();
     } else {
       this.$$scope.$apply(function() {
@@ -46924,7 +48069,7 @@ ModelOptions.prototype = {
     options = extend({}, options);
 
     // Inherit options from the parent if specified by the value `"$inherit"`
-    forEach(options, /* @this */ function(option, key) {
+    forEach(options, /** @this */ function(option, key) {
       if (option === '$inherit') {
         if (key === '*') {
           inheritAll = true;
@@ -47289,12 +48434,6 @@ defaultModelOptions = new ModelOptions({
  * </example>
  *
  *
- * ## Specifying timezones
- *
- * You can specify the timezone that date/time input directives expect by providing its name in the
- * `timezone` property.
- *
- *
  * ## Programmatically changing options
  *
  * The `ngModelOptions` expression is only evaluated once when the directive is linked; it is not
@@ -47306,8 +48445,70 @@ defaultModelOptions = new ModelOptions({
  * Default events, extra triggers, and catch-all debounce values}.
  *
  *
+ * ## Specifying timezones
+ *
+ * You can specify the timezone that date/time input directives expect by providing its name in the
+ * `timezone` property.
+ *
+ *
+ * ## Formatting the value of `time` and `datetime-local`
+ *
+ * With the options `timeSecondsFormat` and `timeStripZeroSeconds` it is possible to adjust the value
+ * that is displayed in the control. Note that browsers may apply their own formatting
+ * in the user interface.
+ *
+   <example name="ngModelOptions-time-format" module="timeExample">
+     <file name="index.html">
+       <time-example></time-example>
+     </file>
+     <file name="script.js">
+        angular.module('timeExample', [])
+          .component('timeExample', {
+            templateUrl: 'timeExample.html',
+            controller: function() {
+              this.time = new Date(1970, 0, 1, 14, 57, 0);
+
+              this.options = {
+                timeSecondsFormat: 'ss',
+                timeStripZeroSeconds: true
+              };
+
+              this.optionChange = function() {
+                this.timeForm.timeFormatted.$overrideModelOptions(this.options);
+                this.time = new Date(this.time);
+              };
+            }
+          });
+     </file>
+     <file name="timeExample.html">
+       <form name="$ctrl.timeForm">
+         <strong>Default</strong>:
+         <input type="time" ng-model="$ctrl.time" step="any" /><br>
+         <strong>With options</strong>:
+         <input type="time" name="timeFormatted" ng-model="$ctrl.time" step="any" ng-model-options="$ctrl.options" />
+         <br>
+
+         Options:<br>
+         <code>timeSecondsFormat</code>:
+         <input
+           type="text"
+           ng-model="$ctrl.options.timeSecondsFormat"
+           ng-change="$ctrl.optionChange()">
+         <br>
+         <code>timeStripZeroSeconds</code>:
+         <input
+           type="checkbox"
+           ng-model="$ctrl.options.timeStripZeroSeconds"
+           ng-change="$ctrl.optionChange()">
+        </form>
+      </file>
+ *  </example>
+ *
  * @param {Object} ngModelOptions options to apply to {@link ngModel} directives on this element and
- *   and its descendents. Valid keys are:
+ *   and its descendents.
+ *
+ * **General options**:
+ *
  *   - `updateOn`: string specifying which event should the input be bound to. You can set several
  *     events using an space delimited list. There is a special event called `default` that
  *     matches the default events belonging to the control. These are the events that are bound to
@@ -47340,6 +48541,10 @@ defaultModelOptions = new ModelOptions({
  *     not validate correctly instead of the default behavior of setting the model to undefined.
  *   - `getterSetter`: boolean value which determines whether or not to treat functions bound to
  *     `ngModel` as getters/setters.
+ *
+ *
+ *  **Input-type specific options**:
+ *
  *   - `timezone`: Defines the timezone to be used to read/write the `Date` instance in the model for
  *     `<input type="date" />`, `<input type="time" />`, ... . It understands UTC/GMT and the
  *     continental US time zone abbreviations, but for general use, use a time zone offset, for
@@ -47347,6 +48552,24 @@ defaultModelOptions = new ModelOptions({
  *     If not specified, the timezone of the browser will be used.
  *     Note that changing the timezone will have no effect on the current date, and is only applied after
  *     the next input / model change.
+ *
+ *   - `timeSecondsFormat`: Defines if the `time` and `datetime-local` types should show seconds and
+ *     milliseconds. The option follows the format string of {@link date date filter}.
+ *     By default, the options is `undefined` which is equal to `'ss.sss'` (seconds and milliseconds).
+ *     The other options are `'ss'` (strips milliseconds), and `''` (empty string), which strips both
+ *     seconds and milliseconds.
+ *     Note that browsers that support `time` and `datetime-local` require the hour and minutes
+ *     part of the time string, and may show the value differently in the user interface.
+ *     {@link ngModelOptions#formatting-the-value-of-time-and-datetime-local- See the example}.
+ *
+ *   - `timeStripZeroSeconds`: Defines if the `time` and `datetime-local` types should strip the
+ *     seconds and milliseconds from the formatted value if they are zero. This option is applied
+ *     after `timeSecondsFormat`.
+ *     This option can be used to make the formatting consistent over different browsers, as some
+ *     browsers with support for `time` will natively hide the milliseconds and
+ *     seconds if they are zero, but others won't, and browsers that don't implement these input
+ *     types will always show the full string.
+ *     {@link ngModelOptions#formatting-the-value-of-time-and-datetime-local- See the example}.
  *
  */
 var ngModelOptionsDirective = function() {
@@ -48372,6 +49595,301 @@ var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function($locale,
   };
 }];
 
+/**
+ * @ngdoc directive
+ * @name ngRef
+ * @restrict A
+ *
+ * @description
+ * The `ngRef` attribute tells AngularJS to assign the controller of a component (or a directive)
+ * to the given property in the current scope. It is also possible to add the jqlite-wrapped DOM
+ * element to the scope.
+ *
+ * If the element with `ngRef` is destroyed `null` is assigned to the property.
+ *
+ * Note that if you want to assign from a child into the parent scope, you must initialize the
+ * target property on the parent scope, otherwise `ngRef` will assign on the child scope.
+ * This commonly happens when assigning elements or components wrapped in {@link ngIf} or
+ * {@link ngRepeat}. See the second example below.
+ *
+ *
+ * @element ANY
+ * @param {string} ngRef property name - A valid AngularJS expression identifier to which the
+ *                       controller or jqlite-wrapped DOM element will be bound.
+ * @param {string=} ngRefRead read value - The name of a directive (or component) on this element,
+ *                            or the special string `$element`. If a name is provided, `ngRef` will
+ *                            assign the matching controller. If `$element` is provided, the element
+ *                            itself is assigned (even if a controller is available).
+ *
+ *
+ * @example
+ * ### Simple toggle
+ * This example shows how the controller of the component toggle
+ * is reused in the template through the scope to use its logic.
+ * <example name="ng-ref-component" module="myApp">
+ *   <file name="index.html">
+ *     <my-toggle ng-ref="myToggle"></my-toggle>
+ *     <button ng-click="myToggle.toggle()">Toggle</button>
+ *     <div ng-show="myToggle.isOpen()">
+ *       You are using a component in the same template to show it.
+ *     </div>
+ *   </file>
+ *   <file name="index.js">
+ *     angular.module('myApp', [])
+ *     .component('myToggle', {
+ *       controller: function ToggleController() {
+ *         var opened = false;
+ *         this.isOpen = function() { return opened; };
+ *         this.toggle = function() { opened = !opened; };
+ *       }
+ *     });
+ *   </file>
+ *   <file name="protractor.js" type="protractor">
+ *      it('should publish the toggle into the scope', function() {
+ *        var toggle = element(by.buttonText('Toggle'));
+ *        expect(toggle.evaluate('myToggle.isOpen()')).toEqual(false);
+ *        toggle.click();
+ *        expect(toggle.evaluate('myToggle.isOpen()')).toEqual(true);
+ *      });
+ *   </file>
+ * </example>
+ *
+ * @example
+ * ### ngRef inside scopes
+ * This example shows how `ngRef` works with child scopes. The `ngRepeat`-ed `myWrapper` components
+ * are assigned to the scope of `myRoot`, because the `toggles` property has been initialized.
+ * The repeated `myToggle` components are published to the child scopes created by `ngRepeat`.
+ * `ngIf` behaves similarly - the assignment of `myToggle` happens in the `ngIf` child scope,
+ * because the target property has not been initialized on the `myRoot` component controller.
+ *
+ * <example name="ng-ref-scopes" module="myApp">
+ *   <file name="index.html">
+ *     <my-root></my-root>
+ *   </file>
+ *   <file name="index.js">
+ *     angular.module('myApp', [])
+ *     .component('myRoot', {
+ *       templateUrl: 'root.html',
+ *       controller: function() {
+ *         this.wrappers = []; // initialize the array so that the wrappers are assigned into the parent scope
+ *       }
+ *     })
+ *     .component('myToggle', {
+ *       template: '<strong>myToggle</strong><button ng-click="$ctrl.toggle()" ng-transclude></button>',
+ *       transclude: true,
+ *       controller: function ToggleController() {
+ *         var opened = false;
+ *         this.isOpen = function() { return opened; };
+ *         this.toggle = function() { opened = !opened; };
+ *       }
+ *     })
+ *     .component('myWrapper', {
+ *       transclude: true,
+ *       template: '<strong>myWrapper</strong>' +
+ *         '<div>ngRepeatToggle.isOpen(): {{$ctrl.ngRepeatToggle.isOpen() | json}}</div>' +
+ *         '<my-toggle ng-ref="$ctrl.ngRepeatToggle"><ng-transclude></ng-transclude></my-toggle>'
+ *     });
+ *   </file>
+ *   <file name="root.html">
+ *     <strong>myRoot</strong>
+ *     <my-toggle ng-ref="$ctrl.outerToggle">Outer Toggle</my-toggle>
+ *     <div>outerToggle.isOpen(): {{$ctrl.outerToggle.isOpen() | json}}</div>
+ *     <div><em>wrappers assigned to root</em><br>
+ *     <div ng-repeat="wrapper in $ctrl.wrappers">
+ *       wrapper.ngRepeatToggle.isOpen(): {{wrapper.ngRepeatToggle.isOpen() | json}}
+ *     </div>
+ *
+ *     <ul>
+ *       <li ng-repeat="(index, value) in [1,2,3]">
+ *         <strong>ngRepeat</strong>
+ *         <div>outerToggle.isOpen(): {{$ctrl.outerToggle.isOpen() | json}}</div>
+ *         <my-wrapper ng-ref="$ctrl.wrappers[index]">ngRepeat Toggle {{$index + 1}}</my-wrapper>
+ *       </li>
+ *     </ul>
+ *
+ *     <div>ngIfToggle.isOpen(): {{ngIfToggle.isOpen()}} // This is always undefined because it's
+ *       assigned to the child scope created by ngIf.
+ *     </div>
+ *     <div ng-if="true">
+          <strong>ngIf</strong>
+ *        <my-toggle ng-ref="ngIfToggle">ngIf Toggle</my-toggle>
+ *        <div>ngIfToggle.isOpen(): {{ngIfToggle.isOpen() | json}}</div>
+ *        <div>outerToggle.isOpen(): {{$ctrl.outerToggle.isOpen() | json}}</div>
+ *     </div>
+ *   </file>
+ *   <file name="styles.css">
+ *     ul {
+ *       list-style: none;
+ *       padding-left: 0;
+ *     }
+ *
+ *     li[ng-repeat] {
+ *       background: lightgreen;
+ *       padding: 8px;
+ *       margin: 8px;
+ *     }
+ *
+ *     [ng-if] {
+ *       background: lightgrey;
+ *       padding: 8px;
+ *     }
+ *
+ *     my-root {
+ *       background: lightgoldenrodyellow;
+ *       padding: 8px;
+ *       display: block;
+ *     }
+ *
+ *     my-wrapper {
+ *       background: lightsalmon;
+ *       padding: 8px;
+ *       display: block;
+ *     }
+ *
+ *     my-toggle {
+ *       background: lightblue;
+ *       padding: 8px;
+ *       display: block;
+ *     }
+ *   </file>
+ *   <file name="protractor.js" type="protractor">
+ *      var OuterToggle = function() {
+ *        this.toggle = function() {
+ *          element(by.buttonText('Outer Toggle')).click();
+ *        };
+ *        this.isOpen = function() {
+ *          return element.all(by.binding('outerToggle.isOpen()')).first().getText();
+ *        };
+ *      };
+ *      var NgRepeatToggle = function(i) {
+ *        var parent = element.all(by.repeater('(index, value) in [1,2,3]')).get(i - 1);
+ *        this.toggle = function() {
+ *          element(by.buttonText('ngRepeat Toggle ' + i)).click();
+ *        };
+ *        this.isOpen = function() {
+ *          return parent.element(by.binding('ngRepeatToggle.isOpen() | json')).getText();
+ *        };
+ *        this.isOuterOpen = function() {
+ *          return parent.element(by.binding('outerToggle.isOpen() | json')).getText();
+ *        };
+ *      };
+ *      var NgRepeatToggles = function() {
+ *        var toggles = [1,2,3].map(function(i) { return new NgRepeatToggle(i); });
+ *        this.forEach = function(fn) {
+ *          toggles.forEach(fn);
+ *        };
+ *        this.isOuterOpen = function(i) {
+ *          return toggles[i - 1].isOuterOpen();
+ *        };
+ *      };
+ *      var NgIfToggle = function() {
+ *        var parent = element(by.css('[ng-if]'));
+ *        this.toggle = function() {
+ *          element(by.buttonText('ngIf Toggle')).click();
+ *        };
+ *        this.isOpen = function() {
+ *          return by.binding('ngIfToggle.isOpen() | json').getText();
+ *        };
+ *        this.isOuterOpen = function() {
+ *          return parent.element(by.binding('outerToggle.isOpen() | json')).getText();
+ *        };
+ *      };
+ *
+ *      it('should toggle the outer toggle', function() {
+ *        var outerToggle = new OuterToggle();
+ *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): false');
+ *        outerToggle.toggle();
+ *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): true');
+ *      });
+ *
+ *      it('should toggle all outer toggles', function() {
+ *        var outerToggle = new OuterToggle();
+ *        var repeatToggles = new NgRepeatToggles();
+ *        var ifToggle = new NgIfToggle();
+ *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): false');
+ *        expect(repeatToggles.isOuterOpen(1)).toEqual('outerToggle.isOpen(): false');
+ *        expect(repeatToggles.isOuterOpen(2)).toEqual('outerToggle.isOpen(): false');
+ *        expect(repeatToggles.isOuterOpen(3)).toEqual('outerToggle.isOpen(): false');
+ *        expect(ifToggle.isOuterOpen()).toEqual('outerToggle.isOpen(): false');
+ *        outerToggle.toggle();
+ *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): true');
+ *        expect(repeatToggles.isOuterOpen(1)).toEqual('outerToggle.isOpen(): true');
+ *        expect(repeatToggles.isOuterOpen(2)).toEqual('outerToggle.isOpen(): true');
+ *        expect(repeatToggles.isOuterOpen(3)).toEqual('outerToggle.isOpen(): true');
+ *        expect(ifToggle.isOuterOpen()).toEqual('outerToggle.isOpen(): true');
+ *      });
+ *
+ *      it('should toggle each repeat iteration separately', function() {
+ *        var repeatToggles = new NgRepeatToggles();
+ *
+ *        repeatToggles.forEach(function(repeatToggle) {
+ *          expect(repeatToggle.isOpen()).toEqual('ngRepeatToggle.isOpen(): false');
+ *          expect(repeatToggle.isOuterOpen()).toEqual('outerToggle.isOpen(): false');
+ *          repeatToggle.toggle();
+ *          expect(repeatToggle.isOpen()).toEqual('ngRepeatToggle.isOpen(): true');
+ *          expect(repeatToggle.isOuterOpen()).toEqual('outerToggle.isOpen(): false');
+ *        });
+ *      });
+ *   </file>
+ * </example>
+ *
+ */
+
+var ngRefMinErr = minErr('ngRef');
+
+var ngRefDirective = ['$parse', function($parse) {
+  return {
+    priority: -1, // Needed for compatibility with element transclusion on the same element
+    restrict: 'A',
+    compile: function(tElement, tAttrs) {
+      // Get the expected controller name, converts <data-some-thing> into "someThing"
+      var controllerName = directiveNormalize(nodeName_(tElement));
+
+      // Get the expression for value binding
+      var getter = $parse(tAttrs.ngRef);
+      var setter = getter.assign || function() {
+        throw ngRefMinErr('nonassign', 'Expression in ngRef="{0}" is non-assignable!', tAttrs.ngRef);
+      };
+
+      return function(scope, element, attrs) {
+        var refValue;
+
+        if (attrs.hasOwnProperty('ngRefRead')) {
+          if (attrs.ngRefRead === '$element') {
+            refValue = element;
+          } else {
+            refValue = element.data('$' + attrs.ngRefRead + 'Controller');
+
+            if (!refValue) {
+              throw ngRefMinErr(
+                'noctrl',
+                'The controller for ngRefRead="{0}" could not be found on ngRef="{1}"',
+                attrs.ngRefRead,
+                tAttrs.ngRef
+              );
+            }
+          }
+        } else {
+          refValue = element.data('$' + controllerName + 'Controller');
+        }
+
+        refValue = refValue || element;
+
+        setter(scope, refValue);
+
+        // when the element is removed, remove it (nullify it)
+        element.on('$destroy', function() {
+          // only remove it if value has not changed,
+          // because animations (and other procedures) may duplicate elements
+          if (getter(scope) === refValue) {
+            setter(scope, null);
+          }
+        });
+      };
+    }
+  };
+}];
+
 /* exported ngRepeatDirective */
 
 /**
@@ -48446,7 +49964,7 @@ var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function($locale,
  * For example, if an item is added to the collection, `ngRepeat` will know that all other items
  * already have DOM elements, and will not re-render them.
  *
- * All different types of tracking functions, their syntax, and and their support for duplicate
+ * All different types of tracking functions, their syntax, and their support for duplicate
  * items in collections can be found in the
  * {@link ngRepeat#ngRepeat-arguments ngRepeat expression description}.
  *
@@ -50407,7 +51925,7 @@ var SelectController =
 
     if (optionAttrs.$attr.ngValue) {
       // The value attribute is set by ngValue
-      var oldVal, hashedVal = NaN;
+      var oldVal, hashedVal;
       optionAttrs.$observe('value', function valueAttributeObserveAction(newVal) {
 
         var removal;
@@ -50579,18 +52097,6 @@ var SelectController =
  * @param {string=} ngAttrSize sets the size of the select element dynamically. Uses the
  * {@link guide/interpolation#-ngattr-for-binding-to-arbitrary-attributes ngAttr} directive.
  *
- *
- * @knownIssue
- *
- * In Firefox, the select model is only updated when the select element is blurred. For example,
- * when switching between options with the keyboard, the select model is only set to the
- * currently selected option when the select is blurred, e.g via tab key or clicking the mouse
- * outside the select.
- *
- * This is due to an ambiguity in the select element specification. See the
- * [issue on the Firefox bug tracker](https://bugzilla.mozilla.org/show_bug.cgi?id=126379)
- * for more information, and this
- * [Github comment for a workaround](https://github.com/angular/angular.js/issues/9134#issuecomment-130800488)
  *
  * @example
  * ### Simple `select` elements with static options
@@ -51469,11 +52975,11 @@ $provide.value("$locale", {
 })(window);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":25}],27:[function(require,module,exports){
+},{"./angular":28}],30:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -51626,7 +53132,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -53364,7 +54870,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":27,"ieee754":207}],29:[function(require,module,exports){
+},{"base64-js":30,"ieee754":210}],32:[function(require,module,exports){
 /*
 Syntax highlighting with language autodetection.
 https://highlightjs.org/
@@ -54182,7 +55688,7 @@ https://highlightjs.org/
   return hljs;
 }));
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var hljs = require('./highlight');
 
 hljs.registerLanguage('1c', require('./languages/1c'));
@@ -54363,7 +55869,7 @@ hljs.registerLanguage('xquery', require('./languages/xquery'));
 hljs.registerLanguage('zephir', require('./languages/zephir'));
 
 module.exports = hljs;
-},{"./highlight":29,"./languages/1c":31,"./languages/abnf":32,"./languages/accesslog":33,"./languages/actionscript":34,"./languages/ada":35,"./languages/apache":36,"./languages/applescript":37,"./languages/arduino":38,"./languages/armasm":39,"./languages/asciidoc":40,"./languages/aspectj":41,"./languages/autohotkey":42,"./languages/autoit":43,"./languages/avrasm":44,"./languages/awk":45,"./languages/axapta":46,"./languages/bash":47,"./languages/basic":48,"./languages/bnf":49,"./languages/brainfuck":50,"./languages/cal":51,"./languages/capnproto":52,"./languages/ceylon":53,"./languages/clean":54,"./languages/clojure":56,"./languages/clojure-repl":55,"./languages/cmake":57,"./languages/coffeescript":58,"./languages/coq":59,"./languages/cos":60,"./languages/cpp":61,"./languages/crmsh":62,"./languages/crystal":63,"./languages/cs":64,"./languages/csp":65,"./languages/css":66,"./languages/d":67,"./languages/dart":68,"./languages/delphi":69,"./languages/diff":70,"./languages/django":71,"./languages/dns":72,"./languages/dockerfile":73,"./languages/dos":74,"./languages/dsconfig":75,"./languages/dts":76,"./languages/dust":77,"./languages/ebnf":78,"./languages/elixir":79,"./languages/elm":80,"./languages/erb":81,"./languages/erlang":83,"./languages/erlang-repl":82,"./languages/excel":84,"./languages/fix":85,"./languages/flix":86,"./languages/fortran":87,"./languages/fsharp":88,"./languages/gams":89,"./languages/gauss":90,"./languages/gcode":91,"./languages/gherkin":92,"./languages/glsl":93,"./languages/go":94,"./languages/golo":95,"./languages/gradle":96,"./languages/groovy":97,"./languages/haml":98,"./languages/handlebars":99,"./languages/haskell":100,"./languages/haxe":101,"./languages/hsp":102,"./languages/htmlbars":103,"./languages/http":104,"./languages/hy":105,"./languages/inform7":106,"./languages/ini":107,"./languages/irpf90":108,"./languages/java":109,"./languages/javascript":110,"./languages/jboss-cli":111,"./languages/json":112,"./languages/julia":114,"./languages/julia-repl":113,"./languages/kotlin":115,"./languages/lasso":116,"./languages/ldif":117,"./languages/leaf":118,"./languages/less":119,"./languages/lisp":120,"./languages/livecodeserver":121,"./languages/livescript":122,"./languages/llvm":123,"./languages/lsl":124,"./languages/lua":125,"./languages/makefile":126,"./languages/markdown":127,"./languages/mathematica":128,"./languages/matlab":129,"./languages/maxima":130,"./languages/mel":131,"./languages/mercury":132,"./languages/mipsasm":133,"./languages/mizar":134,"./languages/mojolicious":135,"./languages/monkey":136,"./languages/moonscript":137,"./languages/n1ql":138,"./languages/nginx":139,"./languages/nimrod":140,"./languages/nix":141,"./languages/nsis":142,"./languages/objectivec":143,"./languages/ocaml":144,"./languages/openscad":145,"./languages/oxygene":146,"./languages/parser3":147,"./languages/perl":148,"./languages/pf":149,"./languages/php":150,"./languages/pony":151,"./languages/powershell":152,"./languages/processing":153,"./languages/profile":154,"./languages/prolog":155,"./languages/protobuf":156,"./languages/puppet":157,"./languages/purebasic":158,"./languages/python":159,"./languages/q":160,"./languages/qml":161,"./languages/r":162,"./languages/rib":163,"./languages/roboconf":164,"./languages/routeros":165,"./languages/rsl":166,"./languages/ruby":167,"./languages/ruleslanguage":168,"./languages/rust":169,"./languages/scala":170,"./languages/scheme":171,"./languages/scilab":172,"./languages/scss":173,"./languages/shell":174,"./languages/smali":175,"./languages/smalltalk":176,"./languages/sml":177,"./languages/sqf":178,"./languages/sql":179,"./languages/stan":180,"./languages/stata":181,"./languages/step21":182,"./languages/stylus":183,"./languages/subunit":184,"./languages/swift":185,"./languages/taggerscript":186,"./languages/tap":187,"./languages/tcl":188,"./languages/tex":189,"./languages/thrift":190,"./languages/tp":191,"./languages/twig":192,"./languages/typescript":193,"./languages/vala":194,"./languages/vbnet":195,"./languages/vbscript":197,"./languages/vbscript-html":196,"./languages/verilog":198,"./languages/vhdl":199,"./languages/vim":200,"./languages/x86asm":201,"./languages/xl":202,"./languages/xml":203,"./languages/xquery":204,"./languages/yaml":205,"./languages/zephir":206}],31:[function(require,module,exports){
+},{"./highlight":32,"./languages/1c":34,"./languages/abnf":35,"./languages/accesslog":36,"./languages/actionscript":37,"./languages/ada":38,"./languages/apache":39,"./languages/applescript":40,"./languages/arduino":41,"./languages/armasm":42,"./languages/asciidoc":43,"./languages/aspectj":44,"./languages/autohotkey":45,"./languages/autoit":46,"./languages/avrasm":47,"./languages/awk":48,"./languages/axapta":49,"./languages/bash":50,"./languages/basic":51,"./languages/bnf":52,"./languages/brainfuck":53,"./languages/cal":54,"./languages/capnproto":55,"./languages/ceylon":56,"./languages/clean":57,"./languages/clojure":59,"./languages/clojure-repl":58,"./languages/cmake":60,"./languages/coffeescript":61,"./languages/coq":62,"./languages/cos":63,"./languages/cpp":64,"./languages/crmsh":65,"./languages/crystal":66,"./languages/cs":67,"./languages/csp":68,"./languages/css":69,"./languages/d":70,"./languages/dart":71,"./languages/delphi":72,"./languages/diff":73,"./languages/django":74,"./languages/dns":75,"./languages/dockerfile":76,"./languages/dos":77,"./languages/dsconfig":78,"./languages/dts":79,"./languages/dust":80,"./languages/ebnf":81,"./languages/elixir":82,"./languages/elm":83,"./languages/erb":84,"./languages/erlang":86,"./languages/erlang-repl":85,"./languages/excel":87,"./languages/fix":88,"./languages/flix":89,"./languages/fortran":90,"./languages/fsharp":91,"./languages/gams":92,"./languages/gauss":93,"./languages/gcode":94,"./languages/gherkin":95,"./languages/glsl":96,"./languages/go":97,"./languages/golo":98,"./languages/gradle":99,"./languages/groovy":100,"./languages/haml":101,"./languages/handlebars":102,"./languages/haskell":103,"./languages/haxe":104,"./languages/hsp":105,"./languages/htmlbars":106,"./languages/http":107,"./languages/hy":108,"./languages/inform7":109,"./languages/ini":110,"./languages/irpf90":111,"./languages/java":112,"./languages/javascript":113,"./languages/jboss-cli":114,"./languages/json":115,"./languages/julia":117,"./languages/julia-repl":116,"./languages/kotlin":118,"./languages/lasso":119,"./languages/ldif":120,"./languages/leaf":121,"./languages/less":122,"./languages/lisp":123,"./languages/livecodeserver":124,"./languages/livescript":125,"./languages/llvm":126,"./languages/lsl":127,"./languages/lua":128,"./languages/makefile":129,"./languages/markdown":130,"./languages/mathematica":131,"./languages/matlab":132,"./languages/maxima":133,"./languages/mel":134,"./languages/mercury":135,"./languages/mipsasm":136,"./languages/mizar":137,"./languages/mojolicious":138,"./languages/monkey":139,"./languages/moonscript":140,"./languages/n1ql":141,"./languages/nginx":142,"./languages/nimrod":143,"./languages/nix":144,"./languages/nsis":145,"./languages/objectivec":146,"./languages/ocaml":147,"./languages/openscad":148,"./languages/oxygene":149,"./languages/parser3":150,"./languages/perl":151,"./languages/pf":152,"./languages/php":153,"./languages/pony":154,"./languages/powershell":155,"./languages/processing":156,"./languages/profile":157,"./languages/prolog":158,"./languages/protobuf":159,"./languages/puppet":160,"./languages/purebasic":161,"./languages/python":162,"./languages/q":163,"./languages/qml":164,"./languages/r":165,"./languages/rib":166,"./languages/roboconf":167,"./languages/routeros":168,"./languages/rsl":169,"./languages/ruby":170,"./languages/ruleslanguage":171,"./languages/rust":172,"./languages/scala":173,"./languages/scheme":174,"./languages/scilab":175,"./languages/scss":176,"./languages/shell":177,"./languages/smali":178,"./languages/smalltalk":179,"./languages/sml":180,"./languages/sqf":181,"./languages/sql":182,"./languages/stan":183,"./languages/stata":184,"./languages/step21":185,"./languages/stylus":186,"./languages/subunit":187,"./languages/swift":188,"./languages/taggerscript":189,"./languages/tap":190,"./languages/tcl":191,"./languages/tex":192,"./languages/thrift":193,"./languages/tp":194,"./languages/twig":195,"./languages/typescript":196,"./languages/vala":197,"./languages/vbnet":198,"./languages/vbscript":200,"./languages/vbscript-html":199,"./languages/verilog":201,"./languages/vhdl":202,"./languages/vim":203,"./languages/x86asm":204,"./languages/xl":205,"./languages/xml":206,"./languages/xquery":207,"./languages/yaml":208,"./languages/zephir":209}],34:[function(require,module,exports){
 module.exports = function(hljs){
 
   // общий паттерн для определения идентификаторов
@@ -54873,7 +56379,7 @@ module.exports = function(hljs){
     ]  
   }
 };
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function(hljs) {
     var regexes = {
         ruleDeclaration: "^[a-zA-Z][a-zA-Z0-9-]*",
@@ -54944,7 +56450,7 @@ module.exports = function(hljs) {
       ]
     };
 };
-},{}],33:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -54982,7 +56488,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -55056,7 +56562,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],35:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = // We try to support full Ada2012
 //
 // We highlight all appearances of types, keywords, literals (string, char, number, bool)
@@ -55229,7 +56735,7 @@ function(hljs) {
         ]
     };
 };
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {className: 'number', begin: '[\\$%]\\d+'};
   return {
@@ -55275,7 +56781,7 @@ module.exports = function(hljs) {
     illegal: /\S/
   };
 };
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {illegal: ''});
   var PARAMS = {
@@ -55361,7 +56867,7 @@ module.exports = function(hljs) {
     illegal: '//|->|=>|\\[\\['
   };
 };
-},{}],38:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 	return {
@@ -55461,7 +56967,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],39:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -55553,7 +57059,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['adoc'],
@@ -55741,7 +57247,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],41:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS =
     'false synchronized int abstract float private char boolean static null if const ' +
@@ -55886,7 +57392,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],42:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: '`[\\s\\S]'
@@ -55945,7 +57451,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],43:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = function(hljs) {
     var KEYWORDS = 'ByRef Case Const ContinueCase ContinueLoop ' +
         'Default Dim Do Else ElseIf EndFunc EndIf EndSelect ' +
@@ -56081,7 +57587,7 @@ module.exports = function(hljs) {
         ]
     }
 };
-},{}],44:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -56143,7 +57649,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     className: 'variable',
@@ -56196,7 +57702,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: 'false int abstract private char boolean static null if for true ' +
@@ -56227,7 +57733,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],47:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -56302,7 +57808,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -56353,7 +57859,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],49:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = function(hljs){
   return {
     contains: [
@@ -56382,7 +57888,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],50:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 module.exports = function(hljs){
   var LITERAL = {
     className: 'literal',
@@ -56419,7 +57925,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'div mod in and or not xor asserterror begin case do downto else end exit for if of repeat then to ' +
@@ -56499,7 +58005,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],52:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['capnp'],
@@ -56548,7 +58054,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = function(hljs) {
   // 2.3. Identifiers and keywords
   var KEYWORDS =
@@ -56615,7 +58121,7 @@ module.exports = function(hljs) {
     ].concat(EXPRESSIONS)
   };
 };
-},{}],54:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['clean','icl','dcl'],
@@ -56640,7 +58146,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],55:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -56655,7 +58161,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],56:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports = function(hljs) {
   var keywords = {
     'builtin-name':
@@ -56751,7 +58257,7 @@ module.exports = function(hljs) {
     contains: [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   }
 };
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['cmake.in'],
@@ -56789,7 +58295,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -56935,7 +58441,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],59:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -57002,7 +58508,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 module.exports = function cos (hljs) {
 
   var STRINGS = {
@@ -57126,7 +58632,7 @@ module.exports = function cos (hljs) {
     ]
   };
 };
-},{}],61:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
@@ -57301,7 +58807,7 @@ module.exports = function(hljs) {
     }
   };
 };
-},{}],62:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 module.exports = function(hljs) {
   var RESOURCES = 'primitive rsc_template';
 
@@ -57395,7 +58901,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],63:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUM_SUFFIX = '(_[uif](8|16|32|64))?';
   var CRYSTAL_IDENT_RE = '[a-zA-Z_]\\w*[!?=]?';
@@ -57589,7 +59095,7 @@ module.exports = function(hljs) {
     contains: CRYSTAL_DEFAULT_CONTAINS
   };
 };
-},{}],64:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -57766,7 +59272,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],65:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: false,
@@ -57788,7 +59294,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var RULE = {
@@ -57893,7 +59399,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],67:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 module.exports = /**
  * Known issues:
  *
@@ -58151,7 +59657,7 @@ function(hljs) {
     ]
   };
 };
-},{}],68:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 module.exports = function (hljs) {
   var SUBST = {
     className: 'subst',
@@ -58252,7 +59758,7 @@ module.exports = function (hljs) {
     ]
   }
 };
-},{}],69:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'exports register file shl array record property for mod while set ally label uses raise not ' +
@@ -58321,7 +59827,7 @@ module.exports = function(hljs) {
     ].concat(COMMENT_MODES)
   };
 };
-},{}],70:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['patch'],
@@ -58361,7 +59867,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],71:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module.exports = function(hljs) {
   var FILTER = {
     begin: /\|[A-Za-z]+:?/,
@@ -58425,7 +59931,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],72:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['bind', 'zone'],
@@ -58454,7 +59960,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['docker'],
@@ -58476,7 +59982,7 @@ module.exports = function(hljs) {
     illegal: '</'
   }
 };
-},{}],74:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = hljs.COMMENT(
     /^\s*@?rem\b/, /$/,
@@ -58528,7 +60034,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],75:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = function(hljs) {
   var QUOTED_PROPERTY = {
     className: 'string',
@@ -58575,7 +60081,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],76:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRINGS = {
     className: 'string',
@@ -58699,7 +60205,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],77:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = function(hljs) {
   var EXPRESSION_KEYWORDS = 'if eq ne lt lte gt gte select default math sep';
   return {
@@ -58731,7 +60237,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],78:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module.exports = function(hljs) {
     var commentMode = hljs.COMMENT(/\(\*/, /\*\)/);
 
@@ -58764,7 +60270,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],79:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 module.exports = function(hljs) {
   var ELIXIR_IDENT_RE = '[a-zA-Z_][a-zA-Z0-9_]*(\\!|\\?)?';
   var ELIXIR_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
@@ -58861,7 +60367,7 @@ module.exports = function(hljs) {
     contains: ELIXIR_DEFAULT_CONTAINS
   };
 };
-},{}],80:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -58945,7 +60451,7 @@ module.exports = function(hljs) {
     illegal: /;/
   };
 };
-},{}],81:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -58960,7 +60466,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -59006,7 +60512,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],83:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 module.exports = function(hljs) {
   var BASIC_ATOM_RE = '[a-z\'][a-zA-Z0-9_\']*';
   var FUNCTION_NAME_RE = '(' + BASIC_ATOM_RE + ':' + BASIC_ATOM_RE + '|' + BASIC_ATOM_RE + ')';
@@ -59152,7 +60658,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],84:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['xlsx', 'xls'],
@@ -59200,7 +60706,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],85:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -59229,7 +60735,7 @@ module.exports = function(hljs) {
     case_insensitive: true
   };
 };
-},{}],86:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 module.exports = function (hljs) {
 
     var CHAR = {
@@ -59274,7 +60780,7 @@ module.exports = function (hljs) {
         ]
     };
 };
-},{}],87:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -59345,7 +60851,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],88:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module.exports = function(hljs) {
   var TYPEPARAM = {
     begin: '<', end: '>',
@@ -59404,7 +60910,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],89:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS = {
     'keyword':
@@ -59558,7 +61064,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],90:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword: 'and bool break call callexe checkinterrupt clear clearg closeall cls comlog compile ' +
@@ -59782,7 +61288,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],91:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module.exports = function(hljs) {
     var GCODE_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
     var GCODE_CLOSE_RE = '\\%';
@@ -59849,7 +61355,7 @@ module.exports = function(hljs) {
         ].concat(GCODE_CODE)
     };
 };
-},{}],92:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module.exports = function (hljs) {
   return {
     aliases: ['feature'],
@@ -59886,7 +61392,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],93:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -60003,7 +61509,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],94:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 module.exports = function(hljs) {
   var GO_KEYWORDS = {
     keyword:
@@ -60057,7 +61563,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],95:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 module.exports = function(hljs) {
     return {
       keywords: {
@@ -60080,7 +61586,7 @@ module.exports = function(hljs) {
       ]
     }
 };
-},{}],96:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -60115,7 +61621,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],97:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module.exports = function(hljs) {
     return {
         keywords: {
@@ -60209,7 +61715,7 @@ module.exports = function(hljs) {
         illegal: /#|<\//
     }
 };
-},{}],98:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 module.exports = // TODO support filter tags like :javascript, support inline HTML
 function(hljs) {
   return {
@@ -60316,7 +61822,7 @@ function(hljs) {
     ]
   };
 };
-},{}],99:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = {'builtin-name': 'each in with if else unless bindattr action collection debugger log outlet template unbound view yield'};
   return {
@@ -60350,7 +61856,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],100:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -60472,7 +61978,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],101:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -60584,7 +62090,7 @@ module.exports = function(hljs) {
     illegal: /<\//
   };
 };
-},{}],102:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -60630,7 +62136,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],103:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = 'action collection component concat debugger each each-in else get hash if input link-to loc log mut outlet partial query-params render textarea unbound unless with yield view';
 
@@ -60701,7 +62207,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],104:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module.exports = function(hljs) {
   var VERSION = 'HTTP/[0-9\\.]+';
   return {
@@ -60742,7 +62248,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],105:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 module.exports = function(hljs) {
   var keywords = {
     'builtin-name':
@@ -60844,7 +62350,7 @@ module.exports = function(hljs) {
     contains: [SHEBANG, LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   }
 };
-},{}],106:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 module.exports = function(hljs) {
   var START_BRACKET = '\\[';
   var END_BRACKET = '\\]';
@@ -60901,7 +62407,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],107:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: "string",
@@ -60967,7 +62473,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],108:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -61043,7 +62549,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],109:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module.exports = function(hljs) {
   var JAVA_IDENT_RE = '[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*';
   var GENERIC_IDENT_RE = JAVA_IDENT_RE + '(<' + JAVA_IDENT_RE + '(\\s*,\\s*' + JAVA_IDENT_RE + ')*>)?';
@@ -61151,7 +62657,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],110:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
   var KEYWORDS = {
@@ -61322,7 +62828,7 @@ module.exports = function(hljs) {
     illegal: /#(?!!)/
   };
 };
-},{}],111:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 module.exports = function (hljs) {
   var PARAM = {
     begin: /[\w-]+ *=/, returnBegin: true,
@@ -61369,7 +62875,7 @@ module.exports = function (hljs) {
     ]
   }
 };
-},{}],112:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 module.exports = function(hljs) {
   var LITERALS = {literal: 'true false null'};
   var TYPES = [
@@ -61406,7 +62912,7 @@ module.exports = function(hljs) {
     illegal: '\\S'
   };
 };
-},{}],113:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -61430,7 +62936,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],114:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = function(hljs) {
   // Since there are numerous special names in Julia, it is too much trouble
   // to maintain them by hand. Hence these names (i.e. keywords, literals and
@@ -61592,7 +63098,7 @@ module.exports = function(hljs) {
 
   return DEFAULT;
 };
-},{}],115:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -61766,7 +63272,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],116:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module.exports = function(hljs) {
   var LASSO_IDENT_RE = '[a-zA-Z_][\\w.]*';
   var LASSO_ANGLE_RE = '<\\?(lasso(script)?|=)';
@@ -61929,7 +63435,7 @@ module.exports = function(hljs) {
     ].concat(LASSO_CODE)
   };
 };
-},{}],117:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -61952,7 +63458,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],118:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 module.exports = function (hljs) {
   return {
     contains: [
@@ -61992,7 +63498,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],119:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE        = '[\\w-]+'; // yes, Less identifiers may begin with a digit
   var INTERP_IDENT_RE = '(' + IDENT_RE + '|@{' + IDENT_RE + '})';
@@ -62132,7 +63638,7 @@ module.exports = function(hljs) {
     contains: RULES
   };
 };
-},{}],120:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 module.exports = function(hljs) {
   var LISP_IDENT_RE = '[a-zA-Z_\\-\\+\\*\\/\\<\\=\\>\\&\\#][a-zA-Z0-9_\\-\\+\\*\\/\\<\\=\\>\\&\\#!]*';
   var MEC_RE = '\\|[^]*?\\|';
@@ -62235,7 +63741,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],121:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\b[gtps][A-Z]+[A-Za-z0-9_\\-]*\\b|\\$_[A-Z]+',
@@ -62392,7 +63898,7 @@ module.exports = function(hljs) {
     illegal: ';$|^\\[|^=|&|{'
   };
 };
-},{}],122:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -62541,7 +64047,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],123:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module.exports = function(hljs) {
   var identifier = '([-a-zA-Z$._][\\w\\-$.]*)';
   return {
@@ -62630,7 +64136,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],124:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 module.exports = function(hljs) {
 
     var LSL_STRING_ESCAPE_CHARS = {
@@ -62713,7 +64219,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],125:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 module.exports = function(hljs) {
   var OPENING_LONG_BRACKET = '\\[=*\\[';
   var CLOSING_LONG_BRACKET = '\\]=*\\]';
@@ -62779,7 +64285,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],126:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 module.exports = function(hljs) {
   /* Variables: simple (eg $(var)) and special (eg $@) */
   var VARIABLE = {
@@ -62860,7 +64366,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],127:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['md', 'mkdown', 'mkd'],
@@ -62968,7 +64474,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],128:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['mma'],
@@ -63026,7 +64532,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],129:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMON_CONTAINS = [
     hljs.C_NUMBER_MODE,
@@ -63114,7 +64620,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],130:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'if then else elseif for thru do while unless step in and or not';
   var LITERALS = 'true false unknown inf minf ind und %e %i %pi %phi %gamma';
@@ -63520,7 +65026,7 @@ module.exports = function(hljs) {
     illegal: /@/
   }
 };
-},{}],131:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -63745,7 +65251,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],132:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -63827,7 +65333,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],133:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -63913,7 +65419,7 @@ module.exports = function(hljs) {
     illegal: '\/'
   };
 };
-},{}],134:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -63932,7 +65438,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],135:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -63957,7 +65463,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],136:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {
     className: 'number', relevance: 0,
@@ -64032,7 +65538,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],137:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -64144,7 +65650,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],138:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -64213,7 +65719,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],139:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -64306,7 +65812,7 @@ module.exports = function(hljs) {
     illegal: '[^\\s\\}]'
   };
 };
-},{}],140:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['nim'],
@@ -64361,7 +65867,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],141:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 module.exports = function(hljs) {
   var NIX_KEYWORDS = {
     keyword:
@@ -64410,7 +65916,7 @@ module.exports = function(hljs) {
     contains: EXPRESSIONS
   };
 };
-},{}],142:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 module.exports = function(hljs) {
   var CONSTANTS = {
     className: 'variable',
@@ -64516,7 +66022,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],143:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 module.exports = function(hljs) {
   var API_CLASS = {
     className: 'built_in',
@@ -64607,7 +66113,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],144:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 module.exports = function(hljs) {
   /* missing support for heredoc-like string (OCaml 4.0.2+) */
   return {
@@ -64678,7 +66184,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],145:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 module.exports = function(hljs) {
 	var SPECIAL_VARS = {
 		className: 'keyword',
@@ -64735,7 +66241,7 @@ module.exports = function(hljs) {
 		]
 	}
 };
-},{}],146:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 module.exports = function(hljs) {
   var OXYGENE_KEYWORDS = 'abstract add and array as asc aspect assembly async begin break block by case class concat const copy constructor continue '+
     'create default delegate desc distinct div do downto dynamic each else empty end ensure enum equals event except exit extension external false '+
@@ -64805,7 +66311,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],147:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 module.exports = function(hljs) {
   var CURLY_SUBCOMMENT = hljs.COMMENT(
     '{',
@@ -64853,7 +66359,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],148:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 module.exports = function(hljs) {
   var PERL_KEYWORDS = 'getpwent getservent quotemeta msgrcv scalar kill dbmclose undef lc ' +
     'ma syswrite tr send umask sysopen shmwrite vec qx utime local oct semctl localtime ' +
@@ -65010,7 +66516,7 @@ module.exports = function(hljs) {
     contains: PERL_DEFAULT_CONTAINS
   };
 };
-},{}],149:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 module.exports = function(hljs) {
   var MACRO = {
     className: 'variable',
@@ -65062,7 +66568,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],150:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
@@ -65189,7 +66695,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],151:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -65280,7 +66786,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],152:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: '`[\\s\\S]',
@@ -65361,7 +66867,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],153:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -65409,7 +66915,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],154:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -65439,7 +66945,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],155:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ATOM = {
@@ -65527,7 +67033,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],156:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -65563,7 +67069,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],157:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var PUPPET_KEYWORDS = {
@@ -65678,7 +67184,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],158:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 module.exports = // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
 
 function(hljs) {
@@ -65736,7 +67242,7 @@ function(hljs) {
     ]
   };
 };
-},{}],159:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -65852,7 +67358,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],160:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 module.exports = function(hljs) {
   var Q_KEYWORDS = {
   keyword:
@@ -65875,7 +67381,7 @@ module.exports = function(hljs) {
      ]
   };
 };
-},{}],161:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
       keyword:
@@ -66044,7 +67550,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],162:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*';
 
@@ -66114,7 +67620,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],163:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -66141,7 +67647,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],164:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENTIFIER = '[a-zA-Z-_][^\\n{]+\\{';
 
@@ -66208,7 +67714,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],165:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 module.exports = // Colors from RouterOS terminal:
 //   green        - #0E9A00
 //   teal         - #0C9A9A
@@ -66367,7 +67873,7 @@ function(hljs) {
     ]
   };
 };
-},{}],166:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -66403,7 +67909,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],167:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 module.exports = function(hljs) {
   var RUBY_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
   var RUBY_KEYWORDS = {
@@ -66580,7 +68086,7 @@ module.exports = function(hljs) {
     contains: COMMENT_MODES.concat(IRB_DEFAULT).concat(RUBY_DEFAULT_CONTAINS)
   };
 };
-},{}],168:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -66641,7 +68147,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],169:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUM_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
   var KEYWORDS =
@@ -66749,7 +68255,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],170:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ANNOTATION = { className: 'meta', begin: '@[A-Za-z]+' };
@@ -66864,7 +68370,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],171:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 module.exports = function(hljs) {
   var SCHEME_IDENT_RE = '[^\\(\\)\\[\\]\\{\\}",\'`;#|\\\\\\s]+';
   var SCHEME_SIMPLE_NUMBER_RE = '(\\-|\\+)?\\d+([./]\\d+)?';
@@ -67008,7 +68514,7 @@ module.exports = function(hljs) {
     contains: [SHEBANG, NUMBER, STRING, QUOTED_IDENT, QUOTED_LIST, LIST].concat(COMMENT_MODES)
   };
 };
-},{}],172:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMON_CONTAINS = [
@@ -67062,7 +68568,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],173:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var VARIABLE = {
@@ -67160,7 +68666,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],174:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['console'],
@@ -67175,7 +68681,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],175:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
 module.exports = function(hljs) {
   var smali_instr_low_prio = ['add', 'and', 'cmp', 'cmpg', 'cmpl', 'const', 'div', 'double', 'float', 'goto', 'if', 'int', 'long', 'move', 'mul', 'neg', 'new', 'nop', 'not', 'or', 'rem', 'return', 'shl', 'shr', 'sput', 'sub', 'throw', 'ushr', 'xor'];
   var smali_instr_high_prio = ['aget', 'aput', 'array', 'check', 'execute', 'fill', 'filled', 'goto/16', 'goto/32', 'iget', 'instance', 'invoke', 'iput', 'monitor', 'packed', 'sget', 'sparse'];
@@ -67231,7 +68737,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],176:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR_IDENT_RE = '[a-z][a-zA-Z0-9_]*';
   var CHAR = {
@@ -67281,7 +68787,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],177:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['ml'],
@@ -67347,7 +68853,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],178:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 
@@ -67718,7 +69224,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],179:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT_MODE = hljs.COMMENT('--', '$');
   return {
@@ -67878,7 +69384,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],180:[function(require,module,exports){
+},{}],183:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -67961,7 +69467,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],181:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['do', 'ado'],
@@ -67999,7 +69505,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],182:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
 module.exports = function(hljs) {
   var STEP21_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
   var STEP21_KEYWORDS = {
@@ -68046,7 +69552,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],183:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var VARIABLE = {
@@ -68500,7 +70006,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],184:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 module.exports = function(hljs) {
   var DETAILS = {
     className: 'string',
@@ -68534,7 +70040,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],185:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 module.exports = function(hljs) {
   var SWIFT_KEYWORDS = {
       keyword: '__COLUMN__ __FILE__ __FUNCTION__ __LINE__ as as! as? associativity ' +
@@ -68651,7 +70157,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],186:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMENT = {
@@ -68695,7 +70201,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],187:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -68731,7 +70237,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],188:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['tk'],
@@ -68792,7 +70298,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],189:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMAND = {
     className: 'tag',
@@ -68854,7 +70360,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],190:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_IN_TYPES = 'bool byte i16 i32 i64 double string binary';
   return {
@@ -68889,7 +70395,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],191:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 module.exports = function(hljs) {
   var TPID = {
     className: 'number',
@@ -68973,7 +70479,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],192:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -69039,7 +70545,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],193:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -69195,7 +70701,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],194:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -69245,7 +70751,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],195:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vb'],
@@ -69301,7 +70807,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],196:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -69313,7 +70819,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],197:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vbs'],
@@ -69352,7 +70858,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],198:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 module.exports = function(hljs) {
   var SV_KEYWORDS = {
     keyword:
@@ -69451,7 +70957,7 @@ module.exports = function(hljs) {
     ]
   }; // return
 };
-},{}],199:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 module.exports = function(hljs) {
   // Regular expression for VHDL numeric literals.
 
@@ -69512,7 +71018,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],200:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     lexemes: /[!#@\w]+/,
@@ -69618,7 +71124,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],201:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -69754,7 +71260,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],202:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILTIN_MODULES =
     'ObjectLoader Animate MovieCredits Slides Filters Shading Materials LensFlare Mapping VLCAudioVideo ' +
@@ -69827,7 +71333,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],203:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 module.exports = function(hljs) {
   var XML_IDENT_RE = '[A-Za-z0-9\\._:-]+';
   var TAG_INTERNALS = {
@@ -69930,7 +71436,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],204:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'for let if while then else return where group by xquery encoding version' +
     'module namespace boundary-space preserve strip default collation base-uri ordering' +
@@ -70001,7 +71507,7 @@ module.exports = function(hljs) {
     contains: CONTAINS
   };
 };
-},{}],205:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 module.exports = function(hljs) {
   var LITERALS = 'true false yes no null';
 
@@ -70089,7 +71595,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],206:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: 'string',
@@ -70196,7 +71702,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],207:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -70282,7 +71788,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],208:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 /**
  * Satellizer 0.15.5
  * (c) 2016 Sahat Yalkabov 
@@ -71243,4 +72749,4 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 }));
 
 
-},{"buffer":28}]},{},[6]);
+},{"buffer":31}]},{},[9]);
