@@ -12,11 +12,12 @@
         <label for="event">Event:</label>
         <select id="event" ng-model="subscription.event" ng-options="event.name as event.name for event in events" required aria-describedby="eventHelp" class="form-control">
         </select>
-        <span class="help-block" id="statusHelp">The status of the app. Only apps which are <b>Active</b> can request an access token for the API</span>
+        <span class="help-block" id="eventHelp">The event which you can subscribe.</span>
     </div>
     <div class="form-group">
         <label for="url">Endpoint:</label>
-        <input type="url" id="url" ng-model="subscription.endpoint" required class="form-control">
+        <input type="url" id="url" ng-model="subscription.endpoint" required aria-describedby="urlHelp" class="form-control">
+      <span class="help-block" id="urlHelp">The endpoint which is called if the event occurs.</span>
     </div>
 </div>
 
