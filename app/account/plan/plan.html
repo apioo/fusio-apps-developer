@@ -32,39 +32,10 @@
                             <dd>{{ plan.points }}</dd>
                         </dl>
                         <p>{{ plan.description }}</p>
-                        <a ng-click="prepareTransaction(provider, plan.id)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
+                        <a ng-click="createContract(provider, plan.id)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
                     </div>
                 </div>
             </div>
-
-            <h2>Transactions</h2>
-            <table class="table">
-                <colgroup>
-                    <col width="*" />
-                    <col width="150" />
-                    <col width="200" />
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>Transaction-Id</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="transaction in transactions">
-                    <td>
-                        <span ng-if="transaction.status == STATUS_PREPARED" class="label label-info">prepared</span>
-                        <span ng-if="transaction.status == STATUS_CREATED" class="label label-info">created</span>
-                        <span ng-if="transaction.status == STATUS_APPROVED" class="label label-success">approved</span>
-                        <span ng-if="transaction.status == STATUS_FAILED" class="label label-danger">failed</span>
-                        <code>{{ transaction.transactionId }}</code>
-                    </td>
-                    <td>{{ transaction.amount | currency : symbol : 2 }}</td>
-                    <td>{{ transaction.insertDate | date: 'short' }}</td>
-                </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>

@@ -2,20 +2,20 @@
 
 var angular = require('angular');
 
-angular.module('fusioApp.account.payment', ['ngRoute'])
+angular.module('fusioApp.account.plan', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/account/payment', {
-    templateUrl: 'app/account/payment/payment.html',
-    controller: 'AccountPaymentCtrl'
+  $routeProvider.when('/account/plan', {
+    templateUrl: 'app/account/plan/plan.html',
+    controller: 'AccountPlanCtrl'
   });
-  $routeProvider.when('/account/payment/:transaction_id?', {
-    templateUrl: 'app/account/payment/payment.html',
-    controller: 'AccountPaymentCtrl'
+  $routeProvider.when('/account/plan/:transaction_id?', {
+    templateUrl: 'app/account/plan/plan.html',
+    controller: 'AccountPlanCtrl'
   });
 }])
 
-.controller('AccountPaymentCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', 'fusio', function($scope, $http, $auth, $location, $window, $routeParams, fusio) {
+.controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', 'fusio', function($scope, $http, $auth, $location, $window, $routeParams, fusio) {
   $scope.STATUS_PREPARED = 0;
   $scope.STATUS_CREATED  = 1;
   $scope.STATUS_APPROVED = 2;
@@ -33,18 +33,31 @@ angular.module('fusioApp.account.payment', ['ngRoute'])
   }
 
   $scope.load = function() {
-    $http.get(fusio.baseUrl + 'consumer/transaction').then(function(response) {
-      $scope.transactions = response.data.entry;
-    });
-  };
-
-  $scope.loadPlans = function() {
     $http.get(fusio.baseUrl + 'consumer/plan').then(function(response) {
         $scope.plans = response.data.entry;
     });
   };
 
-  $scope.prepareTransaction = function(provider, planId) {
+  $scope.createContract = function(provider, planId) {
+      if ($scope.loading) {
+          return;
+      }
+
+      var data = {
+          planId: planId
+      };
+
+      $http.post(fusio.baseUrl + 'consumer/plan/contract', data).then(function(response) {
+          var invoiceId = response.data.invoiceId;
+
+          $scope.response = response.data;
+          $scope.prepareTransaction(provider, invoiceId);
+      }, function(response) {
+          $scope.response = response.data;
+      });
+  };
+
+  $scope.prepareTransaction = function(provider, invoiceId) {
     if ($scope.loading) {
       return;
     }
@@ -52,7 +65,7 @@ angular.module('fusioApp.account.payment', ['ngRoute'])
     $scope.loading = true;
 
     var data = {
-      planId: planId,
+      invoiceId: invoiceId,
       returnUrl: $location.absUrl() + '/{transaction_id}'
     };
 
@@ -75,7 +88,6 @@ angular.module('fusioApp.account.payment', ['ngRoute'])
   };
 
   $scope.load();
-  $scope.loadPlans();
 
   // check transaction id if available
   if ($routeParams.transaction_id) {
