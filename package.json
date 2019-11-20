@@ -9,7 +9,7 @@
     "cs": "standard \"app/**/*.js\" --fix"
   },
   "dependencies": {
-    "angular": "^1.7.5",
+    "angular": "^1.7.9",
     "angular-animate": "^1.7.5",
     "angular-gravatar": "^0.4.2",
     "angular-highlightjs": "0.6.*",
