@@ -2,16 +2,16 @@
 
 var angular = require('angular')
 
-angular.module('fusioApp.signup', ['ngRoute'])
+angular.module('fusioApp.register', ['ngRoute'])
 
   .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/signup', {
-      templateUrl: 'app/signup/signup.html',
-      controller: 'SignupCtrl'
+    $routeProvider.when('/register', {
+      templateUrl: 'app/register/register.html',
+      controller: 'RegisterCtrl'
     })
   }])
 
-  .controller('SignupCtrl', ['$scope', '$http', '$auth', 'fusio', function ($scope, $http, $auth, fusio) {
+  .controller('RegisterCtrl', ['$scope', '$http', '$auth', 'fusio', function ($scope, $http, $auth, fusio) {
     $scope.user = {
       name: '',
       email: '',
@@ -30,6 +30,7 @@ angular.module('fusioApp.signup', ['ngRoute'])
         }, function (response) {
           $scope.user.password = ''
           $scope.user.passwordRepeat = ''
+          $scope.user.captcha = ''
           $scope.response = response.data
         })
     }

@@ -21,7 +21,10 @@ var fusioApp = angular.module('fusioApp', [
   'fusioApp.login',
   'fusioApp.logout',
   'fusioApp.overview',
-  'fusioApp.signup'
+  'fusioApp.password.confirm',
+  'fusioApp.password.reset',
+  'fusioApp.register',
+  'fusioApp.register.activate'
 ])
 
 require('angular-route')
@@ -45,7 +48,10 @@ require('./documentation/documentation')
 require('./login/login')
 require('./logout/logout')
 require('./overview/overview')
-require('./signup/signup')
+require('./password/reset')
+require('./password/confirm')
+require('./register/activate')
+require('./register/register')
 
 fusioApp.value('version', 'v0.5')
 
