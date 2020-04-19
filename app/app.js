@@ -53,7 +53,7 @@ require('./password/confirm')
 require('./register/activate')
 require('./register/register')
 
-fusioApp.value('version', 'v0.5')
+fusioApp.value('version', 'v0.6')
 
 fusioApp.provider('fusio', function () {
   var baseUrl = null
@@ -112,10 +112,6 @@ fusioApp.config(['$routeProvider', function ($routeProvider) {
   $routeProvider.otherwise({
     redirectTo: '/'
   })
-}])
-
-fusioApp.config(['$locationProvider', function ($locationProvider) {
-  $locationProvider.html5Mode(true)
 }])
 
 fusioApp.factory('fusioAuthenticate', ['SatellizerShared', function ($auth) {

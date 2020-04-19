@@ -5,7 +5,7 @@
             <div ng-repeat="(groupTitle, group) in menu" class="fusio-nav-group">
                 <h3>{{ groupTitle }}</h3>
                 <ul>
-                    <li ng-repeat="(title, href) in group"><a ng-href="documentation/{{ href }}">{{ title }}</a></li>
+                    <li ng-repeat="(title, href) in group"><a ng-href="#!/documentation/{{ href }}">{{ title }}</a></li>
                 </ul>
             </div>
         </nav>

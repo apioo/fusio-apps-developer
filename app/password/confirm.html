@@ -4,7 +4,7 @@
         {{response.message}}
     </div>
     <div uib-alert ng-class="'alert-success'" close="closeResponse()" ng-if="response.success === true">
-        Password reset successful. You can now <a href="./login">Log in</a> with your new password.
+        Password reset successful. You can now <a ng-href="#!/login">Log in</a> with your new password.
     </div>
 
     <form id="passwordConfirmForm" method="POST" ng-submit="confirm(user)" ng-hide="response.success == true">
@@ -23,6 +23,6 @@
     </form>
     <div class="fusio-login-ruler"></div>
     <p class="text-center text-muted">
-        <small><a href="./login">Log in</a> if you already have an account</small>
+        <small><a ng-href="#!/login">Log in</a> if you already have an account</small>
     </p>
 </div>
