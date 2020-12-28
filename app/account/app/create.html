@@ -17,7 +17,7 @@
         <input type="url" id="url" ng-model="app.url" required class="form-control">
     </div>
     <div class="checkbox" ng-repeat="scope in scopes">
-        <label><input type="checkbox" ng-model="app.scopes[$index]" ng-true-value="'{{scope.name}}'" ng-false-value="''"> {{ scope.description }}</label>
+      <label><input type="checkbox" ng-model="app.scopes[$index]" ng-true-value="'{{ scope.name }}'" ng-false-value="''"> {{ scope.name }} <span ng-if="scope.description">- {{ scope.description }}</span></label>
     </div>
 </div>
 
