@@ -1,5 +1,0 @@
-RewriteEngine On
-RewriteBase /projects/fusio-apps/consumer/
-
-DirectoryIndex index.html
-FallbackResource /projects/fusio-apps/consumer/index.html

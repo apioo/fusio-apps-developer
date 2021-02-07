@@ -53,7 +53,7 @@ require('./password/confirm')
 require('./register/activate')
 require('./register/register')
 
-fusioApp.value('version', 'v0.6')
+fusioApp.value('version', 'v1.0')
 
 fusioApp.provider('fusio', function () {
   var baseUrl = null
