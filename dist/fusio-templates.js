@@ -12,7 +12,7 @@ angular.module('fusioApp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('app/documentation/documentation.html',
-    "<div class=row><div class=\"col-md-2 fusio-sidebar\"><nav class=fusio-nav><div ng-repeat=\"(groupTitle, group) in menu\" class=fusio-nav-group><h3>{{ groupTitle }}</h3><ul><li ng-repeat=\"(title, href) in group\"><a ng-href=\"#!/documentation/{{ href }}\">{{ title }}</a></li></ul></div></nav></div><div class=col-md-10><div class=fusio-content ng-bind-html=content></div></div></div>"
+    "<div class=row><div class=\"col-md-2 fusio-sidebar\"><nav class=fusio-nav><div class=fusio-nav-group><h3>Index</h3><ul><li ng-repeat=\"row in pages\"><a ng-href=\"#!/documentation/{{ row.slug }}\">{{ row.title }}</a></li></ul></div></nav></div><div class=col-md-10><h2>{{ page.title }}</h2><div ng-bind-html=page.content></div></div></div>"
   );
 
 
@@ -27,7 +27,7 @@ angular.module('fusioApp').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('app/overview/overview.html',
-    "<div ng-include src=\"'docs/overview.html'\"></div>"
+    "<div ng-bind-html=page.content></div>"
   );
 
 

@@ -57,7 +57,6 @@ fusioApp.value('version', 'v1.0')
 
 fusioApp.provider('fusio', function () {
   var baseUrl = null
-  var documentationMenu = null
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -65,14 +64,6 @@ fusioApp.provider('fusio', function () {
 
   this.getBaseUrl = function () {
     return baseUrl
-  }
-
-  this.setDocumentationMenu = function (_documentationMenu) {
-    documentationMenu = _documentationMenu
-  }
-
-  this.getDocumentationMenu = function () {
-    return documentationMenu
   }
 
   this.guessFusioEndpointUrl = function (urlRewrite) {
@@ -102,8 +93,7 @@ fusioApp.provider('fusio', function () {
     }
 
     return {
-      baseUrl: baseUrl,
-      documentationMenu: documentationMenu
+      baseUrl: baseUrl
     }
   }
 })

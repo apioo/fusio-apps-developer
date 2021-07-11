@@ -11,6 +11,17 @@ angular.module('fusioApp.overview', ['ngRoute'])
     })
   }])
 
-  .controller('OverviewCtrl', ['$scope', '$auth', '$location', function ($scope, $auth, $location) {
+  .controller('OverviewCtrl', ['$scope', '$auth', '$location', '$http', 'fusio', function ($scope, $auth, $location, $http, fusio) {
+    $scope.page = null
 
+    $scope.loadPage = function () {
+      $http.get(fusio.baseUrl + 'consumer/page/~overview')
+        .then(function (response) {
+            console.log(response.data)
+            $scope.page = response.data
+        }, function () {
+        })
+    }
+
+    $scope.loadPage();
   }])

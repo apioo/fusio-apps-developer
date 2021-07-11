@@ -12,31 +12,31 @@ angular.module('fusioApp.documentation', ['ngRoute'])
   }])
 
   .controller('DocumentationCtrl', ['$scope', '$auth', '$location', '$http', '$routeParams', 'fusio', function ($scope, $auth, $location, $http, $routeParams, fusio) {
-    $scope.menu = fusio.documentationMenu
-    $scope.content = null
+    $scope.pages = []
+    $scope.page = null
 
-    $scope.loadDoc = function (href) {
-      $http.get('docs/' + href + '.htm').then(function (response) {
-        $scope.content = response.data
-      }, function () {
-        $scope.content = 'Could not load document'
-      })
+    $scope.loadPages = function () {
+      $http.get(fusio.baseUrl + 'consumer/page')
+        .then(function (response) {
+          $scope.pages = response.data.entry
+          if (!$routeParams.doc && response.data.entry[0]) {
+            $scope.loadPage(response.data.entry[0].slug)
+          }
+        }, function () {
+        })
     }
 
-    $scope.getFirstObjectValue = function (object) {
-      if (angular.isObject(object)) {
-        var key = Object.keys(object)[0]
-        return object[key] ? object[key] : null
-      } else {
-        return null
-      }
+    $scope.loadPage = function (slug) {
+      $http.get(fusio.baseUrl + 'consumer/page/~' + slug)
+        .then(function (response) {
+          $scope.page = response.data
+        }, function () {
+        })
     }
 
     if ($routeParams.doc) {
-      $scope.loadDoc($routeParams.doc)
-    } else {
-      var group = $scope.getFirstObjectValue($scope.menu)
-      var href = $scope.getFirstObjectValue(group)
-      $scope.loadDoc(href)
+      $scope.loadPage($routeParams.doc)
     }
+
+    $scope.loadPages();
   }])
