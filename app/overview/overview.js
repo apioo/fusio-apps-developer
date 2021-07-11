@@ -15,9 +15,8 @@ angular.module('fusioApp.overview', ['ngRoute'])
     $scope.page = null
 
     $scope.loadPage = function () {
-      $http.get(fusio.baseUrl + 'consumer/page/~overview')
+      $http.get(fusio.baseUrl + 'consumer/page/~overview', {cache: true})
         .then(function (response) {
-            console.log(response.data)
             $scope.page = response.data
         }, function () {
         })

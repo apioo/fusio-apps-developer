@@ -16,7 +16,7 @@ angular.module('fusioApp.documentation', ['ngRoute'])
     $scope.page = null
 
     $scope.loadPages = function () {
-      $http.get(fusio.baseUrl + 'consumer/page')
+      $http.get(fusio.baseUrl + 'consumer/page', {cache: true})
         .then(function (response) {
           $scope.pages = response.data.entry
           if (!$routeParams.doc && response.data.entry[0]) {
@@ -27,7 +27,7 @@ angular.module('fusioApp.documentation', ['ngRoute'])
     }
 
     $scope.loadPage = function (slug) {
-      $http.get(fusio.baseUrl + 'consumer/page/~' + slug)
+      $http.get(fusio.baseUrl + 'consumer/page/~' + slug, {cache: true})
         .then(function (response) {
           $scope.page = response.data
         }, function () {
