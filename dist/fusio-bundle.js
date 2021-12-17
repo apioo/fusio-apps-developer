@@ -266,7 +266,6 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
   }])
 
   .controller('AccountInvoiceCtrl', ['$scope', '$http', '$auth', '$uibModal', '$location', '$window', '$routeParams', 'fusio', function ($scope, $http, $auth, $uibModal, $location, $window, $routeParams, fusio) {
-    $scope.provider = 'paypal'
     $scope.invoices = []
     $scope.loading = false
 
@@ -281,7 +280,25 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
       })
     }
 
-    $scope.payInvoice = function (provider, invoice) {
+    $scope.pay = function(invoice) {
+      var modalInstance = $uibModal.open({
+        backdrop: 'static',
+        templateUrl: 'app/account/invoice/pay.html',
+        controller: 'AccountInvoicePayCtrl',
+        resolve: {
+          invoice: function () {
+            return invoice;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {
+        $scope.payInvoice(result.provider, result.invoice.id);
+      }, function () {
+      });
+    };
+
+    $scope.payInvoice = function (provider, invoiceId) {
       if ($scope.loading) {
         return
       }
@@ -293,7 +310,7 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
       returnUrl = returnUrl + '/plan/{transaction_id}'
 
       var data = {
-        invoiceId: invoice.id,
+        invoiceId: invoiceId,
         returnUrl: returnUrl
       }
 
@@ -316,6 +333,28 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
     }
 
     $scope.load()
+  }])
+
+  .controller('AccountInvoicePayCtrl', ['$scope', '$uibModalInstance', 'invoice', function ($scope, $uibModalInstance, invoice) {
+
+    $scope.providers = [
+      {key: 'stripe', name: 'Stripe'},
+      {key: 'paypal', name: 'PayPal'},
+    ];
+    $scope.provider = 'stripe';
+    $scope.invoice = invoice;
+
+    $scope.pay = function() {
+      $uibModalInstance.close({
+        provider: $scope.provider,
+        invoice: invoice
+      })
+    };
+
+    $scope.close = function() {
+      $uibModalInstance.dismiss('cancel')
+    };
+
   }])
 
 },{"angular":32}],5:[function(require,module,exports){
@@ -343,7 +382,6 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     $scope.STATUS_FAILED = 3
     $scope.STATUS_UNKNOWN = 4
 
-    $scope.provider = 'stripe'
     $scope.transactions = []
     $scope.plans = []
     $scope.loading = false
