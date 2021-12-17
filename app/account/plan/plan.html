@@ -30,9 +30,16 @@
                             <dd>{{ plan.price | currency : symbol : 2 }}</dd>
                             <dt>Points</dt>
                             <dd>{{ plan.points }}</dd>
+                            <dt ng-if="plan.period">Period</dt>
+                            <dd ng-if="plan.period">
+                              <span ng-if="plan.period == 1">Period: monthly</span>
+                              <span ng-if="plan.period == 2">Period: quarterly</span>
+                              <span ng-if="plan.period == 3">Period: half yearly</span>
+                              <span ng-if="plan.period == 4">Period: yearly</span>
+                            </dd>
                         </dl>
                         <p>{{ plan.description }}</p>
-                        <a ng-click="createContract(provider, plan.id)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
+                        <a ng-click="purchase(plan)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
                     </div>
                 </div>
             </div>

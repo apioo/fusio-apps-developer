@@ -15,14 +15,14 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     })
   }])
 
-  .controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', 'fusio', function ($scope, $http, $auth, $location, $window, $routeParams, fusio) {
+  .controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', '$uibModal', 'fusio', function ($scope, $http, $auth, $location, $window, $routeParams, $uibModal, fusio) {
     $scope.STATUS_PREPARED = 0
     $scope.STATUS_CREATED = 1
     $scope.STATUS_APPROVED = 2
     $scope.STATUS_FAILED = 3
     $scope.STATUS_UNKNOWN = 4
 
-    $scope.provider = 'paypal'
+    $scope.provider = 'stripe'
     $scope.transactions = []
     $scope.plans = []
     $scope.loading = false
@@ -37,6 +37,24 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
         $scope.plans = response.data.entry
       })
     }
+
+    $scope.purchase = function(plan) {
+      var modalInstance = $uibModal.open({
+        backdrop: 'static',
+        templateUrl: 'app/account/plan/purchase.html',
+        controller: 'AccountPlanPurchaseCtrl',
+        resolve: {
+          plan: function () {
+            return plan;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {
+        $scope.createContract(result.provider, result.plan.id);
+      }, function () {
+      });
+    };
 
     $scope.createContract = function (provider, planId) {
       if ($scope.loading) {
@@ -95,4 +113,26 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
         $scope.transaction = response.data
       })
     }
+  }])
+
+  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', function ($scope, $uibModalInstance, plan) {
+
+    $scope.providers = [
+      {key: 'stripe', name: 'Stripe'},
+      {key: 'paypal', name: 'PayPal'},
+    ];
+    $scope.provider = 'stripe';
+    $scope.plan = plan;
+
+    $scope.purchase = function() {
+      $uibModalInstance.close({
+        provider: $scope.provider,
+        plan: plan
+      })
+    };
+
+    $scope.close = function() {
+      $uibModalInstance.dismiss('cancel')
+    };
+
   }])
