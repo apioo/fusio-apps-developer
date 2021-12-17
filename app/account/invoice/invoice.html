@@ -38,7 +38,7 @@
               <td>{{invoice.amount | currency : symbol : 2}}</td>
               <td>{{invoice.insertDate | date: 'shortDate'}}</td>
               <td>
-                <button class="btn btn-default" ng-disabled="invoice.status != 0 || loading" ng-click="payInvoice(provider, invoice)">Pay</button>
+                <button class="btn btn-default" ng-disabled="invoice.status != 0 || loading" ng-click="pay(invoice)">Pay</button>
               </td>
             </tr>
             </tbody>

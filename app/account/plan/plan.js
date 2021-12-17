@@ -22,7 +22,6 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     $scope.STATUS_FAILED = 3
     $scope.STATUS_UNKNOWN = 4
 
-    $scope.provider = 'stripe'
     $scope.transactions = []
     $scope.plans = []
     $scope.loading = false
