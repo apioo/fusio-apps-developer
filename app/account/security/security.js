@@ -12,8 +12,6 @@ angular.module('fusioApp.account.security', ['ngRoute'])
   }])
 
   .controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
-    $scope.account = {}
-
     if (!$auth.isAuthenticated()) {
       $location.path('/login')
       return

@@ -1,4 +1,8 @@
 
+.navbar {
+  margin-bottom:0;
+}
+
 .fusio-login-container {
   max-width: 400px;
   background-color: #eee;

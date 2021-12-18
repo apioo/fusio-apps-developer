@@ -122,13 +122,21 @@ fusioApp.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.interceptors.push('fusioAuthenticate')
 }])
 
-fusioApp.run(function ($rootScope, $window, $location, $http, $auth, version) {
+fusioApp.run(function ($rootScope, $window, $location, $http, $auth, version, fusio) {
   // set version
   $rootScope.isAuthenticated = $auth.isAuthenticated()
   $rootScope.userName = null
+  $rootScope.account = null
   var payload = $auth.getPayload()
   if (payload && payload.name) {
     $rootScope.userName = payload.name
+  }
+  // get account details
+  if ($rootScope.isAuthenticated) {
+    $http.get(fusio.baseUrl + 'consumer/account').then(function (response) {
+      $rootScope.account = response.data
+    }, function (response) {
+    })
   }
   $rootScope.version = version
 })

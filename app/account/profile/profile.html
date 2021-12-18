@@ -11,8 +11,8 @@
                 {{response.message}}
             </div>
 
-            <div ng-if="email" class="pull-right visible-lg-block visible-md-block">
-                <img gravatar-src="email" gravatar-size="100">
+            <div ng-if="account.email" class="pull-right visible-lg-block visible-md-block">
+                <img gravatar-src="account.email" gravatar-size="100">
             </div>
             <form style="max-width:400px;" ng-submit="update(account)">
                 <div class="form-group">
