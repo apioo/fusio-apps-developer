@@ -511,7 +511,6 @@ angular.module('fusioApp.account.profile', ['ngRoute'])
   }])
 
   .controller('AccountProfileCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
-    $scope.account = {}
     $scope.email = null
 
     if (!$auth.isAuthenticated()) {
@@ -529,19 +528,6 @@ angular.module('fusioApp.account.profile', ['ngRoute'])
     $scope.closeResponse = function () {
       $scope.response = null
     }
-
-    $scope.load = function () {
-      $http.get(fusio.baseUrl + 'consumer/account').then(function (response) {
-        $scope.account = response.data
-        if (response.data.email) {
-          $scope.email = response.data.email
-        }
-      }, function (response) {
-        $scope.response = response.data
-      })
-    }
-
-    $scope.load()
   }])
 
 },{"angular":32}],7:[function(require,module,exports){
@@ -559,8 +545,6 @@ angular.module('fusioApp.account.security', ['ngRoute'])
   }])
 
   .controller('AccountSecurityCtrl', ['$scope', '$http', '$uibModal', '$auth', '$location', 'fusio', function ($scope, $http, $uibModal, $auth, $location, fusio) {
-    $scope.account = {}
-
     if (!$auth.isAuthenticated()) {
       $location.path('/login')
       return
@@ -823,13 +807,21 @@ fusioApp.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.interceptors.push('fusioAuthenticate')
 }])
 
-fusioApp.run(function ($rootScope, $window, $location, $http, $auth, version) {
+fusioApp.run(function ($rootScope, $window, $location, $http, $auth, version, fusio) {
   // set version
   $rootScope.isAuthenticated = $auth.isAuthenticated()
   $rootScope.userName = null
+  $rootScope.account = null
   var payload = $auth.getPayload()
   if (payload && payload.name) {
     $rootScope.userName = payload.name
+  }
+  // get account details
+  if ($rootScope.isAuthenticated) {
+    $http.get(fusio.baseUrl + 'consumer/account').then(function (response) {
+      $rootScope.account = response.data
+    }, function (response) {
+    })
   }
   $rootScope.version = version
 })
