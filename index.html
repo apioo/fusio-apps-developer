@@ -79,8 +79,8 @@
           </li>
         </ul>
       </div>
-      <div class="navbar-text navbar-right" style="margin-right:8px;">
-        Logged in as <a ng-href="#!/account">{{ userName }}</a>
+      <div class="navbar-text navbar-right" style="margin-right:8px;" ng-if="account.name">
+        Logged in as <a ng-href="#!/account">{{ account.name }}</a>
         <img ng-if="account.email" gravatar-src="account.email" gravatar-size="16">
       </div>
   </div>
