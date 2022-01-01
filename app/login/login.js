@@ -11,7 +11,7 @@ angular.module('fusioApp.login', ['ngRoute'])
     })
   }])
 
-  .controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', '$route', '$rootScope', 'SatellizerConfig', function ($scope, $http, $auth, $location, $route, $rootScope, SatellizerConfig) {
+  .controller('LoginCtrl', ['$scope', '$http', '$auth', '$location', '$route', '$rootScope', 'SatellizerConfig', 'userInfo', function ($scope, $http, $auth, $location, $route, $rootScope, SatellizerConfig, userInfo) {
     $scope.user = {
       username: '',
       password: ''
@@ -37,34 +37,29 @@ angular.module('fusioApp.login', ['ngRoute'])
     $scope.login = function (user) {
       $auth.login(JSON.stringify(user))
         .then(function () {
-          $rootScope.isAuthenticated = $auth.isAuthenticated()
-          $rootScope.userName = null
-          var payload = $auth.getPayload()
-          if (payload && payload.name) {
-            $rootScope.userName = payload.name
-          }
-
-          var params = $location.search()
-          if (params && params.auth) {
-            var allowedParams = {
-              responseType: 'response_type',
-              clientId: 'client_id',
-              redirectUri: 'redirect_uri',
-              scope: 'scope',
-              state: 'state'
-            }
-            var data = JSON.parse(atob(params.auth))
-            var parts = []
-            for (var key in allowedParams) {
-              if (data[key]) {
-                parts.push(allowedParams[key] + '=' + encodeURIComponent(data[key]))
+          userInfo().then(function(){
+            var params = $location.search()
+            if (params && params.auth) {
+              var allowedParams = {
+                responseType: 'response_type',
+                clientId: 'client_id',
+                redirectUri: 'redirect_uri',
+                scope: 'scope',
+                state: 'state'
               }
-            }
+              var data = JSON.parse(atob(params.auth))
+              var parts = []
+              for (var key in allowedParams) {
+                if (data[key]) {
+                  parts.push(allowedParams[key] + '=' + encodeURIComponent(data[key]))
+                }
+              }
 
-            $location.url('/auth?' + parts.join('&'))
-          } else {
-            $route.reload()
-          }
+              $location.url('/auth?' + parts.join('&'))
+            } else {
+              $route.reload()
+            }
+          });
         })
         .catch(function (response) {
           $scope.user.password = ''
