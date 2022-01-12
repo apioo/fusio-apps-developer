@@ -1056,6 +1056,7 @@ angular.module('fusioApp.logout', ['ngRoute'])
       $auth.logout()
       $rootScope.isAuthenticated = $auth.isAuthenticated()
       $rootScope.userName = null
+      $rootScope.account = null
     }
 
     $location.url('/login')
