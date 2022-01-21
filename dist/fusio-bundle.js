@@ -742,6 +742,7 @@ fusioApp.value('version', 'v1.0')
 
 fusioApp.provider('fusio', function () {
   var baseUrl = null
+  var recaptchaEnabled = true
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -749,6 +750,14 @@ fusioApp.provider('fusio', function () {
 
   this.getBaseUrl = function () {
     return baseUrl
+  }
+
+  this.setRecaptchaEnabled = function (_recaptchaEnabled) {
+    recaptchaEnabled = _recaptchaEnabled
+  }
+
+  this.getRecaptchaEnabled = function () {
+    return recaptchaEnabled
   }
 
   this.guessFusioEndpointUrl = function (urlRewrite) {
@@ -1224,9 +1233,15 @@ angular.module('fusioApp.register', ['ngRoute'])
       captcha: ''
     }
 
+    $scope.recaptchaEnabled = fusio.recaptchaEnabled;
+
     $scope.register = function (user) {
       var data = angular.copy(user)
       delete data.passwordRepeat
+
+      if (!fusio.recaptchaEnabled) {
+        delete data.captcha
+      }
 
       $http.post(fusio.baseUrl + 'consumer/register', data)
         .then(function (response) {
@@ -1237,6 +1252,27 @@ angular.module('fusioApp.register', ['ngRoute'])
           $scope.user.captcha = ''
           $scope.response = response.data
         })
+    }
+
+    $scope.isRegisterDisabled = function() {
+      if ($scope.user.name === '') {
+        return true;
+      }
+      if ($scope.user.email === '') {
+        return true;
+      }
+      if ($scope.user.password === '') {
+        return true;
+      }
+      if ($scope.user.password !== $scope.user.passwordRepeat) {
+        return true;
+      }
+      if (fusio.recaptchaEnabled) {
+        if ($scope.user.captcha === '') {
+          return true;
+        }
+      }
+      return false;
     }
 
     $scope.closeResponse = function () {
