@@ -51,9 +51,13 @@
      * Google captcha site key for registration. Also you need to save the 
      * secret key in the Fusio backend configuration
      */
-    fusioApp.config(['vcRecaptchaServiceProvider', function(vcRecaptchaServiceProvider) {
-        vcRecaptchaServiceProvider.setSiteKey('${RECAPTCHA_KEY}');
-    }]);
+    fusioApp.config(function(vcRecaptchaServiceProvider, fusioProvider) {
+        var siteKey = '${RECAPTCHA_KEY}';
+        fusioProvider.setRecaptchaEnabled(!!siteKey);
+        if (siteKey) {
+          vcRecaptchaServiceProvider.setSiteKey(siteKey);
+        }
+    });
     </script>
 </head>
 <body>

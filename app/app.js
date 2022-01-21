@@ -57,6 +57,7 @@ fusioApp.value('version', 'v1.0')
 
 fusioApp.provider('fusio', function () {
   var baseUrl = null
+  var recaptchaEnabled = true
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -64,6 +65,14 @@ fusioApp.provider('fusio', function () {
 
   this.getBaseUrl = function () {
     return baseUrl
+  }
+
+  this.setRecaptchaEnabled = function (_recaptchaEnabled) {
+    recaptchaEnabled = _recaptchaEnabled
+  }
+
+  this.getRecaptchaEnabled = function () {
+    return recaptchaEnabled
   }
 
   this.guessFusioEndpointUrl = function (urlRewrite) {
