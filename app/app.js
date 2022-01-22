@@ -58,6 +58,7 @@ fusioApp.value('version', 'v1.0')
 fusioApp.provider('fusio', function () {
   var baseUrl = null
   var recaptchaEnabled = true
+  var paymentProvider = []
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -73,6 +74,17 @@ fusioApp.provider('fusio', function () {
 
   this.getRecaptchaEnabled = function () {
     return recaptchaEnabled
+  }
+
+  this.addPaymentProvider = function (key, name) {
+      paymentProvider.push({
+        key: key,
+        name: name
+    });
+  }
+
+  this.getPaymentProvider = function () {
+    return paymentProvider
   }
 
   this.guessFusioEndpointUrl = function (urlRewrite) {
@@ -102,7 +114,9 @@ fusioApp.provider('fusio', function () {
     }
 
     return {
-      baseUrl: baseUrl
+      baseUrl: baseUrl,
+      recaptchaEnabled: recaptchaEnabled,
+      paymentProvider: paymentProvider
     }
   }
 })

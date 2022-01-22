@@ -81,12 +81,9 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
     $scope.load()
   }])
 
-  .controller('AccountInvoicePayCtrl', ['$scope', '$uibModalInstance', 'invoice', function ($scope, $uibModalInstance, invoice) {
+  .controller('AccountInvoicePayCtrl', ['$scope', '$uibModalInstance', 'invoice', 'fusio', function ($scope, $uibModalInstance, invoice, fusio) {
 
-    $scope.providers = [
-      {key: 'stripe', name: 'Stripe'},
-      {key: 'paypal', name: 'PayPal'},
-    ];
+    $scope.providers = fusio.paymentProvider;
     $scope.provider = 'stripe';
     $scope.invoice = invoice;
 

@@ -19,6 +19,11 @@
          * I.e.: http://127.0.0.1/projects/fusio/public/index.php/
          */
         fusioProvider.setBaseUrl('${API_URL}');
+
+        /**
+         * Configure the available payment provider
+         */
+        fusioProvider.addPaymentProvider('stripe', 'Stripe');
     });
 
     /**

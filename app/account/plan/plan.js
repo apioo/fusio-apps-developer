@@ -114,12 +114,9 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     }
   }])
 
-  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', function ($scope, $uibModalInstance, plan) {
+  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', 'fusio', function ($scope, $uibModalInstance, plan, fusio) {
 
-    $scope.providers = [
-      {key: 'stripe', name: 'Stripe'},
-      {key: 'paypal', name: 'PayPal'},
-    ];
+    $scope.providers = fusio.paymentProvider;
     $scope.provider = 'stripe';
     $scope.plan = plan;
 
