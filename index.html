@@ -35,22 +35,25 @@
         $authProvider.baseUrl = fusioProvider.getBaseUrl();
         $authProvider.loginUrl = '/consumer/login';
 
+        var facebookClientId = '${PROVIDER_FACEBOOK_KEY}';
         $authProvider.facebook({
             url: '/consumer/provider/facebook',
             redirectUri: window.location.origin + '/consumer/provider/facebook',
-            clientId: '${PROVIDER_FACEBOOK_KEY}' // Facebook App ID
+            clientId: facebookClientId !== '${PROVIDER_FACEBOOK_KEY}' ? facebookClientId : ''
         });
 
+        var googleClientId = '${PROVIDER_GOOGLE_KEY}';
         $authProvider.google({
             url: '/consumer/provider/google',
             redirectUri: window.location.origin + '/consumer/provider/google',
-            clientId: '${PROVIDER_GOOGLE_KEY}' // Google Client ID
+            clientId: googleClientId !== '${PROVIDER_GOOGLE_KEY}' ? googleClientId : ''
         });
 
+        var githubClientId = '${PROVIDER_GITHUB_KEY}';
         $authProvider.github({
             url: '/consumer/provider/github',
             redirectUri: window.location.origin + '/consumer/provider/github',
-            clientId: '${PROVIDER_GITHUB_KEY}' // GitHub Client ID
+            clientId: githubClientId !== '${PROVIDER_GITHUB_KEY}' ? githubClientId : ''
         });
     });
 
@@ -60,6 +63,10 @@
      */
     fusioApp.config(function(vcRecaptchaServiceProvider, fusioProvider) {
         var siteKey = '${RECAPTCHA_KEY}';
+        if (siteKey === '${RECAPTCHA_KEY}') {
+            siteKey = '';
+        }
+
         fusioProvider.setRecaptchaEnabled(!!siteKey);
         if (siteKey) {
           vcRecaptchaServiceProvider.setSiteKey(siteKey);
