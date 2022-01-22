@@ -335,12 +335,9 @@ angular.module('fusioApp.account.invoice', ['ngRoute'])
     $scope.load()
   }])
 
-  .controller('AccountInvoicePayCtrl', ['$scope', '$uibModalInstance', 'invoice', function ($scope, $uibModalInstance, invoice) {
+  .controller('AccountInvoicePayCtrl', ['$scope', '$uibModalInstance', 'invoice', 'fusio', function ($scope, $uibModalInstance, invoice, fusio) {
 
-    $scope.providers = [
-      {key: 'stripe', name: 'Stripe'},
-      {key: 'paypal', name: 'PayPal'},
-    ];
+    $scope.providers = fusio.paymentProvider;
     $scope.provider = 'stripe';
     $scope.invoice = invoice;
 
@@ -474,12 +471,9 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     }
   }])
 
-  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', function ($scope, $uibModalInstance, plan) {
+  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', 'fusio', function ($scope, $uibModalInstance, plan, fusio) {
 
-    $scope.providers = [
-      {key: 'stripe', name: 'Stripe'},
-      {key: 'paypal', name: 'PayPal'},
-    ];
+    $scope.providers = fusio.paymentProvider;
     $scope.provider = 'stripe';
     $scope.plan = plan;
 
@@ -743,6 +737,7 @@ fusioApp.value('version', 'v1.0')
 fusioApp.provider('fusio', function () {
   var baseUrl = null
   var recaptchaEnabled = true
+  var paymentProvider = []
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -758,6 +753,17 @@ fusioApp.provider('fusio', function () {
 
   this.getRecaptchaEnabled = function () {
     return recaptchaEnabled
+  }
+
+  this.addPaymentProvider = function (key, name) {
+      paymentProvider.push({
+        key: key,
+        name: name
+    });
+  }
+
+  this.getPaymentProvider = function () {
+    return paymentProvider
   }
 
   this.guessFusioEndpointUrl = function (urlRewrite) {
@@ -787,7 +793,9 @@ fusioApp.provider('fusio', function () {
     }
 
     return {
-      baseUrl: baseUrl
+      baseUrl: baseUrl,
+      recaptchaEnabled: recaptchaEnabled,
+      paymentProvider: paymentProvider
     }
   }
 })
