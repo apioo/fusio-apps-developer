@@ -23,7 +23,11 @@ angular.module('fusioApp.login', ['ngRoute'])
     }
 
     $scope.authenticate = function (provider) {
-      $auth.authenticate(provider)
+      $auth.authenticate(provider).then(function(){
+        userInfo().then(function(){
+          $route.reload()
+        });
+      });
     }
 
     $scope.isConfigured = function (provider) {
