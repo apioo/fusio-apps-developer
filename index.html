@@ -38,16 +38,19 @@
 
         $authProvider.facebook({
             url: 'consumer/provider/facebook',
+            redirectUri: window.location.origin + '/consumer/provider/facebook',
             clientId: '${PROVIDER_FACEBOOK_KEY}' // Facebook App ID
         });
 
         $authProvider.google({
             url: 'consumer/provider/google',
+            redirectUri: window.location.origin + '/consumer/provider/google',
             clientId: '${PROVIDER_GOOGLE_KEY}' // Google Client ID
         });
 
         $authProvider.github({
             url: 'consumer/provider/github',
+            redirectUri: window.location.origin + '/consumer/provider/github',
             clientId: '${PROVIDER_GITHUB_KEY}' // GitHub Client ID
         });
     });
