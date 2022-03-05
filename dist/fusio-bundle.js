@@ -953,7 +953,7 @@ angular.module('fusioApp.documentation', ['ngRoute'])
     })
   }])
 
-  .controller('DocumentationCtrl', ['$scope', '$auth', '$location', '$http', '$routeParams', 'fusio', function ($scope, $auth, $location, $http, $routeParams, fusio) {
+  .controller('DocumentationCtrl', ['$scope', '$auth', '$location', '$http', '$routeParams', '$sce', 'fusio', function ($scope, $auth, $location, $http, $routeParams, $sce, fusio) {
     $scope.pages = []
     $scope.page = null
 
@@ -971,7 +971,9 @@ angular.module('fusioApp.documentation', ['ngRoute'])
     $scope.loadPage = function (slug) {
       $http.get(fusio.baseUrl + 'consumer/page/~' + slug, {cache: true})
         .then(function (response) {
-          $scope.page = response.data
+          var page = response.data;
+          page.content = $sce.trustAsHtml(page.content);
+          $scope.page = page
         }, function () {
         })
     }
