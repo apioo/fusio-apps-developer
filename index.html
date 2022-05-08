@@ -38,21 +38,21 @@
         var facebookClientId = '${PROVIDER_FACEBOOK_KEY}';
         $authProvider.facebook({
             url: '/consumer/provider/facebook',
-            redirectUri: window.location.origin + '/consumer/provider/facebook',
+            redirectUri: window.location.origin + '/apps/developer/',
             clientId: getEnvValue('PROVIDER_FACEBOOK_KEY', facebookClientId)
         });
 
         var googleClientId = '${PROVIDER_GOOGLE_KEY}';
         $authProvider.google({
             url: '/consumer/provider/google',
-            redirectUri: window.location.origin + '/consumer/provider/google',
+            redirectUri: window.location.origin + '/apps/developer/',
             clientId: getEnvValue('PROVIDER_GOOGLE_KEY', googleClientId)
         });
 
         var githubClientId = '${PROVIDER_GITHUB_KEY}';
         $authProvider.github({
             url: '/consumer/provider/github',
-            redirectUri: window.location.origin + '/consumer/provider/github',
+            redirectUri: window.location.origin + '/apps/developer/',
             clientId: getEnvValue('PROVIDER_GITHUB_KEY', githubClientId)
         });
     });
