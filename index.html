@@ -21,9 +21,9 @@
         fusioProvider.setBaseUrl('${API_URL}');
 
         /**
-         * Configure the available payment provider
+         * Configure the payment provider
          */
-        fusioProvider.addPaymentProvider('stripe', 'Stripe');
+        fusioProvider.setPaymentProvider('stripe');
     });
 
     /**
