@@ -9,20 +9,10 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
       templateUrl: 'app/account/plan/plan.html',
       controller: 'AccountPlanCtrl'
     })
-    $routeProvider.when('/account/plan/:transaction_id?', {
-      templateUrl: 'app/account/plan/plan.html',
-      controller: 'AccountPlanCtrl'
-    })
   }])
 
-  .controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', '$routeParams', '$uibModal', 'fusio', function ($scope, $http, $auth, $location, $window, $routeParams, $uibModal, fusio) {
-    $scope.STATUS_PREPARED = 0
-    $scope.STATUS_CREATED = 1
-    $scope.STATUS_APPROVED = 2
-    $scope.STATUS_FAILED = 3
-    $scope.STATUS_UNKNOWN = 4
+  .controller('AccountPlanCtrl', ['$scope', '$http', '$auth', '$location', '$window', 'fusio', function ($scope, $http, $auth, $location, $window, fusio) {
 
-    $scope.transactions = []
     $scope.plans = []
     $scope.loading = false
 
@@ -37,56 +27,22 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
       })
     }
 
-    $scope.purchase = function(plan) {
-      var modalInstance = $uibModal.open({
-        backdrop: 'static',
-        templateUrl: 'app/account/plan/purchase.html',
-        controller: 'AccountPlanPurchaseCtrl',
-        resolve: {
-          plan: function () {
-            return plan;
-          }
+    $scope.billingPortal = function () {
+      $http.post(fusio.baseUrl + 'consumer/payment/' + fusio.paymentProvider + '/portal', null).then(function (response) {
+        var redirectUrl = response.data.redirectUrl;
+        if (redirectUrl) {
+          $window.location.href = redirectUrl
         }
-      });
-
-      modalInstance.result.then(function (result) {
-        $scope.createContract(result.provider, result.plan.id);
-      }, function () {
-      });
-    };
-
-    $scope.createContract = function (provider, planId) {
-      if ($scope.loading) {
-        return
-      }
-
-      var data = {
-        planId: planId
-      }
-
-      $http.post(fusio.baseUrl + 'consumer/plan/contract', data).then(function (response) {
-        var invoiceId = response.data.invoiceId
-
-        $scope.response = response.data
-        $scope.prepareTransaction(provider, invoiceId)
-      }, function (response) {
-        $scope.response = response.data
       })
     }
 
-    $scope.prepareTransaction = function (provider, invoiceId) {
-      if ($scope.loading) {
-        return
-      }
-
-      $scope.loading = true
-
+    $scope.checkout = function (plan) {
       var data = {
-        invoiceId: invoiceId,
-        returnUrl: $location.absUrl() + '/{transaction_id}'
+        planId: plan.id,
+        returnUrl: $location.absUrl()
       }
 
-      $http.post(fusio.baseUrl + 'consumer/transaction/prepare/' + provider, data).then(function (response) {
+      $http.post(fusio.baseUrl + 'consumer/payment/' + fusio.paymentProvider + '/checkout', data).then(function (response) {
         var approvalUrl = response.data.approvalUrl
         if (approvalUrl) {
           $window.location.href = approvalUrl
@@ -105,30 +61,4 @@ angular.module('fusioApp.account.plan', ['ngRoute'])
     }
 
     $scope.load()
-
-    // check transaction id if available
-    if ($routeParams.transaction_id) {
-      $http.get(fusio.baseUrl + 'consumer/transaction/' + $routeParams.transaction_id).then(function (response) {
-        $scope.transaction = response.data
-      })
-    }
-  }])
-
-  .controller('AccountPlanPurchaseCtrl', ['$scope', '$uibModalInstance', 'plan', 'fusio', function ($scope, $uibModalInstance, plan, fusio) {
-
-    $scope.providers = fusio.paymentProvider;
-    $scope.provider = 'stripe';
-    $scope.plan = plan;
-
-    $scope.purchase = function() {
-      $uibModalInstance.close({
-        provider: $scope.provider,
-        plan: plan
-      })
-    };
-
-    $scope.close = function() {
-      $uibModalInstance.dismiss('cancel')
-    };
-
   }])

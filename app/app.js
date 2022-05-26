@@ -9,9 +9,7 @@ var fusioApp = angular.module('fusioApp', [
   'satellizer',
   'vcRecaptcha',
   'fusioApp.account.app',
-  'fusioApp.account.contract',
   'fusioApp.account.grant',
-  'fusioApp.account.invoice',
   'fusioApp.account.plan',
   'fusioApp.account.profile',
   'fusioApp.account.security',
@@ -36,9 +34,7 @@ require('angular-recaptcha')
 require('angular-gravatar')
 require('satellizer')
 require('./account/app/app')
-require('./account/contract/contract')
 require('./account/grant/grant')
-require('./account/invoice/invoice')
 require('./account/plan/plan')
 require('./account/profile/profile')
 require('./account/security/security')
@@ -58,7 +54,7 @@ fusioApp.value('version', 'v1.0')
 fusioApp.provider('fusio', function () {
   var baseUrl = null
   var recaptchaEnabled = true
-  var paymentProvider = []
+  var paymentProvider = null
 
   this.setBaseUrl = function (_baseUrl) {
     baseUrl = _baseUrl
@@ -76,11 +72,8 @@ fusioApp.provider('fusio', function () {
     return recaptchaEnabled
   }
 
-  this.addPaymentProvider = function (key, name) {
-      paymentProvider.push({
-        key: key,
-        name: name
-    });
+  this.setPaymentProvider = function (_paymentProvider) {
+    paymentProvider = _paymentProvider;
   }
 
   this.getPaymentProvider = function () {

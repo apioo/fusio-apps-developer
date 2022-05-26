@@ -7,10 +7,8 @@
             <li><a ng-href="#!/account/security">Security</a></li>
             <li ng-if="account.scopes.includes('consumer.grant')"><a ng-href="#!/account/grant">Grants</a></li>
             <li ng-if="account.scopes.includes('consumer.app')"><a ng-href="#!/account/app">Apps</a></li>
-            <li ng-if="account.scopes.includes('consumer.subscription')"><a ng-href="#!/account/subscription">Subscriptions</a></li>
+            <li ng-if="account.scopes.includes('consumer.subscription')"><a ng-href="#!/account/subscription">Events</a></li>
             <li ng-if="account.scopes.includes('consumer.plan')"><a ng-href="#!/account/plan">Plans</a></li>
-            <li ng-if="account.scopes.includes('consumer.plan')"><a ng-href="#!/account/contract">Contracts</a></li>
-            <li ng-if="account.scopes.includes('consumer.plan')"><a ng-href="#!/account/invoice">Invoices</a></li>
         </ul>
     </div>
 </nav>

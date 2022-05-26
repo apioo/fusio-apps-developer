@@ -4,22 +4,19 @@
     <div class="col-md-10">
         <div class="fusio-content">
             <h2>Purchase</h2>
-            <div uib-alert ng-class="'alert-success'" close="closeResponse()" ng-if="transaction.id">
-                <div ng-if="transaction.status == STATUS_CREATED">Transaction was created but not approved yet.</div>
-                <div ng-if="transaction.status == STATUS_APPROVED">Thank you for the purchase! We have credited <b>{{transaction.plan.points}}</b> points to your account.</div>
-                <div ng-if="transaction.status == STATUS_FAILED">Transaction failed. Please contact the support regarding the transaction <code>{{transaction.transactionId}}</code>.</div>
-            </div>
             <div uib-alert ng-class="'alert-danger'" close="closeResponse()" ng-if="response.success === false">
-                {{response.message}}
+                {{ response.message }}
             </div>
             <div uib-alert ng-class="'alert-success'" close="closeResponse()" ng-if="response.success === true">
-                {{response.message}}
+                {{ response.message }}
             </div>
 
             <div uib-alert ng-class="'alert-info'">
             List of plans which can be purchased. Your account receives a specific
-            amount of points which can be used to call routes which cost points.
+            amount of points which can be used to call specific routes.
             </div>
+
+            <a ng-click="billingPortal()" class="btn btn-primary">Billing portal</a>
 
             <div class="row">
                 <div class="col-md-4" ng-repeat="plan in plans">
@@ -32,14 +29,12 @@
                             <dd>{{ plan.points }}</dd>
                             <dt ng-if="plan.period">Period</dt>
                             <dd ng-if="plan.period">
-                              <span ng-if="plan.period == 1">Period: monthly</span>
-                              <span ng-if="plan.period == 2">Period: quarterly</span>
-                              <span ng-if="plan.period == 3">Period: half yearly</span>
-                              <span ng-if="plan.period == 4">Period: yearly</span>
+                              <span ng-if="plan.period == 0">one-time</span>
+                              <span ng-if="plan.period == 1">subscription</span>
                             </dd>
                         </dl>
                         <p>{{ plan.description }}</p>
-                        <a ng-click="purchase(plan)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
+                        <a ng-click="checkout(plan)" ng-class="{'disabled': loading}" class="btn btn-primary">Purchase</a>
                     </div>
                 </div>
             </div>
