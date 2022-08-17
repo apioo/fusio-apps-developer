@@ -1,0 +1,210 @@
+
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.fusio-login-container {
+  max-width: 400px;
+  background-color: #eee;
+  margin: 0 auto;
+  margin-top: 64px;
+  margin-bottom: 128px;
+  padding: 12px;
+  padding-top: 16px;
+  padding-bottom: 32px;
+  border: 1px solid #aaa;
+}
+
+.fusio-login-container h1 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #666;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.fusio-login-container .fusio-login-ruler {
+  border-bottom: 1px solid #444;
+  margin-bottom: 16px;
+}
+
+.fusio-header {
+  border-bottom: 1px solid #ccc;
+}
+
+.fusio-header-loggedin {
+  padding: 15px 0;
+}
+
+.fusio-footer {
+  padding: 32px;
+  text-align: right;
+  border-top: 1px solid #ccc;
+}
+
+.fusio-main {
+}
+
+.fusio-intro {
+  background-image: url(assets/header.jpg);
+  background-position: left top;
+  background-repeat: no-repeat;
+  background-color: #191a1f;
+  margin: 0 -15px;
+  height: 400px;
+  padding-top: 32px;
+  border-bottom: 1px solid #ccc;
+}
+
+.fusio-intro h1 {
+  font-size: 3em;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+.fusio-intro p {
+  font-size: 1.6em;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+.fusio-intro-subline {
+  background-color: #222;
+  color: #fff;
+  margin: 0 -15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.fusio-intro-subline h2 {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.fusio-intro-column {
+  margin-top: 32px;
+  margin-bottom: 64px;
+  text-align: center;
+}
+
+.fusio-intro-column h3 {
+  margin-top:0;
+}
+
+.fusio-intro-column-icon {
+  font-size: 5em;
+}
+
+.fusio-intro-column-icon > i {
+}
+
+.fusio-sidebar {
+  background-color: #222;
+  height: 100%;
+  background-image: url(assets/nav.jpg);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.fusio-nav {
+  min-height: 600px;
+}
+
+.fusio-nav h3 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color:#fff;
+}
+
+.fusio-nav ul {
+  padding: 0;
+}
+
+.fusio-nav li {
+  list-style-type: none;
+}
+
+.fusio-nav li a {
+  text-decoration: none;
+  padding: 12px;
+  display: block;
+  border-bottom:1px solid #999;
+  font-family: monospace;
+  border-left:4px solid #999;
+  background-color:#fff;
+  opacity:0.9;
+}
+
+.fusio-nav li a:hover {
+  text-decoration: underline;
+}
+
+.fusio-nav-group {
+  padding-bottom: 8px;
+}
+
+.fusio-content {
+  margin-top: 0;
+  margin-bottom: 64px;
+  max-width: 800px;
+  font-size:16px;
+}
+
+.fusio-content h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.fusio-api {
+}
+
+.fusio-api h2 {
+  font-family: monospace;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.fusio-endpoint-method {
+}
+
+.fusio-endpoint-method h3 {
+  background-color: #eee;
+  border-bottom: 1px solid #aaa;
+  padding: 12px;
+  font-size: 1em;
+}
+
+.fusio-endpoint-method h4 {
+  font-size: 1em;
+  font-weight: bold;
+  padding: 8px 8px;
+  background-color: #eee;
+}
+
+.fusio-code {
+  font-family: monospace;
+  background-color: #fff;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+}
+
+.fusio-property {
+  font-family: monospace;
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+
+.fusio-property-required {
+  font-weight: bold;
+}
+

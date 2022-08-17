@@ -1,0 +1,37 @@
+
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a routerLink="/" class="navbar-brand">Developer</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/bootstrap">Get started</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/api">REST API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/sdk">SDK</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/support">Support</a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/account">Account</a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/logout">Logout</a>
+        </li>
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="nav-link" routerLink="/login">Login</a>
+        </li>
+      </ul>
+      <span class="navbar-text" *ngIf="isAuthenticated && account.name">
+        Logged in as <a routerLink="/account">{{ account.name }}</a>
+      </span>
+    </div>
+  </div>
+</nav>
