@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {UserService} from "../user.service";
+import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
+import {FactoryService} from "../factory.service";
 
 @Component({
   selector: 'app-navigation',
@@ -8,14 +11,13 @@ import { Component, OnInit } from '@angular/core';
 export class NavigationComponent implements OnInit {
 
   isAuthenticated = true;
-  account = {
-    name: 'foo',
-    email: 'test@test.com',
-  };
+  account?: User_Account;
 
-  constructor() { }
+  constructor(private factory: FactoryService, private user: UserService) { }
 
   ngOnInit(): void {
+    this.isAuthenticated = this.factory.hasValidToken();
+    this.account = this.user.get();
   }
 
 }

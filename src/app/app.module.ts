@@ -14,7 +14,6 @@ import {EventsComponent} from './account/events/events.component';
 import {PlansComponent} from './account/plans/plans.component';
 import {ContractsComponent} from './account/contracts/contracts.component';
 import {InvoicesComponent} from './account/invoices/invoices.component';
-import {GrantsComponent} from "./account/grants/grants.component";
 import {AppsComponent} from "./account/apps/apps.component";
 import {NavigationComponent} from './navigation/navigation.component';
 import {GravatarModule} from "ngx-gravatar";
@@ -24,9 +23,9 @@ import {SdkComponent} from './sdk/sdk.component';
 import {SupportComponent} from './support/support.component';
 import {RegisterComponent} from './register/register.component';
 import {ActivateComponent} from './activate/activate.component';
-import {AuthComponent} from './auth/auth.component';
 import {ConfirmComponent} from './password/confirm/confirm.component';
 import {ResetComponent} from './password/reset/reset.component';
+import {MessageComponent} from "./shared/message/message.component";
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import {ResetComponent} from './password/reset/reset.component';
     HomeComponent,
     LoginComponent,
     LogoutComponent,
-    GrantsComponent,
     AppsComponent,
     ProfileComponent,
     SecurityComponent,
@@ -49,9 +47,9 @@ import {ResetComponent} from './password/reset/reset.component';
     SupportComponent,
     RegisterComponent,
     ActivateComponent,
-    AuthComponent,
     ConfirmComponent,
     ResetComponent,
+    MessageComponent,
   ],
   imports: [
     BrowserModule,

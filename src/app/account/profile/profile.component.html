@@ -1,1 +1,48 @@
-<p>profile works!</p>
+
+<div class="fusio-page">
+  <nav class="fusio-tabs">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a routerLink="/account" class="nav-link active">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/security" class="nav-link">Security</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/apps" class="nav-link">Apps</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/events" class="nav-link">Events</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/plans" class="nav-link">Plans</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/contracts" class="nav-link">Contracts</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/invoices" class="nav-link">Invoices</a>
+      </li>
+    </ul>
+  </nav>
+  <app-message [response]="response"></app-message>
+  <form *ngIf="user" (ngSubmit)="doSave()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Username</label>
+      <input type="text" class="form-control" id="name" name="name" [ngModel]="user.name" disabled readonly>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" [(ngModel)]="user.email">
+    </div>
+    <div class="mb-3">
+      <label for="points" class="form-label">Points</label>
+      <input type="number" class="form-control" id="points" name="points" [ngModel]="user.points" disabled readonly>
+    </div>
+    <div class="mb-3">
+      <label for="scopes" class="form-label">Scopes</label>
+      <input type="text" class="form-control" id="scopes" name="scopes" [ngModel]="user.scopes" disabled readonly>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {User} from "fusio-sdk/dist/src/generated/backend/User";
+import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
 import {FactoryService} from "./factory.service";
 
 @Injectable({
@@ -7,16 +7,16 @@ import {FactoryService} from "./factory.service";
 })
 export class UserService {
 
-  private user?: User;
+  private user?: User_Account;
 
   constructor(private factory: FactoryService) { }
 
-  public login(user: User): void {
+  public login(user: User_Account): void {
     this.user = user;
     sessionStorage.setItem('fusio_user', JSON.stringify(user));
   }
 
-  public get(): User|undefined {
+  public get(): User_Account|undefined {
     if (!this.factory.hasValidToken()) {
       return undefined;
     }
