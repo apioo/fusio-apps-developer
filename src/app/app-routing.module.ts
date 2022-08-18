@@ -18,6 +18,9 @@ import {SupportComponent} from "./support/support.component";
 import {RegisterComponent} from "./register/register.component";
 import {AuthorizationComponent} from "./authorization/authorization.component";
 import {AboutComponent} from "./about/about.component";
+import {ActivateComponent} from "./register/activate/activate.component";
+import {ResetComponent} from "./password/reset/reset.component";
+import {ConfirmComponent} from "./password/confirm/confirm.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -37,6 +40,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'register/activate/:token', component: ActivateComponent },
+  { path: 'password/reset', component: ResetComponent },
+  { path: 'password/confirm/:token', component: ConfirmComponent },
 ];
 
 @NgModule({

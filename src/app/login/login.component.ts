@@ -47,7 +47,10 @@ export class LoginComponent implements OnInit {
           message: error.response.data.error_description || 'An unknown error occurred',
         };
       } else {
-        throw error;
+        this.response = {
+          success: false,
+          message: String(error),
+        };
       }
     }
   }
