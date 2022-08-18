@@ -5,7 +5,7 @@ import axios from "axios";
 import {Account_ChangePassword} from "fusio-sdk/dist/src/generated/consumer/Account_ChangePassword";
 
 @Component({
-  selector: 'app-security',
+  selector: 'app-account-security',
   templateUrl: './security.component.html',
   styleUrls: ['./security.component.css']
 })

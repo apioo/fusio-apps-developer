@@ -11,11 +11,6 @@ import {LoginComponent} from './login/login.component';
 import {LogoutComponent} from './logout/logout.component';
 import {ProfileComponent} from './account/profile/profile.component';
 import {SecurityComponent} from './account/security/security.component';
-import {EventsComponent} from './account/events/events.component';
-import {PlansComponent} from './account/plans/plans.component';
-import {ContractsComponent} from './account/contracts/contracts.component';
-import {InvoicesComponent} from './account/invoices/invoices.component';
-import {AppsComponent} from "./account/apps/apps.component";
 import {NavigationComponent} from './navigation/navigation.component';
 import {GravatarModule} from "ngx-gravatar";
 import {ApiComponent} from './api/api.component';
@@ -23,38 +18,45 @@ import {BootstrapComponent} from './bootstrap/bootstrap.component';
 import {SdkComponent} from './sdk/sdk.component';
 import {SupportComponent} from './support/support.component';
 import {RegisterComponent} from './register/register.component';
-import {ConfirmComponent} from './password/confirm/confirm.component';
-import {ResetComponent} from './password/reset/reset.component';
-import {MessageComponent} from "./shared/message/message.component";
+import {ConfirmComponent as PasswordConfirm} from './password/confirm/confirm.component';
+import {ResetComponent as PasswordReset} from './password/reset/reset.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
 import {ActivateComponent} from "./register/activate/activate.component";
+import {FusioSdkModule} from "ngx-fusio-sdk";
+import {ListComponent as AccountAppList} from './account/app/list/list.component';
+import {ModalComponent as AccountAppModal} from './account/app/modal/modal.component';
+import {DetailComponent as AccountAppDetail} from './account/app/detail/detail.component';
+import {ListComponent as AccountEventList} from './account/event/list/list.component';
+import {ModalComponent as AccountEventModal} from './account/event/modal/modal.component';
+import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
+import {PlanComponent} from "./account/plan/plan.component";
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AboutComponent,
+    ActivateComponent,
+    AccountAppList,
+    AccountAppModal,
+    AccountAppDetail,
+    AccountEventList,
+    AccountEventModal,
+    AccountEventDetail,
+    PlanComponent,
+    ProfileComponent,
+    SecurityComponent,
+    ApiComponent,
+    AuthorizationComponent,
+    BootstrapComponent,
     HomeComponent,
     LoginComponent,
     LogoutComponent,
-    AppsComponent,
-    ProfileComponent,
-    SecurityComponent,
-    EventsComponent,
-    PlansComponent,
-    ContractsComponent,
-    InvoicesComponent,
     NavigationComponent,
-    ApiComponent,
-    BootstrapComponent,
+    PasswordConfirm,
+    PasswordReset,
+    RegisterComponent,
     SdkComponent,
     SupportComponent,
-    RegisterComponent,
-    ActivateComponent,
-    ConfirmComponent,
-    ResetComponent,
-    MessageComponent,
-    AuthorizationComponent,
-    AboutComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,6 +67,7 @@ import {ActivateComponent} from "./register/activate/activate.component";
     ReactiveFormsModule,
     GravatarModule,
     NgxCaptchaModule,
+    FusioSdkModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

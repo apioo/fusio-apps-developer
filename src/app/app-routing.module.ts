@@ -6,11 +6,6 @@ import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./logout/logout.component";
 import {ProfileComponent} from "./account/profile/profile.component";
 import {SecurityComponent} from "./account/security/security.component";
-import {AppsComponent} from "./account/apps/apps.component";
-import {EventsComponent} from "./account/events/events.component";
-import {PlansComponent} from "./account/plans/plans.component";
-import {ContractsComponent} from "./account/contracts/contracts.component";
-import {InvoicesComponent} from "./account/invoices/invoices.component";
 import {BootstrapComponent} from "./bootstrap/bootstrap.component";
 import {ApiComponent} from "./api/api.component";
 import {SdkComponent} from "./sdk/sdk.component";
@@ -21,6 +16,9 @@ import {AboutComponent} from "./about/about.component";
 import {ActivateComponent} from "./register/activate/activate.component";
 import {ResetComponent} from "./password/reset/reset.component";
 import {ConfirmComponent} from "./password/confirm/confirm.component";
+import {PlanComponent} from "./account/plan/plan.component";
+import {ListComponent as AppList} from "./account/app/list/list.component";
+import {ListComponent as EventList} from "./account/event/list/list.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -32,11 +30,9 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'account', component: ProfileComponent, canActivate: [AuthenticationGuard] },
   { path: 'account/security', component: SecurityComponent, canActivate: [AuthenticationGuard] },
-  { path: 'account/apps', component: AppsComponent, canActivate: [AuthenticationGuard] },
-  { path: 'account/events', component: EventsComponent, canActivate: [AuthenticationGuard] },
-  { path: 'account/plans', component: PlansComponent, canActivate: [AuthenticationGuard] },
-  { path: 'account/contracts', component: ContractsComponent, canActivate: [AuthenticationGuard] },
-  { path: 'account/invoices', component: InvoicesComponent, canActivate: [AuthenticationGuard] },
+  { path: 'account/app', component: AppList, canActivate: [AuthenticationGuard] },
+  { path: 'account/event', component: EventList, canActivate: [AuthenticationGuard] },
+  { path: 'account/plan', component: PlanComponent, canActivate: [AuthenticationGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'register', component: RegisterComponent },

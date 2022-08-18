@@ -5,7 +5,7 @@ import axios from "axios";
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-account-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
