@@ -2,10 +2,10 @@
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
   <div class="container">
     <a routerLink="/" class="navbar-brand"><img src="assets/fusio_32px.png"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" routerLink="/bootstrap">Get started</a>
@@ -26,21 +26,23 @@
           <a class="nav-link" routerLink="/about">About</a>
         </li>
         <li class="nav-item" *ngIf="isAuthenticated">
-          <a class="nav-link" routerLink="/account">Account</a>
         </li>
-        <li class="nav-item" *ngIf="isAuthenticated">
-          <a class="nav-link" routerLink="/logout">Logout</a>
+        <li class="nav-item">
         </li>
         <li class="nav-item" *ngIf="!isAuthenticated">
-          <a class="nav-link" routerLink="/register">Register</a>
         </li>
-        <li class="nav-item" *ngIf="!isAuthenticated">
-          <a class="nav-link" routerLink="/login">Login</a>
+        <li class="nav-item">
         </li>
       </ul>
-      <span class="navbar-text" *ngIf="isAuthenticated && account?.name">
+      <span class="navbar-text me-2" *ngIf="isAuthenticated && account?.name">
         Logged in as <a routerLink="/account">{{ account?.name }}</a>
       </span>
+      <form class="d-flex" role="search">
+        <a *ngIf="isAuthenticated" class="btn btn-primary ms-2" routerLink="/account">Account</a>
+        <a *ngIf="isAuthenticated" class="btn btn-secondary ms-2" routerLink="/logout">Logout</a>
+        <a *ngIf="!isAuthenticated" class="btn btn-primary ms-2" routerLink="/login">Login</a>
+        <a *ngIf="!isAuthenticated" class="btn btn-secondary ms-2" routerLink="/register">Register</a>
+      </form>
     </div>
   </div>
 </nav>
