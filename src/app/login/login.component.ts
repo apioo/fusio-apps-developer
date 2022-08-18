@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 import axios from "axios";
-import {FactoryService} from "../factory.service";
+import {UserService} from "ngx-fusio-sdk";
 import {Router} from "@angular/router";
-import {UserService} from "../user.service";
+import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
+import {ClientService} from "../client.service";
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
   response?: Message;
   loading = false
 
-  constructor(private factory: FactoryService, private router: Router, private user: UserService) {
+  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>) {
   }
 
   ngOnInit(): void {
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
 
     try {
-      const client = this.factory.getClientWithCredentials(this.credentials.username, this.credentials.password);
+      const client = this.client.getClientWithCredentials(this.credentials.username, this.credentials.password);
       const account = await client.consumerUser();
       const response = await account.getConsumerAccount().consumerActionUserGet();
 

@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {FactoryService} from "../factory.service";
-import {Router} from "@angular/router";
-import {UserService} from "../user.service";
 import axios from "axios";
 import {User_Register} from "fusio-sdk/dist/src/generated/consumer/User_Register";
+import {ClientService} from "../client.service";
 
 @Component({
   selector: 'app-register',
@@ -25,7 +23,7 @@ export class RegisterComponent implements OnInit {
   response?: Message;
   loading = false
 
-  constructor(private factory: FactoryService) {
+  constructor(private client: ClientService) {
   }
 
   ngOnInit(): void {
@@ -46,7 +44,7 @@ export class RegisterComponent implements OnInit {
         throw new Error('No captcha provided');
       }
 
-      const client = this.factory.getClientAnonymous();
+      const client = this.client.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerRegister().consumerActionUserRegister(this.credentials);
 

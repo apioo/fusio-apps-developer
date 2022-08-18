@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {FactoryService} from "../../factory.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import axios from "axios";
 import {User_Activate} from "fusio-sdk/dist/src/generated/consumer/User_Activate";
+import {ClientService} from "../../client.service";
 
 @Component({
   selector: 'app-activate',
@@ -14,14 +14,13 @@ export class ActivateComponent implements OnInit {
 
   response?: Message;
 
-  constructor(private factory: FactoryService, protected route: ActivatedRoute) {
+  constructor(private client: ClientService, protected route: ActivatedRoute) {
   }
 
   async ngOnInit(): Promise<void> {
    this.route.paramMap.subscribe(async params => {
       const token = params.get('token');
       if (token) {
-        console.log(token);
         await this.activate(token);
       }
     });
@@ -33,7 +32,7 @@ export class ActivateComponent implements OnInit {
     };
 
     try {
-      const client = this.factory.getClientAnonymous();
+      const client = this.client.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerActivate().consumerActionUserActivate(activate);
 

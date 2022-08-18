@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {User_PasswordReset} from "fusio-sdk/dist/src/generated/consumer/User_PasswordReset";
+import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {FactoryService} from "../../factory.service";
 import {ActivatedRoute} from "@angular/router";
 import axios from "axios";
 import {User_Email} from "fusio-sdk/dist/src/generated/consumer/User_Email";
+import {ClientService} from "../../client.service";
 
 @Component({
   selector: 'app-reset',
@@ -22,7 +21,7 @@ export class ResetComponent implements OnInit {
   response?: Message;
   loading = false
 
-  constructor(private factory: FactoryService, protected route: ActivatedRoute) {
+  constructor(private client: ClientService, protected route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -39,7 +38,7 @@ export class ResetComponent implements OnInit {
         throw new Error('No captcha provided');
       }
 
-      const client = this.factory.getClientAnonymous();
+      const client = this.client.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerPasswordReset().consumerActionUserResetPasswordRequest(this.data);
 

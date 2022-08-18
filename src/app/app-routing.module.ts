@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {AuthenticationGuard} from "./authentication.guard";
 import {HomeComponent} from "./home/home.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./logout/logout.component";
@@ -19,6 +18,7 @@ import {ConfirmComponent} from "./password/confirm/confirm.component";
 import {PlanComponent} from "./account/plan/plan.component";
 import {ListComponent as AppList} from "./account/app/list/list.component";
 import {ListComponent as EventList} from "./account/event/list/list.component";
+import {AuthenticationGuard} from "ngx-fusio-sdk";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },

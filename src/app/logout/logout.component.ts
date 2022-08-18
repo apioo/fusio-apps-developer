@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from "../user.service";
 import {Router} from "@angular/router";
+import {UserService} from "ngx-fusio-sdk";
+import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
 
 @Component({
   selector: 'app-logout',
@@ -9,7 +10,7 @@ import {Router} from "@angular/router";
 })
 export class LogoutComponent implements OnInit {
 
-  constructor(private user: UserService, private router: Router) {
+  constructor(private user: UserService<User_Account>, private router: Router) {
   }
 
   ngOnInit(): void {

@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {FactoryService} from "../../factory.service";
 import {ActivatedRoute} from "@angular/router";
-import {User_Activate} from "fusio-sdk/dist/src/generated/consumer/User_Activate";
 import axios from "axios";
 import {User_PasswordReset} from "fusio-sdk/dist/src/generated/consumer/User_PasswordReset";
-import {User_Register} from "fusio-sdk/dist/src/generated/consumer/User_Register";
+import {ClientService} from "../../client.service";
 
 @Component({
   selector: 'app-confirm',
@@ -24,7 +22,7 @@ export class ConfirmComponent implements OnInit {
   response?: Message;
   loading = false
 
-  constructor(private factory: FactoryService, protected route: ActivatedRoute) {
+  constructor(private client: ClientService, protected route: ActivatedRoute) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -44,7 +42,7 @@ export class ConfirmComponent implements OnInit {
         throw new Error('The provided password does not match with the confirmation password');
       }
 
-      const client = this.factory.getClientAnonymous();
+      const client = this.client.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerPasswordReset().consumerActionUserResetPasswordExecute(this.reset);
 

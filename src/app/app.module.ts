@@ -34,6 +34,7 @@ import {PlanComponent} from "./account/plan/plan.component";
 
 @NgModule({
   declarations: [
+    AppComponent,
     AboutComponent,
     ActivateComponent,
     AccountAppList,
