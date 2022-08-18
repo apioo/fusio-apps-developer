@@ -37,7 +37,7 @@
       <span class="navbar-text me-2" *ngIf="isAuthenticated && account?.name">
         Logged in as <a routerLink="/account">{{ account?.name }}</a>
       </span>
-      <form class="d-flex" role="search">
+      <form class="d-flex">
         <a *ngIf="isAuthenticated" class="btn btn-primary ms-2" routerLink="/account">Account</a>
         <a *ngIf="isAuthenticated" class="btn btn-secondary ms-2" routerLink="/logout">Logout</a>
         <a *ngIf="!isAuthenticated" class="btn btn-primary ms-2" routerLink="/login">Login</a>
