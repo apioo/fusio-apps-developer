@@ -26,6 +26,8 @@ import {ActivateComponent} from './activate/activate.component';
 import {ConfirmComponent} from './password/confirm/confirm.component';
 import {ResetComponent} from './password/reset/reset.component';
 import {MessageComponent} from "./shared/message/message.component";
+import { AuthorizationComponent } from './authorization/authorization.component';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import {MessageComponent} from "./shared/message/message.component";
     ConfirmComponent,
     ResetComponent,
     MessageComponent,
+    AuthorizationComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,

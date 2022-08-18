@@ -16,13 +16,17 @@ import {ApiComponent} from "./api/api.component";
 import {SdkComponent} from "./sdk/sdk.component";
 import {SupportComponent} from "./support/support.component";
 import {RegisterComponent} from "./register/register.component";
+import {AuthorizationComponent} from "./authorization/authorization.component";
+import {AboutComponent} from "./about/about.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'bootstrap', component: BootstrapComponent },
+  { path: 'authorization', component: AuthorizationComponent },
   { path: 'api', component: ApiComponent },
   { path: 'sdk', component: SdkComponent },
   { path: 'support', component: SupportComponent },
+  { path: 'about', component: AboutComponent },
   { path: 'account', component: ProfileComponent, canActivate: [AuthenticationGuard] },
   { path: 'account/security', component: SecurityComponent, canActivate: [AuthenticationGuard] },
   { path: 'account/apps', component: AppsComponent, canActivate: [AuthenticationGuard] },
