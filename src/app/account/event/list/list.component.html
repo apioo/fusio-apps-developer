@@ -20,4 +20,37 @@
     </ul>
   </nav>
 
+  <fusio-message [response]="response"></fusio-message>
+
+  <fusio-search
+    [searchTerm]="search"
+    (search)="doSearch(1, $event)"
+    (newClick)="openCreateDialog()"
+    placeholder="event">
+  </fusio-search>
+
+  <div class="row">
+    <div class="col-md-3">
+      <fusio-sidebar
+        name="event"
+        nameKey="endpoint"
+        [entries]="entries"
+        [totalResults]="totalResults"
+        [selected]="selected"
+        [page]="page"
+        [pageSize]="pageSize"
+        (pageChange)="doSearch($event, search)"
+        (entrySelect)="doSelect($event)">
+      </fusio-sidebar>
+    </div>
+    <div class="col-md-9">
+      <fusio-empty *ngIf="!selected" [loading]="loading" (newClick)="openCreateDialog()"></fusio-empty>
+      <app-account-event-detail *ngIf="selected"
+        [selected]="selected"
+        (updateClick)="openUpdateDialog(selected)"
+        (deleteClick)="openDeleteDialog(selected)">
+      </app-account-event-detail>
+    </div>
+  </div>
+
 </div>
