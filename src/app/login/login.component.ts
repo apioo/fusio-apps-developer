@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 
       this.user.login(response.data);
 
-      this.router.navigate(['/']).then(() => {
+      this.router.navigate(['/account']).then(() => {
         location.reload();
       });
     } catch (error) {

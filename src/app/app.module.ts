@@ -23,7 +23,7 @@ import {ResetComponent as PasswordReset} from './password/reset/reset.component'
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
 import {ActivateComponent} from "./register/activate/activate.component";
-import {FusioSdkModule} from "ngx-fusio-sdk";
+import {FactoryService, FusioSdkModule} from "ngx-fusio-sdk";
 import {ListComponent as AccountAppList} from './account/app/list/list.component';
 import {ModalComponent as AccountAppModal} from './account/app/modal/modal.component';
 import {DetailComponent as AccountAppDetail} from './account/app/detail/detail.component';
@@ -31,6 +31,7 @@ import {ListComponent as AccountEventList} from './account/event/list/list.compo
 import {ModalComponent as AccountEventModal} from './account/event/modal/modal.component';
 import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
 import {PlanComponent} from "./account/plan/plan.component";
+import {ClientService} from "./client.service";
 
 @NgModule({
   declarations: [
@@ -70,7 +71,9 @@ import {PlanComponent} from "./account/plan/plan.component";
     NgxCaptchaModule,
     FusioSdkModule,
   ],
-  providers: [],
+  providers: [
+    {provide: FactoryService, useExisting: ClientService}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
