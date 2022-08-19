@@ -13,6 +13,7 @@ export class ProfileComponent implements OnInit {
 
   user?: User_Account;
   response?: Message;
+  email: string = '';
 
   constructor(private client: ClientService) { }
 
@@ -22,6 +23,7 @@ export class ProfileComponent implements OnInit {
       const response = await group.getConsumerAccount().consumerActionUserGet();
 
       this.user = response.data;
+      this.email = this.user.email || '';
     } catch (error) {
       if (axios.isAxiosError(error) && error.response)  {
         this.response = error.response.data as Message;
