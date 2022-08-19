@@ -15,7 +15,8 @@ export class PlanComponent implements OnInit {
   plans?: Array<Plan>
   response?: Message;
 
-  private provider = 'stripe';
+  provider = 'stripe';
+  currencyCode = 'USD';
 
   constructor(private client: ClientService, private location: LocationStrategy) { }
 

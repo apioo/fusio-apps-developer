@@ -31,7 +31,7 @@
     <div class="card-body">
       <dl>
         <dt>Price</dt>
-        <dd>{{ plan.price | currency }}</dd>
+        <dd>{{ plan.price | currency : currencyCode }}</dd>
         <dt>Points</dt>
         <dd>{{ plan.points }}</dd>
       </dl>
