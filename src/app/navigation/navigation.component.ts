@@ -11,6 +11,7 @@ import {ClientService} from "../client.service";
 export class NavigationComponent implements OnInit {
 
   isAuthenticated = true;
+  isMenuCollapsed = true;
   account?: User_Account;
 
   constructor(private client: ClientService, private user: UserService<User_Account>) { }

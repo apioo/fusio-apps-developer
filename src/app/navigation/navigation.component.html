@@ -2,10 +2,10 @@
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
   <div class="container">
     <a routerLink="/" class="navbar-brand"><img src="assets/fusio_32px.png"></a>
-    <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse">
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" routerLink="/bootstrap">Get started</a>
