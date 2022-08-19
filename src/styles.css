@@ -104,5 +104,35 @@ body {
 }
 
 .fusio-tabs {
-  margin-bottom:16px;
+  margin-bottom:1rem;
+}
+
+.fusio-detail
+{
+  margin:8px 0;
+}
+
+.fusio-detail > .row
+{
+}
+
+.fusio-detail > .row:nth-child(even)
+{
+  background-color:rgba(0,0,0,.03);
+}
+
+.fusio-detail > .row > div
+{
+  margin:12px 0;
+}
+
+.fusio-detail > .row > div:first-child
+{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.fusio-detail .badge
+{
+  margin-right:4px;
 }
