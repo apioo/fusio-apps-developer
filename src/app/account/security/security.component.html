@@ -20,19 +20,25 @@
     </ul>
   </nav>
   <fusio-message [response]="response"></fusio-message>
-  <form *ngIf="credentials" (ngSubmit)="doSave()">
-    <div class="mb-3">
-      <label for="name" class="form-label">Old password</label>
-      <input type="password" class="form-control" id="name" name="name" [(ngModel)]="credentials.oldPassword">
+  <div class="row">
+    <div class="col-md-6">
+      <form *ngIf="credentials" (ngSubmit)="doSave()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Old password</label>
+          <input type="password" class="form-control" id="name" name="name" [(ngModel)]="credentials.oldPassword">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">New password</label>
+          <input type="password" class="form-control" id="email" name="email" [(ngModel)]="credentials.newPassword">
+        </div>
+        <div class="mb-3">
+          <label for="points" class="form-label">Verify password</label>
+          <input type="password" class="form-control" id="points" name="points" [(ngModel)]="credentials.verifyPassword">
+        </div>
+        <button type="submit" class="btn btn-primary">Change password</button>
+      </form>
     </div>
-    <div class="mb-3">
-      <label for="email" class="form-label">New password</label>
-      <input type="password" class="form-control" id="email" name="email" [(ngModel)]="credentials.newPassword">
+    <div class="col-md-6">
     </div>
-    <div class="mb-3">
-      <label for="points" class="form-label">Verify password</label>
-      <input type="password" class="form-control" id="points" name="points" [(ngModel)]="credentials.verifyPassword">
-    </div>
-    <button type="submit" class="btn btn-primary">Change password</button>
-  </form>
+  </div>
 </div>
