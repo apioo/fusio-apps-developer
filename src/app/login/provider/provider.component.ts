@@ -37,7 +37,7 @@ export class ProviderComponent implements OnInit {
     try {
       const verification = this.provider.verifyRequest(providerName, state);
 
-      const group = await this.client.getClient().consumerUser();
+      const group = await this.client.getClientAnonymous().consumerUser();
       const response = await group.getConsumerProviderByProvider(providerName).consumerActionUserProvider({
         code: code,
         clientId: verification.clientId,
