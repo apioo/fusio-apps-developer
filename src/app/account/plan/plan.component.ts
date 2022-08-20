@@ -33,12 +33,17 @@ export class PlanComponent implements OnInit {
 
       if (response.data.redirectUrl) {
         location.href = response.data.redirectUrl;
+      } else {
+        throw new Error('You can only visit the billing portal once you have successfully purchased a subscription');
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response)  {
         this.response = error.response.data as Message;
       } else {
-        throw error;
+        this.response = {
+          success: false,
+          message: String(error),
+        };
       }
     }
   }
@@ -61,7 +66,10 @@ export class PlanComponent implements OnInit {
       if (axios.isAxiosError(error) && error.response)  {
         this.response = error.response.data as Message;
       } else {
-        throw error;
+        this.response = {
+          success: false,
+          message: String(error),
+        };
       }
     }
   }
