@@ -6,6 +6,8 @@ import {SessionTokenStore} from "sdkgen-client";
 import {AccessToken} from "sdkgen-client/dist/src/AccessToken";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProviderService} from "../../provider.service";
+import {UserService} from "ngx-fusio-sdk";
+import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
 
 @Component({
   selector: 'app-login-provider',
@@ -16,7 +18,7 @@ export class ProviderComponent implements OnInit {
 
   response?: Message;
 
-  constructor(private client: ClientService, private router: Router, protected route: ActivatedRoute, private provider: ProviderService) { }
+  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>, protected route: ActivatedRoute, private provider: ProviderService) { }
 
   async ngOnInit(): Promise<void> {
     const provider = this.route.snapshot.paramMap.get('provider');
@@ -59,9 +61,7 @@ export class ProviderComponent implements OnInit {
       const store = new SessionTokenStore();
       store.persist(token);
 
-      this.router.navigate(['/account']).then(() => {
-        location.reload();
-      });
+      await this.obtainUserInfo();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response)  {
         this.response = error.response.data as Message;
@@ -72,6 +72,17 @@ export class ProviderComponent implements OnInit {
         };
       }
     }
+  }
+
+  private async obtainUserInfo() {
+    const account = await this.client.getClient().consumerUser();
+    const response = await account.getConsumerAccount().consumerActionUserGet();
+
+    this.user.login(response.data);
+
+    this.router.navigate(['/account']).then(() => {
+      location.reload();
+    });
   }
 
 }
