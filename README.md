@@ -14,7 +14,7 @@ which helps to integrate Fusio into your project. You can also take a look at ou
 [samples overview](https://www.fusio-project.org/samples) where we provide some demo
 integrations.
 
-You can take directly a look at the app at our demo instance:  
+You can also take directly a look at this app at our demo instance:  
 https://demo.fusio-project.org/apps/developer/
 
 ## Customizing
