@@ -32,6 +32,7 @@ import {ModalComponent as AccountEventModal} from './account/event/modal/modal.c
 import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
 import {PlanComponent} from "./account/plan/plan.component";
 import {ClientService} from "./client.service";
+import { ProviderComponent } from './login/provider/provider.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import {ClientService} from "./client.service";
     BootstrapComponent,
     HomeComponent,
     LoginComponent,
+    ProviderComponent,
     LogoutComponent,
     NavigationComponent,
     PasswordConfirm,

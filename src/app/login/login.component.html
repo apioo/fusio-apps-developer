@@ -20,6 +20,12 @@
           Login
         </button>
         <br>
+        <ng-container *ngIf="providers.length > 0">
+          <hr>
+          <div class="d-grid gap-2">
+            <button *ngFor="let provider of providers" class="btn btn-secondary" type="button" (click)="doProviderLogin(provider.name)"><i class="bi bi-{{provider.icon}}"></i> {{provider.name}}</button>
+          </div>
+        </ng-container>
         <br>
         <span class="float-end"><a routerLink="/password/reset">Password reset</a></span>
       </form>

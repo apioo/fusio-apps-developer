@@ -19,6 +19,7 @@ import {PlanComponent} from "./account/plan/plan.component";
 import {ListComponent as AppList} from "./account/app/list/list.component";
 import {ListComponent as EventList} from "./account/event/list/list.component";
 import {AuthenticationGuard} from "ngx-fusio-sdk";
+import {ProviderComponent} from "./login/provider/provider.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -36,6 +37,7 @@ const routes: Routes = [
   { path: 'account/event/:id', component: EventList, canActivate: [AuthenticationGuard] },
   { path: 'account/plan', component: PlanComponent, canActivate: [AuthenticationGuard] },
   { path: 'login', component: LoginComponent },
+  { path: 'login/:provider', component: ProviderComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register/activate/:token', component: ActivateComponent },

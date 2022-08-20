@@ -5,6 +5,7 @@ import {UserService} from "ngx-fusio-sdk";
 import {Router} from "@angular/router";
 import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
 import {ClientService} from "../client.service";
+import {ProviderService, Provider} from "../provider.service";
 
 @Component({
   selector: 'app-login',
@@ -19,12 +20,15 @@ export class LoginComponent implements OnInit {
   }
 
   response?: Message;
-  loading = false
+  loading = false;
 
-  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>) {
+  providers: Array<Provider> = [];
+
+  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>, private provider: ProviderService) {
   }
 
   ngOnInit(): void {
+    this.providers = this.provider.getProviders();
   }
 
   async login() {
@@ -53,6 +57,17 @@ export class LoginComponent implements OnInit {
           message: String(error),
         };
       }
+    }
+  }
+
+  doProviderLogin(name: string) {
+    try {
+      location.href = this.provider.generateUrl(name);
+    } catch (error) {
+      this.response = {
+        success: false,
+        message: String(error),
+      };
     }
   }
 
