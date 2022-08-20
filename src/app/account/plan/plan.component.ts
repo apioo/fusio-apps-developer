@@ -45,10 +45,13 @@ export class PlanComponent implements OnInit {
 
   async doPurchase(plan: Plan) {
     try {
+      const path = this.location.prepareExternalUrl('/account');
+      const redirectUrl = location.origin + path;
+
       const group = await this.client.getClient().consumerPayment();
       const response = await group.getConsumerPaymentByProviderCheckout(this.provider).consumerActionPaymentCheckout({
         planId: plan.id,
-        returnUrl: this.location.prepareExternalUrl('/account'),
+        returnUrl: redirectUrl,
       });
 
       if (response.data.approvalUrl) {

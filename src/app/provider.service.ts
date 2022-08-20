@@ -15,11 +15,11 @@ export class ProviderService {
   public generateUrl(name: string): string {
     const provider = this.getProviderByName(name);
     if (!provider) {
-      throw new Error('Provided login provides does not exist');
+      throw new Error('Login provider does not exist');
     }
 
     const state = this.generateState();
-    const path = this.location.prepareExternalUrl('login/' + provider.name);
+    const path = this.location.prepareExternalUrl('/login/' + provider.name);
     const redirectUrl = location.origin + path;
 
     let params: Record<string, string> = {};
