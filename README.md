@@ -1,5 +1,5 @@
 
-# Fusio Developer
+# Fusio Developer Portal
 
 This repository contains the Fusio developer portal app which allows you to easily on-board
 external developers by providing a fronted where external developers can register to consume
