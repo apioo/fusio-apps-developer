@@ -1,0 +1,37 @@
+
+<div class="fusio-login">
+  <div class="fusio-login-panel">
+    <header>
+      <h1>Register</h1>
+    </header>
+    <div class="fusio-login-panel-body">
+      <fusio-message [response]="response"></fusio-message>
+      <form (submit)="register()">
+        <div class="mb-3">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" [(ngModel)]="credentials.name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" [(ngModel)]="credentials.email" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" [(ngModel)]="credentials.password" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="passwordConfirm">Confirm password:</label>
+          <input type="password" id="passwordConfirm" name="passwordConfirm" [(ngModel)]="passwordConfirm" class="form-control">
+        </div>
+        <div class="mb-3" *ngIf="captchaKey">
+          <label>Captcha:</label>
+          <ngx-recaptcha2 #captchaElem [siteKey]="captchaKey" (success)="setCaptcha($event)" [useGlobalDomain]="false" formControlName="recaptcha"></ngx-recaptcha2>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Register
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

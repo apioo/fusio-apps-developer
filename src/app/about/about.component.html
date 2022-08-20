@@ -1,0 +1,29 @@
+
+<div class="fusio-page">
+  <dl>
+    <dt>API-Version</dt>
+    <dd>{{about?.apiVersion}}</dd>
+    <dt>Title</dt>
+    <dd>{{about?.title}}</dd>
+    <dt>Categories</dt>
+    <dd><span class="badge text-bg-primary me-1" *ngFor="let category of about?.categories">{{category}}</span></dd>
+    <dt>Scopes</dt>
+    <dd><span class="badge text-bg-primary me-1" *ngFor="let scope of about?.scopes">{{scope}}</span></dd>
+  </dl>
+  <h3>Links</h3>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Relationship</th>
+      <th>Link</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let link of about?.links">
+      <td>{{link.rel}}</td>
+      <td><a href="{{link.href}}">{{link.href}}</a></td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>

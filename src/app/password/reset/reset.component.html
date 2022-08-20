@@ -1,0 +1,25 @@
+
+<div class="fusio-login">
+  <div class="fusio-login-panel">
+    <header>
+      <h1>Password reset</h1>
+    </header>
+    <div class="fusio-login-panel-body">
+      <fusio-message [response]="response"></fusio-message>
+      <form (submit)="doReset()">
+        <div class="mb-3">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" [(ngModel)]="data.email" class="form-control">
+        </div>
+        <div class="mb-3" *ngIf="captchaKey">
+          <label>Captcha:</label>
+          <ngx-recaptcha2 #captchaElem [siteKey]="captchaKey" (success)="setCaptcha($event)" [useGlobalDomain]="false" formControlName="recaptcha"></ngx-recaptcha2>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Change password
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

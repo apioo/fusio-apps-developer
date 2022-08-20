@@ -1,0 +1,44 @@
+
+<div class="fusio-page">
+  <nav class="fusio-tabs">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a routerLink="/account" class="nav-link">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/security" class="nav-link active">Security</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/app" class="nav-link">Apps</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/event" class="nav-link">Events</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/plan" class="nav-link">Subscriptions</a>
+      </li>
+    </ul>
+  </nav>
+  <fusio-message [response]="response"></fusio-message>
+  <div class="row">
+    <div class="col-md-6">
+      <form *ngIf="credentials" (ngSubmit)="doSave()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Old password</label>
+          <input type="password" class="form-control" id="name" name="name" [(ngModel)]="credentials.oldPassword">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">New password</label>
+          <input type="password" class="form-control" id="email" name="email" [(ngModel)]="credentials.newPassword">
+        </div>
+        <div class="mb-3">
+          <label for="points" class="form-label">Verify password</label>
+          <input type="password" class="form-control" id="points" name="points" [(ngModel)]="credentials.verifyPassword">
+        </div>
+        <button type="submit" class="btn btn-primary">Change password</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+    </div>
+  </div>
+</div>

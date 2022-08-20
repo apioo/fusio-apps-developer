@@ -1,0 +1,49 @@
+
+<div class="fusio-page">
+  <nav class="fusio-tabs">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a routerLink="/account" class="nav-link active">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/security" class="nav-link">Security</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/app" class="nav-link">Apps</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/event" class="nav-link">Events</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/plan" class="nav-link">Subscriptions</a>
+      </li>
+    </ul>
+  </nav>
+  <fusio-message [response]="response"></fusio-message>
+  <div class="row">
+    <div class="col-md-6">
+      <form *ngIf="user" (ngSubmit)="doSave()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Username</label>
+          <input type="text" class="form-control" id="name" name="name" [ngModel]="user.name" disabled readonly>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" name="email" [(ngModel)]="user.email">
+        </div>
+        <div class="mb-3">
+          <label for="points" class="form-label">Points</label>
+          <input type="number" class="form-control" id="points" name="points" [ngModel]="user.points" disabled readonly>
+        </div>
+        <div class="mb-3">
+          <label for="scopes" class="form-label">Scopes</label>
+          <input type="text" class="form-control" id="scopes" name="scopes" [ngModel]="user.scopes" disabled readonly>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+    </div>
+    <div class="col-md-6" *ngIf="email">
+      <img ngxGravatar [email]="email" [size]="128" class="ms-4" />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+
+<div class="fusio-page">
+  <nav class="fusio-tabs">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a routerLink="/account" class="nav-link">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/security" class="nav-link">Security</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/app" class="nav-link">Apps</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/event" class="nav-link">Events</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/account/plan" class="nav-link active">Subscriptions</a>
+      </li>
+    </ul>
+  </nav>
+
+  <fusio-message [response]="response"></fusio-message>
+
+  <button class="btn btn-primary" (click)="doBillingPortal()">Billing portal</button>
+
+  <hr>
+
+  <div class="card float-start" style="width:14rem;margin-right:1rem;margin-bottom:1rem" *ngFor="let plan of plans">
+    <h5 class="card-header">{{plan.name}}</h5>
+    <div class="card-body">
+      <dl>
+        <dt>Price</dt>
+        <dd>{{ plan.price | currency : currencyCode }}</dd>
+        <dt>Points</dt>
+        <dd>{{ plan.points }}</dd>
+      </dl>
+      <p>{{ plan.description }}</p>
+      <div class="btn-group" role="group">
+        <a (click)="doPurchase(plan)" class="btn btn-primary">Purchase</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="clear:both"></div>
+
+</div>

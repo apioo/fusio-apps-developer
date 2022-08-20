@@ -1,0 +1,42 @@
+<div class="card" *ngIf="selected">
+  <div class="card-header">{{selected?.endpoint}}</div>
+  <div class="card-body">
+    <div class="btn-group" role="group">
+      <button type="button" (click)="doUpdateClick()" class="btn btn-primary fusio-btn-update">Update</button>
+      <button type="button" (click)="doDeleteClick()" class="btn btn-danger fusio-btn-delete">Delete</button>
+    </div>
+    <div class="fusio-detail">
+      <div class="row">
+        <div class="col-2 fw-bold">Endpoint</div>
+        <div class="col-10">{{selected?.endpoint}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:1rem;" *ngIf="selected">
+  <div class="card-header">Responses</div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Status</th>
+        <th>Code</th>
+        <th>Attempts</th>
+        <th>Execute-Date</th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let response of selected?.responses">
+      <tr>
+        <td>
+          <span *ngIf="response?.status === 1" class="badge bg-info">Pending</span>
+          <span *ngIf="response?.status === 2" class="badge bg-success">Done</span>
+          <span *ngIf="response?.status === 3" class="badge bg-secondary">Exceeded</span>
+        </td>
+        <td>{{response.code}}</td>
+        <td>{{response.attempts}}</td>
+        <td>{{response.executeDate|date:'short'}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+body {
+  background-color: #eee;
+}
+
+.fusio-login {
+  max-width: 400px;
+  background-color: #fff;
+  margin: 0 auto;
+  margin-top: 64px;
+  margin-bottom: 128px;
+  padding: 12px;
+  padding-top: 16px;
+  padding-bottom: 32px;
+  border: 1px solid #ccc;
+}
+
+.fusio-login h1 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #666;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.fusio-login .fusio-login-ruler {
+  border-bottom: 1px solid #444;
+  margin-bottom: 16px;
+}
+
+.fusio-header {
+  border-bottom: 1px solid #ccc;
+}
+
+.fusio-header-loggedin {
+  padding: 15px 0;
+}
+
+.fusio-footer {
+  padding: 32px;
+  text-align: right;
+  border-top: 1px solid #ccc;
+}
+
+.fusio-page {
+  background-color:#fff;
+  padding:15px;
+  padding-bottom:64px;
+}
+
+.fusio-intro {
+  background-image: url(assets/header.jpg);
+  background-position: left top;
+  background-repeat: no-repeat;
+  background-color: #191a1f;
+  margin: -15px;
+  padding: 15px;
+  padding-top: 32px;
+  height: 400px;
+  border-bottom: 1px solid #ccc;
+}
+
+.fusio-intro h1 {
+  font-size: 3em;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+.fusio-intro p {
+  font-size: 1.6em;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+.fusio-intro-subline {
+  background-color: #222;
+  color: #fff;
+  margin: -15px;
+  padding: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.fusio-intro-subline h2 {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.fusio-intro-column {
+  margin-top: 32px;
+  margin-bottom: 64px;
+  text-align: center;
+}
+
+.fusio-intro-column h3 {
+  margin-top:0;
+}
+
+.fusio-intro-column-icon {
+  font-size: 5em;
+}
+
+.fusio-tabs {
+  margin-bottom:1rem;
+}
+
+.fusio-detail
+{
+  margin:8px 0;
+}
+
+.fusio-detail > .row
+{
+}
+
+.fusio-detail > .row:nth-child(even)
+{
+  background-color:rgba(0,0,0,.03);
+}
+
+.fusio-detail > .row > div
+{
+  margin:12px 0;
+}
+
+.fusio-detail > .row > div:first-child
+{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.fusio-detail .badge
+{
+  margin-right:4px;
+}
