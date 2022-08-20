@@ -29,7 +29,10 @@ export abstract class PageComponent implements OnInit {
       if (axios.isAxiosError(error) && error.response)  {
         this.response = error.response.data as Message;
       } else {
-        throw error;
+        this.response = {
+          success: false,
+          message: String(error),
+        };
       }
     }
   }
