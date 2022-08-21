@@ -3,7 +3,7 @@ import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 import {ActivatedRoute} from "@angular/router";
 import axios from "axios";
 import {User_Activate} from "fusio-sdk/dist/src/generated/consumer/User_Activate";
-import {ClientService} from "../../client.service";
+import {FusioService} from "../../fusio.service";
 
 @Component({
   selector: 'app-activate',
@@ -14,7 +14,7 @@ export class ActivateComponent implements OnInit {
 
   response?: Message;
 
-  constructor(private client: ClientService, protected route: ActivatedRoute) {
+  constructor(private fusio: FusioService, protected route: ActivatedRoute) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -32,7 +32,7 @@ export class ActivateComponent implements OnInit {
     };
 
     try {
-      const client = this.client.getClientAnonymous();
+      const client = this.fusio.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerActivate().consumerActionUserActivate(activate);
 

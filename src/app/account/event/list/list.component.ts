@@ -15,12 +15,12 @@ import {Event_Subscription} from "fusio-sdk/dist/src/generated/consumer/Event_Su
 export class ListComponent extends List<Client, Event_Subscription> {
 
   protected async getAll(query: Collection_Query): Promise<AxiosResponse<Collection<Event_Subscription>>> {
-    const group = await this.factory.getClient().consumerSubscription();
+    const group = await this.fusio.getClient().consumerSubscription();
     return await group.getConsumerSubscription().consumerActionEventSubscriptionGetAll(query);
   }
 
   protected async get(id: string): Promise<AxiosResponse<Event_Subscription>> {
-    const group = await this.factory.getClient().consumerSubscription();
+    const group = await this.fusio.getClient().consumerSubscription();
     return await group.getConsumerSubscriptionBySubscriptionId(id).consumerActionEventSubscriptionGet();
   }
 

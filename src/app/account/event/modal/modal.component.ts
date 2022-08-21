@@ -18,23 +18,23 @@ export class ModalComponent extends Modal<Client, Event_Subscription> {
   events?: Array<Event>;
 
   override async ngOnInit(): Promise<void> {
-    const group = await this.factory.getClient().consumerEvent();
+    const group = await this.fusio.getClient().consumerEvent();
     const response = await group.getConsumerEvent().consumerActionEventGetAll({count: 1024});
     this.events = response.data.entry;
   }
 
   protected async create(entity: Event_Subscription): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerSubscription();
+    const group = await this.fusio.getClient().consumerSubscription();
     return await group.getConsumerSubscription().consumerActionEventSubscriptionCreate(<Event_Subscription_Create> entity);
   }
 
   protected async update(entity: Event_Subscription): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerSubscription();
+    const group = await this.fusio.getClient().consumerSubscription();
     return await group.getConsumerSubscriptionBySubscriptionId('' + entity.id).consumerActionEventSubscriptionUpdate(<Event_Subscription_Update> entity);
   }
 
   protected async delete(entity: Event_Subscription): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerSubscription();
+    const group = await this.fusio.getClient().consumerSubscription();
     return await group.getConsumerSubscriptionBySubscriptionId('' + entity.id).consumerActionEventSubscriptionDelete();
   }
 

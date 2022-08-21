@@ -15,12 +15,12 @@ import {ModalComponent} from "../modal/modal.component";
 export class ListComponent extends List<Client, App> {
 
   protected async getAll(query: Collection_Query): Promise<AxiosResponse<Collection<App>>> {
-    const group = await this.factory.getClient().consumerApp();
+    const group = await this.fusio.getClient().consumerApp();
     return await group.getConsumerApp().consumerActionAppGetAll(query);
   }
 
   protected async get(id: string): Promise<AxiosResponse<App>> {
-    const group = await this.factory.getClient().consumerApp();
+    const group = await this.fusio.getClient().consumerApp();
     return await group.getConsumerAppByAppId(id).consumerActionAppGet();
   }
 

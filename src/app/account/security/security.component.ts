@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 import axios from "axios";
 import {Account_ChangePassword} from "fusio-sdk/dist/src/generated/consumer/Account_ChangePassword";
-import {ClientService} from "../../client.service";
+import {FusioService} from "../../fusio.service";
 
 @Component({
   selector: 'app-account-security',
@@ -18,7 +18,7 @@ export class SecurityComponent implements OnInit {
   };
   response?: Message;
 
-  constructor(private client: ClientService) { }
+  constructor(private fusio: FusioService) { }
 
   ngOnInit(): void {
   }
@@ -29,7 +29,7 @@ export class SecurityComponent implements OnInit {
         return;
       }
 
-      const group = await this.client.getClient().consumerUser();
+      const group = await this.fusio.getClient().consumerUser();
       const response = await group.getConsumerAccountChangePassword().consumerActionUserChangePassword(this.credentials);
 
       this.response = response.data;

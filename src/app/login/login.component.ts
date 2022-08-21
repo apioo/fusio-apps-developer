@@ -4,8 +4,8 @@ import axios from "axios";
 import {UserService} from "ngx-fusio-sdk";
 import {Router} from "@angular/router";
 import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
-import {ClientService} from "../client.service";
 import {ProviderService, Provider} from "../provider.service";
+import {FusioService} from "../fusio.service";
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
 
   providers: Array<Provider> = [];
 
-  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>, private provider: ProviderService) {
+  constructor(private fusio: FusioService, private router: Router, private user: UserService<User_Account>, private provider: ProviderService) {
   }
 
   ngOnInit(): void {
@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
 
     try {
-      const client = this.client.getClientWithCredentials(this.credentials.username, this.credentials.password);
+      const client = this.fusio.getClientWithCredentials(this.credentials.username, this.credentials.password);
       const account = await client.consumerUser();
       const response = await account.getConsumerAccount().consumerActionUserGet();
 

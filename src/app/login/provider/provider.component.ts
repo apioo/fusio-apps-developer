@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import axios from "axios";
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {ClientService} from "../../client.service";
 import {SessionTokenStore} from "sdkgen-client";
 import {AccessToken} from "sdkgen-client/dist/src/AccessToken";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProviderService} from "../../provider.service";
 import {UserService} from "ngx-fusio-sdk";
 import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
+import {FusioService} from "../../fusio.service";
 
 @Component({
   selector: 'app-login-provider',
@@ -18,7 +18,7 @@ export class ProviderComponent implements OnInit {
 
   response?: Message;
 
-  constructor(private client: ClientService, private router: Router, private user: UserService<User_Account>, protected route: ActivatedRoute, private provider: ProviderService) { }
+  constructor(private fusio: FusioService, private router: Router, private user: UserService<User_Account>, protected route: ActivatedRoute, private provider: ProviderService) { }
 
   async ngOnInit(): Promise<void> {
     const provider = this.route.snapshot.paramMap.get('provider');
@@ -39,7 +39,7 @@ export class ProviderComponent implements OnInit {
     try {
       const verification = this.provider.verifyRequest(providerName, state);
 
-      const group = await this.client.getClientAnonymous().consumerUser();
+      const group = await this.fusio.getClientAnonymous().consumerUser();
       const response = await group.getConsumerProviderByProvider(providerName).consumerActionUserProvider({
         code: code,
         clientId: verification.clientId,
@@ -75,7 +75,7 @@ export class ProviderComponent implements OnInit {
   }
 
   private async obtainUserInfo() {
-    const account = await this.client.getClient().consumerUser();
+    const account = await this.fusio.getClient().consumerUser();
     const response = await account.getConsumerAccount().consumerActionUserGet();
 
     this.user.login(response.data);

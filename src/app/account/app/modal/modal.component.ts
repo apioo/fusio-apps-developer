@@ -18,23 +18,23 @@ export class ModalComponent extends Modal<Client, App> {
   scopes?: Array<Scope>;
 
   override async ngOnInit(): Promise<void> {
-    const group = await this.factory.getClient().consumerScope();
+    const group = await this.fusio.getClient().consumerScope();
     const response = await group.getConsumerScope().consumerActionScopeGetAll({count: 1024});
     this.scopes = response.data.entry;
   }
 
   protected async create(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerApp();
+    const group = await this.fusio.getClient().consumerApp();
     return await group.getConsumerApp().consumerActionAppCreate(<App_Create> entity);
   }
 
   protected async update(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerApp();
+    const group = await this.fusio.getClient().consumerApp();
     return await group.getConsumerAppByAppId('' + entity.id).consumerActionAppUpdate(<App_Update> entity);
   }
 
   protected async delete(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.factory.getClient().consumerApp();
+    const group = await this.fusio.getClient().consumerApp();
     return await group.getConsumerAppByAppId('' + entity.id).consumerActionAppDelete();
   }
 

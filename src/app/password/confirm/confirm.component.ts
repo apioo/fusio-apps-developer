@@ -3,7 +3,7 @@ import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 import {ActivatedRoute} from "@angular/router";
 import axios from "axios";
 import {User_PasswordReset} from "fusio-sdk/dist/src/generated/consumer/User_PasswordReset";
-import {ClientService} from "../../client.service";
+import {FusioService} from "../../fusio.service";
 
 @Component({
   selector: 'app-confirm',
@@ -22,7 +22,7 @@ export class ConfirmComponent implements OnInit {
   response?: Message;
   loading = false
 
-  constructor(private client: ClientService, protected route: ActivatedRoute) {
+  constructor(private fusio: FusioService, protected route: ActivatedRoute) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -42,7 +42,7 @@ export class ConfirmComponent implements OnInit {
         throw new Error('The provided password does not match with the confirmation password');
       }
 
-      const client = this.client.getClientAnonymous();
+      const client = this.fusio.getClientAnonymous();
       const account = await client.consumerUser();
       const response = await account.getConsumerPasswordReset().consumerActionUserResetPasswordExecute(this.reset);
 

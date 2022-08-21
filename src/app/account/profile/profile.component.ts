@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
 import axios from "axios";
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {ClientService} from "../../client.service";
+import {FusioService} from "../../fusio.service";
 
 @Component({
   selector: 'app-account-profile',
@@ -15,11 +15,11 @@ export class ProfileComponent implements OnInit {
   response?: Message;
   email: string = '';
 
-  constructor(private client: ClientService) { }
+  constructor(private fusio: FusioService) { }
 
   async ngOnInit(): Promise<void> {
     try {
-      const group = await this.client.getClient().consumerUser();
+      const group = await this.fusio.getClient().consumerUser();
       const response = await group.getConsumerAccount().consumerActionUserGet();
 
       this.user = response.data;
@@ -42,7 +42,7 @@ export class ProfileComponent implements OnInit {
         return;
       }
 
-      const group = await this.client.getClient().consumerUser();
+      const group = await this.fusio.getClient().consumerUser();
       const response = await group.getConsumerAccount().consumerActionUserUpdate(this.user);
 
       this.response = response.data;

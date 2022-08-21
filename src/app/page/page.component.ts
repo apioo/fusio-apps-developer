@@ -3,7 +3,7 @@ import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
 import axios from "axios";
 import {Page} from "fusio-sdk/dist/src/generated/consumer/Page";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {ClientService} from "../client.service";
+import {FusioService} from "../fusio.service";
 
 @Component({
   selector: 'app-page',
@@ -16,11 +16,11 @@ export abstract class PageComponent implements OnInit {
   page?: Page
   content?: SafeHtml
 
-  constructor(protected client: ClientService, protected sanitizer: DomSanitizer) { }
+  constructor(protected fusio: FusioService, protected sanitizer: DomSanitizer) { }
 
   async ngOnInit(): Promise<void> {
     try {
-      const group = await this.client.getClientAnonymous().consumerPage();
+      const group = await this.fusio.getClientAnonymous().consumerPage();
       const response = await group.getConsumerPageByPageId(this.getId()).consumerActionPageGet();
 
       this.page = response.data;
