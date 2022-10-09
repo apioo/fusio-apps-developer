@@ -26,6 +26,7 @@ import {ModalComponent as AccountEventModal} from './account/event/modal/modal.c
 import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
 import {PlanComponent} from "./account/plan/plan.component";
 import {FusioService} from "./fusio.service";
+import {ConfigBuilder} from "./config-builder";
 
 @NgModule({
   declarations: [
@@ -57,7 +58,7 @@ import {FusioService} from "./fusio.service";
     ReactiveFormsModule,
     GravatarModule,
     NgxCaptchaModule,
-    FusioSdkModule.forRoot(),
+    FusioSdkModule.forRoot(ConfigBuilder.build()),
   ],
   providers: [
     {provide: Sdk, useExisting: FusioService}
