@@ -26,7 +26,7 @@
     "bootstrap-icons": "^1.8.3",
     "fusio-sdk": "^3.0.1",
     "ngx-captcha": "^11.0.0",
-    "ngx-fusio-sdk": "^1.0.5",
+    "ngx-fusio-sdk": "^1.0.6",
     "ngx-gravatar": "^13.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

@@ -9,8 +9,6 @@ import {SdkComponent} from "./sdk/sdk.component";
 import {SupportComponent} from "./support/support.component";
 import {AboutComponent} from "./about/about.component";
 import {PlanComponent} from "./account/plan/plan.component";
-import {ListComponent as AppList} from "./account/app/list/list.component";
-import {ListComponent as EventList} from "./account/event/list/list.component";
 import {
   AuthenticationGuard,
   LoginComponent,
@@ -19,7 +17,9 @@ import {
   RegisterComponent,
   ActivateComponent,
   ResetComponent,
-  ConfirmComponent
+  ConfirmComponent,
+  AppList,
+  EventList
 } from "ngx-fusio-sdk";
 import {AuthorizationComponent} from "./authorization/authorization.component";
 

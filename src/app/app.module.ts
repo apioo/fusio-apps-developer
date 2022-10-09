@@ -18,26 +18,15 @@ import {SupportComponent} from './support/support.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
 import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
-import {ListComponent as AccountAppList} from './account/app/list/list.component';
-import {ModalComponent as AccountAppModal} from './account/app/modal/modal.component';
-import {DetailComponent as AccountAppDetail} from './account/app/detail/detail.component';
-import {ListComponent as AccountEventList} from './account/event/list/list.component';
-import {ModalComponent as AccountEventModal} from './account/event/modal/modal.component';
-import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
 import {PlanComponent} from "./account/plan/plan.component";
 import {FusioService} from "./fusio.service";
 import {ConfigBuilder} from "./config-builder";
+import {EventComponent} from './account/event/event.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
-    AccountAppList,
-    AccountAppModal,
-    AccountAppDetail,
-    AccountEventList,
-    AccountEventModal,
-    AccountEventDetail,
     PlanComponent,
     ProfileComponent,
     SecurityComponent,
@@ -48,6 +37,7 @@ import {ConfigBuilder} from "./config-builder";
     NavigationComponent,
     SdkComponent,
     SupportComponent,
+    EventComponent,
   ],
   imports: [
     BrowserModule,
