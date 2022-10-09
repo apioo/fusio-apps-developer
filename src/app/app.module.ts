@@ -7,8 +7,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {HomeComponent} from './home/home.component';
-import {ProfileComponent} from './account/profile/profile.component';
-import {SecurityComponent} from './account/security/security.component';
 import {NavigationComponent} from './navigation/navigation.component';
 import {GravatarModule} from "ngx-gravatar";
 import {ApiComponent} from './api/api.component';
@@ -18,18 +16,14 @@ import {SupportComponent} from './support/support.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
 import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
-import {PlanComponent} from "./account/plan/plan.component";
 import {FusioService} from "./fusio.service";
 import {ConfigBuilder} from "./config-builder";
-import {EventComponent} from './account/event/event.component';
+import {AccountComponent} from './account/account.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
-    PlanComponent,
-    ProfileComponent,
-    SecurityComponent,
     ApiComponent,
     AuthorizationComponent,
     BootstrapComponent,
@@ -37,7 +31,7 @@ import {EventComponent} from './account/event/event.component';
     NavigationComponent,
     SdkComponent,
     SupportComponent,
-    EventComponent,
+    AccountComponent,
   ],
   imports: [
     BrowserModule,

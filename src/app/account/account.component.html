@@ -1,0 +1,11 @@
+
+<div class="fusio-page">
+  <nav class="fusio-tabs">
+    <ul ngbNav [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="item.id" *ngFor="let item of items">
+        <a ngbNavLink [routerLink]="item.link" class="nav-link">{{item.name}}</a>
+      </li>
+    </ul>
+  </nav>
+  <router-outlet></router-outlet>
+</div>
