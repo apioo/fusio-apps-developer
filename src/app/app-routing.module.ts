@@ -9,10 +9,10 @@ import {AboutComponent} from "./about/about.component";
 import {
   AccountComponent,
   ActivateComponent,
-  AppList,
+  AppListComponent,
   AuthenticationGuard,
   ConfirmComponent,
-  EventList,
+  EventListComponent,
   LoginComponent,
   LogoutComponent,
   ProviderComponent,
@@ -36,10 +36,10 @@ const routes: Routes = [
     path: 'account', component: AccountContainer, canActivate: [AuthenticationGuard], children: [
       {path: '', component: AccountComponent, canActivate: [AuthenticationGuard]},
       {path: 'security', component: SecurityComponent, canActivate: [AuthenticationGuard]},
-      {path: 'app', component: AppList, canActivate: [AuthenticationGuard]},
-      {path: 'app/:id', component: AppList, canActivate: [AuthenticationGuard]},
-      {path: 'event', component: EventList, canActivate: [AuthenticationGuard]},
-      {path: 'event/:id', component: EventList, canActivate: [AuthenticationGuard]},
+      {path: 'app', component: AppListComponent, canActivate: [AuthenticationGuard]},
+      {path: 'app/:id', component: AppListComponent, canActivate: [AuthenticationGuard]},
+      {path: 'event', component: EventListComponent, canActivate: [AuthenticationGuard]},
+      {path: 'event/:id', component: EventListComponent, canActivate: [AuthenticationGuard]},
       {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthenticationGuard]},
     ]
   },
