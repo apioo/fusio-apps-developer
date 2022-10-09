@@ -19,29 +19,5 @@
       </li>
     </ul>
   </nav>
-
-  <fusio-message [response]="response"></fusio-message>
-
-  <button class="btn btn-primary" (click)="doBillingPortal()">Billing portal</button>
-
-  <hr>
-
-  <div class="card float-start" style="width:14rem;margin-right:1rem;margin-bottom:1rem" *ngFor="let plan of plans">
-    <h5 class="card-header">{{plan.name}}</h5>
-    <div class="card-body">
-      <dl>
-        <dt>Price</dt>
-        <dd>{{ plan.price | currency : currencyCode }}</dd>
-        <dt>Points</dt>
-        <dd>{{ plan.points }}</dd>
-      </dl>
-      <p>{{ plan.description }}</p>
-      <div class="btn-group" role="group">
-        <a (click)="doPurchase(plan)" class="btn btn-primary">Purchase</a>
-      </div>
-    </div>
-  </div>
-
-  <div style="clear:both"></div>
-
+  <fusio-subscription></fusio-subscription>
 </div>

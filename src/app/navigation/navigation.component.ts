@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {User_Account} from "fusio-sdk/dist/src/generated/consumer/User_Account";
-import {UserService} from "ngx-fusio-sdk";
-import {FusioService} from "../fusio.service";
+import {UserAccount} from "fusio-sdk/dist/src/generated/consumer/UserAccount";
+import {ConsumerService, UserService} from "ngx-fusio-sdk";
 
 @Component({
   selector: 'app-navigation',
@@ -12,12 +11,12 @@ export class NavigationComponent implements OnInit {
 
   isAuthenticated = true;
   isMenuCollapsed = true;
-  account?: User_Account;
+  account?: UserAccount;
 
-  constructor(private fusio: FusioService, private user: UserService<User_Account>) { }
+  constructor(private consumer: ConsumerService, private user: UserService<UserAccount>) { }
 
   ngOnInit(): void {
-    this.isAuthenticated = this.fusio.hasValidToken();
+    this.isAuthenticated = this.consumer.hasValidToken();
     this.account = this.user.get();
   }
 

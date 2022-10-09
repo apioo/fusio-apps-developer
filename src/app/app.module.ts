@@ -7,8 +7,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {HomeComponent} from './home/home.component';
-import {LoginComponent} from './login/login.component';
-import {LogoutComponent} from './logout/logout.component';
 import {ProfileComponent} from './account/profile/profile.component';
 import {SecurityComponent} from './account/security/security.component';
 import {NavigationComponent} from './navigation/navigation.component';
@@ -17,12 +15,8 @@ import {ApiComponent} from './api/api.component';
 import {BootstrapComponent} from './bootstrap/bootstrap.component';
 import {SdkComponent} from './sdk/sdk.component';
 import {SupportComponent} from './support/support.component';
-import {RegisterComponent} from './register/register.component';
-import {ConfirmComponent as PasswordConfirm} from './password/confirm/confirm.component';
-import {ResetComponent as PasswordReset} from './password/reset/reset.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
-import {ActivateComponent} from "./register/activate/activate.component";
 import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
 import {ListComponent as AccountAppList} from './account/app/list/list.component';
 import {ModalComponent as AccountAppModal} from './account/app/modal/modal.component';
@@ -32,13 +26,11 @@ import {ModalComponent as AccountEventModal} from './account/event/modal/modal.c
 import {DetailComponent as AccountEventDetail} from './account/event/detail/detail.component';
 import {PlanComponent} from "./account/plan/plan.component";
 import {FusioService} from "./fusio.service";
-import {ProviderComponent} from './login/provider/provider.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AboutComponent,
-    ActivateComponent,
     AccountAppList,
     AccountAppModal,
     AccountAppDetail,
@@ -52,13 +44,7 @@ import {ProviderComponent} from './login/provider/provider.component';
     AuthorizationComponent,
     BootstrapComponent,
     HomeComponent,
-    LoginComponent,
-    ProviderComponent,
-    LogoutComponent,
     NavigationComponent,
-    PasswordConfirm,
-    PasswordReset,
-    RegisterComponent,
     SdkComponent,
     SupportComponent,
   ],
@@ -71,7 +57,7 @@ import {ProviderComponent} from './login/provider/provider.component';
     ReactiveFormsModule,
     GravatarModule,
     NgxCaptchaModule,
-    FusioSdkModule,
+    FusioSdkModule.forRoot(),
   ],
   providers: [
     {provide: Sdk, useExisting: FusioService}

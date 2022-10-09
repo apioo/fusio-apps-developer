@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {Detail} from "ngx-fusio-sdk";
-import {Event_Subscription} from "fusio-sdk/dist/src/generated/consumer/Event_Subscription";
+import {EventSubscription} from "fusio-sdk/dist/src/generated/consumer/EventSubscription";
 
 @Component({
   selector: 'app-account-event-detail',
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.css']
 })
-export class DetailComponent extends Detail<Event_Subscription> {
+export class DetailComponent extends Detail<EventSubscription> {
 
 }

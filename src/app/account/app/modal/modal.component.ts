@@ -4,8 +4,8 @@ import {App} from "fusio-sdk/dist/src/generated/consumer/App";
 import Client from "fusio-sdk/dist/src/generated/consumer/Client";
 import {AxiosResponse} from "axios";
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {App_Update} from "fusio-sdk/dist/src/generated/consumer/App_Update";
-import {App_Create} from "fusio-sdk/dist/src/generated/consumer/App_Create";
+import {AppUpdate} from "fusio-sdk/dist/src/generated/consumer/AppUpdate";
+import {AppCreate} from "fusio-sdk/dist/src/generated/consumer/AppCreate";
 import {Scope} from "fusio-sdk/dist/src/generated/consumer/Scope";
 
 @Component({
@@ -18,24 +18,24 @@ export class ModalComponent extends Modal<Client, App> {
   scopes?: Array<Scope>;
 
   override async ngOnInit(): Promise<void> {
-    const group = await this.fusio.getClient().consumerScope();
-    const response = await group.getConsumerScope().consumerActionScopeGetAll({count: 1024});
+    const scope = await this.fusio.getClient().getConsumerScope();
+    const response = await scope.consumerActionScopeGetAll({count: 1024});
     this.scopes = response.data.entry;
   }
 
   protected async create(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.fusio.getClient().consumerApp();
-    return await group.getConsumerApp().consumerActionAppCreate(<App_Create> entity);
+    const app = await this.fusio.getClient().getConsumerApp();
+    return await app.consumerActionAppCreate(<AppCreate> entity);
   }
 
   protected async update(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.fusio.getClient().consumerApp();
-    return await group.getConsumerAppByAppId('' + entity.id).consumerActionAppUpdate(<App_Update> entity);
+    const app = await this.fusio.getClient().getConsumerAppByAppId('' + entity.id);
+    return await app.consumerActionAppUpdate(<AppUpdate> entity);
   }
 
   protected async delete(entity: App): Promise<AxiosResponse<Message>> {
-    const group = await this.fusio.getClient().consumerApp();
-    return await group.getConsumerAppByAppId('' + entity.id).consumerActionAppDelete();
+    const app = await this.fusio.getClient().getConsumerAppByAppId('' + entity.id);
+    return await app.consumerActionAppDelete();
   }
 
   protected newEntity(): App {

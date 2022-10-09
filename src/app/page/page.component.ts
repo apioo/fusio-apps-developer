@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import axios from "axios";
 import {Page} from "fusio-sdk/dist/src/generated/consumer/Page";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {FusioService} from "../fusio.service";
+import {ConsumerService, ErrorConverter} from "ngx-fusio-sdk";
 
 @Component({
   selector: 'app-page',
@@ -16,24 +15,18 @@ export abstract class PageComponent implements OnInit {
   page?: Page
   content?: SafeHtml
 
-  constructor(protected fusio: FusioService, protected sanitizer: DomSanitizer) { }
+  constructor(private consumer: ConsumerService, protected sanitizer: DomSanitizer) { }
 
   async ngOnInit(): Promise<void> {
     try {
-      const group = await this.fusio.getClientAnonymous().consumerPage();
-      const response = await group.getConsumerPageByPageId(this.getId()).consumerActionPageGet();
+      const page = await this.consumer.getClientAnonymous().getConsumerPageByPageId(this.getId());
+      const response = await page.consumerActionPageGet();
 
       this.page = response.data;
       this.content = this.sanitizer.bypassSecurityTrustHtml(this.page.content || '');
+      this.response = undefined;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response)  {
-        this.response = error.response.data as Message;
-      } else {
-        this.response = {
-          success: false,
-          message: String(error),
-        };
-      }
+      this.response = ErrorConverter.convert(error);
     }
   }
 

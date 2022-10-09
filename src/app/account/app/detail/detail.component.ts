@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {Detail} from "ngx-fusio-sdk";
 import {App} from "fusio-sdk/dist/src/generated/consumer/App";
 

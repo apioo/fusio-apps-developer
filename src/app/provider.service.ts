@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {LocationStrategy, PlatformLocation} from "@angular/common";
+import {LocationStrategy} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
