@@ -11,7 +11,7 @@ export class ConfigBuilder {
     return {
       baseUrl: baseUrl,
       providers: ConfigBuilder.getProviders(),
-      recaptcha: RECAPTCHA_KEY,
+      recaptcha: ConfigBuilder.getRecaptchaKey(),
     }
   }
 
@@ -80,6 +80,10 @@ export class ConfigBuilder {
         return typeof FACEBOOK_KEY === 'string' && FACEBOOK_KEY !== '${PROVIDER_FACEBOOK_KEY}' ? FACEBOOK_KEY : undefined;
     }
     return;
+  }
+
+  private static getRecaptchaKey(): string|undefined {
+    return typeof RECAPTCHA_KEY === 'string' && RECAPTCHA_KEY !== '${RECAPTCHA_KEY}' ? RECAPTCHA_KEY : undefined;
   }
 
 }
