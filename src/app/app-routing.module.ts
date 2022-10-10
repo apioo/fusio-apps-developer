@@ -6,23 +6,8 @@ import {ApiComponent} from "./api/api.component";
 import {SdkComponent} from "./sdk/sdk.component";
 import {SupportComponent} from "./support/support.component";
 import {AboutComponent} from "./about/about.component";
-import {
-  AccountComponent,
-  ActivateComponent,
-  AppListComponent,
-  AuthenticationGuard,
-  ConfirmComponent,
-  EventListComponent,
-  LoginComponent,
-  LogoutComponent,
-  ProviderComponent,
-  RegisterComponent,
-  ResetComponent,
-  SecurityComponent,
-  SubscriptionComponent
-} from "ngx-fusio-sdk";
 import {AuthorizationComponent} from "./authorization/authorization.component";
-import {AccountComponent as AccountContainer} from "./account/account.component";
+import {RouteBuilder} from "ngx-fusio-sdk";
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -32,26 +17,9 @@ const routes: Routes = [
   {path: 'sdk', component: SdkComponent},
   {path: 'support', component: SupportComponent},
   {path: 'about', component: AboutComponent},
-  {
-    path: 'account', component: AccountContainer, canActivate: [AuthenticationGuard], children: [
-      {path: '', component: AccountComponent, canActivate: [AuthenticationGuard]},
-      {path: 'security', component: SecurityComponent, canActivate: [AuthenticationGuard]},
-      {path: 'app', component: AppListComponent, canActivate: [AuthenticationGuard]},
-      {path: 'app/:id', component: AppListComponent, canActivate: [AuthenticationGuard]},
-      {path: 'event', component: EventListComponent, canActivate: [AuthenticationGuard]},
-      {path: 'event/:id', component: EventListComponent, canActivate: [AuthenticationGuard]},
-      {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthenticationGuard]},
-    ]
-  },
-
-  {path: 'login', component: LoginComponent},
-  {path: 'login/:provider', component: ProviderComponent},
-  {path: 'logout', component: LogoutComponent},
-  {path: 'register', component: RegisterComponent},
-  {path: 'register/activate/:token', component: ActivateComponent},
-  {path: 'password/reset', component: ResetComponent},
-  {path: 'password/confirm/:token', component: ConfirmComponent},
 ];
+
+routes.push(...RouteBuilder.getRoutes());
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

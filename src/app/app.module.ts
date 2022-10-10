@@ -18,7 +18,6 @@ import {AboutComponent} from './about/about.component';
 import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
 import {FusioService} from "./fusio.service";
 import {ConfigBuilder} from "./config-builder";
-import {AccountComponent} from './account/account.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +30,6 @@ import {AccountComponent} from './account/account.component';
     NavigationComponent,
     SdkComponent,
     SupportComponent,
-    AccountComponent,
   ],
   imports: [
     BrowserModule,
