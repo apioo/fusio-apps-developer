@@ -7,7 +7,7 @@ import {SdkComponent} from "./sdk/sdk.component";
 import {SupportComponent} from "./support/support.component";
 import {AboutComponent} from "./about/about.component";
 import {AuthorizationComponent} from "./authorization/authorization.component";
-import {AccountRoute, isAuthenticated} from "ngx-fusio-sdk";
+import {AccountRoute, AuthorizationRoute, isAuthenticated} from "ngx-fusio-sdk";
 import {AccountComponent} from "./account/account.component";
 
 const routes: Routes = [
@@ -20,6 +20,8 @@ const routes: Routes = [
   {path: 'about', component: AboutComponent},
   {path: 'account', component: AccountComponent, canActivate: [isAuthenticated], children: AccountRoute.getAll()},
 ];
+
+routes.push(...AuthorizationRoute.getAll());
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
