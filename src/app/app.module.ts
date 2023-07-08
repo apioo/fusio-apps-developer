@@ -18,6 +18,7 @@ import {AboutComponent} from './about/about.component';
 import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
 import {FusioService} from "./fusio.service";
 import {ConfigBuilder} from "./config-builder";
+import { AccountComponent } from './account/account.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {ConfigBuilder} from "./config-builder";
     NavigationComponent,
     SdkComponent,
     SupportComponent,
+    AccountComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,8 +54,4 @@ export class AppModule {
 
 declare global {
   var FUSIO_URL: string | undefined;
-  var FACEBOOK_KEY: string | undefined;
-  var GOOGLE_KEY: string | undefined;
-  var GITHUB_KEY: string | undefined;
-  var RECAPTCHA_KEY: string | undefined;
 }

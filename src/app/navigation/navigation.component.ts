@@ -13,7 +13,7 @@ export class NavigationComponent implements OnInit {
   isMenuCollapsed = true;
   account?: UserAccount;
 
-  constructor(private consumer: ConsumerService, private user: UserService<UserAccount>) { }
+  constructor(private consumer: ConsumerService, private user: UserService) { }
 
   ngOnInit(): void {
     this.isAuthenticated = this.consumer.hasValidToken();

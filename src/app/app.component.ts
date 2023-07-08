@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import packageJson from "../../package.json";
+import {VersionService} from "./version.service";
 
 @Component({
   selector: 'app-root',
@@ -8,12 +8,12 @@ import packageJson from "../../package.json";
 })
 export class AppComponent {
   title = 'developer';
+  currentVersion = '';
 
-  version = packageJson.version;
-
-  constructor() { }
+  constructor(private version: VersionService) { }
 
   ngOnInit(): void {
+    this.currentVersion = this.version.get();
   }
 
 }
