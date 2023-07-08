@@ -11,6 +11,7 @@ export class ConfigBuilder {
     return {
       baseUrl: baseUrl,
       helpUrl: 'https://docs.fusio-project.org/docs/backend/',
+      homePath: 'account'
     }
   }
 
