@@ -11,13 +11,13 @@ import {AccountRoute, AuthorizationRoute, isAuthenticated} from "ngx-fusio-sdk";
 import {AccountComponent} from "./account/account.component";
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
-  {path: 'bootstrap', component: BootstrapComponent},
-  {path: 'authorization', component: AuthorizationComponent},
-  {path: 'api', component: ApiComponent},
-  {path: 'sdk', component: SdkComponent},
-  {path: 'support', component: SupportComponent},
-  {path: 'about', component: AboutComponent},
+  {path: '', component: HomeComponent, title: 'Developer'},
+  {path: 'bootstrap', component: BootstrapComponent, title: 'Bootstrap'},
+  {path: 'authorization', component: AuthorizationComponent, title: 'Authorization'},
+  {path: 'api', component: ApiComponent, title: 'API'},
+  {path: 'sdk', component: SdkComponent, title: 'SDK'},
+  {path: 'support', component: SupportComponent, title: 'Support'},
+  {path: 'about', component: AboutComponent, title: 'About'},
   {path: 'account', component: AccountComponent, canActivate: [isAuthenticated], children: AccountRoute.getAll()},
 ];
 
