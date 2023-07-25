@@ -6,29 +6,27 @@ body {
   background-color: #eee;
 }
 
-.fusio-login {
-  max-width: 400px;
-  background-color: #fff;
-  margin: 0 auto;
-  margin-top: 64px;
-  margin-bottom: 128px;
-  padding: 12px;
-  padding-top: 16px;
-  padding-bottom: 32px;
-  border: 1px solid #ccc;
+.fusio-login
+{
 }
 
-.fusio-login h1 {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #666;
-  margin: 0;
-  margin-bottom: 8px;
+.fusio-login header
+{
 }
 
-.fusio-login .fusio-login-ruler {
-  border-bottom: 1px solid #444;
-  margin-bottom: 16px;
+.fusio-login-panel
+{
+  background-color:#fff;
+  width:400px;
+  border:1px solid #fff;
+  margin:0 auto;
+  margin-top:32px;
+  margin-bottom:64px;
+}
+
+.fusio-login-panel-body
+{
+  margin:8px;
 }
 
 .fusio-header {
