@@ -10,8 +10,10 @@ export class ConfigBuilder {
 
     return {
       baseUrl: baseUrl,
+      logo: 'fusio_64px.png',
+      appId: 2,
+      homePath: 'account',
       helpUrl: 'https://docs.fusio-project.org/docs/backend/',
-      homePath: 'account'
     }
   }
 
