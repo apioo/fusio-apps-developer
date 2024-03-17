@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Message} from "fusio-sdk/dist/src/generated/consumer/Message";
-import {Page} from "fusio-sdk/dist/src/generated/consumer/Page";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {ConsumerService, ErrorService} from "ngx-fusio-sdk";
+import {ErrorService} from "ngx-fusio-sdk";
+import {CommonMessage, ConsumerPage} from "fusio-sdk";
+import {ApiService} from "../api.service";
 
 @Component({
   selector: 'app-page',
@@ -11,15 +11,15 @@ import {ConsumerService, ErrorService} from "ngx-fusio-sdk";
 })
 export abstract class PageComponent implements OnInit {
 
-  response?: Message;
-  page?: Page
+  response?: CommonMessage;
+  page?: ConsumerPage
   content?: SafeHtml
 
-  constructor(private consumer: ConsumerService, private error: ErrorService, protected sanitizer: DomSanitizer) { }
+  constructor(private fusio: ApiService, private error: ErrorService, protected sanitizer: DomSanitizer) { }
 
   async ngOnInit(): Promise<void> {
     try {
-      this.page = await this.consumer.getClientAnonymous().page().get(this.getId());
+      this.page = await this.fusio.getClientAnonymous().consumer().page().get(this.getId());
       this.content = this.sanitizer.bypassSecurityTrustHtml(this.page.content || '');
       this.response = undefined;
     } catch (error) {

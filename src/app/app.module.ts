@@ -15,10 +15,10 @@ import {SdkComponent} from './sdk/sdk.component';
 import {SupportComponent} from './support/support.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
 import {AboutComponent} from './about/about.component';
-import {FusioSdkModule, FusioService as Sdk} from "ngx-fusio-sdk";
-import {FusioService} from "./fusio.service";
+import {FusioSdkModule, ApiService as SDK} from "ngx-fusio-sdk";
 import {ConfigBuilder} from "./config-builder";
-import { AccountComponent } from './account/account.component';
+import {AccountComponent} from './account/account.component';
+import {ApiService} from "./api.service";
 
 @NgModule({
   declarations: [
@@ -45,7 +45,10 @@ import { AccountComponent } from './account/account.component';
     FusioSdkModule.forRoot(ConfigBuilder.build()),
   ],
   providers: [
-    {provide: Sdk, useExisting: FusioService}
+    {
+      provide: SDK,
+      useExisting: ApiService
+    }
   ],
   bootstrap: [AppComponent]
 })
