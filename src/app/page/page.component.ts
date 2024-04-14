@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {ErrorService} from "ngx-fusio-sdk";
-import {CommonMessage, ConsumerPage} from "fusio-sdk";
 import {ApiService} from "../api.service";
+import {CommonMessage} from "fusio-sdk/dist/CommonMessage";
+import {ConsumerPage} from "fusio-sdk/dist/ConsumerPage";
 
 @Component({
   selector: 'app-page',
@@ -11,7 +12,7 @@ import {ApiService} from "../api.service";
 })
 export abstract class PageComponent implements OnInit {
 
-  response?: CommonMessage;
+  response?: CommonMessage
   page?: ConsumerPage
   content?: SafeHtml
 
@@ -20,7 +21,7 @@ export abstract class PageComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       this.page = await this.fusio.getClientAnonymous().consumer().page().get(this.getId());
-      this.content = this.sanitizer.bypassSecurityTrustHtml(this.page.content || '');
+      this.content = this.sanitizer.bypassSecurityTrustHtml(this.page?.content || '');
       this.response = undefined;
     } catch (error) {
       this.response = this.error.convert(error);
