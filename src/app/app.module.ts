@@ -57,4 +57,5 @@ export class AppModule {
 
 declare global {
   var FUSIO_URL: string | undefined;
+  var FUSIO_APP_KEY: string | undefined;
 }
