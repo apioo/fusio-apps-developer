@@ -15,7 +15,7 @@ export class ConfigBuilder {
       logo: 'fusio_64px.png',
       appKey: appKey && appKey !== '${APP_KEY}' ? appKey : undefined,
       homePath: 'account',
-      helpUrl: 'https://docs.fusio-project.org/docs/backend/',
+      helpUrl: 'https://docs.fusio-project.org/docs/developer/',
     }
   }
 
