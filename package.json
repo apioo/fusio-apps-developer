@@ -25,7 +25,7 @@
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
     "fusio-sdk": "^5.0.7",
-    "ngx-fusio-sdk": "^5.0.2",
+    "ngx-fusio-sdk": "^5.0.5",
     "ngx-captcha": "^13.0.0",
     "ngx-clipboard": "^16.0.0",
     "ngx-gravatar": "^13.0.0",
