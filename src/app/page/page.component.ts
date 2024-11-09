@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {ErrorService} from "ngx-fusio-sdk";
+import {CommonMessage, ConsumerPage} from "fusio-sdk";
 import {ApiService} from "../api.service";
-import {CommonMessage} from "fusio-sdk/dist/CommonMessage";
-import {ConsumerPage} from "fusio-sdk/dist/ConsumerPage";
 
 @Component({
   selector: 'app-page',

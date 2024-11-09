@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from "ngx-fusio-sdk";
+import {ConsumerUserAccount} from "fusio-sdk";
 import {ApiService} from "../api.service";
-import {ConsumerUserAccount} from "fusio-sdk/dist/ConsumerUserAccount";
 
 @Component({
   selector: 'app-navigation',
