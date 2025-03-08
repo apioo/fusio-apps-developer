@@ -1,6 +1,6 @@
 {
   "name": "developer",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -25,15 +25,17 @@
     "axios": "^1.3.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
-    "fusio-sdk": "^5.1.10",
+    "fusio-sdk": "^5.1.14",
     "ngx-captcha": "^13.0.0",
-    "ngx-fusio-sdk": "^5.1.1",
+    "ngx-fusio-sdk": "^6.1.3",
     "ngx-clipboard": "^16.0.0",
     "ngx-gravatar": "^13.0.0",
     "ngx-markdown": "^18.0.0",
-    "sdkgen-client": "^2.0.0",
+    "ngx-typeschema-editor": "^3.2.1",
     "rxjs": "~7.8.0",
+    "sdkgen-client": "^2.0.0",
     "tslib": "^2.3.0",
+    "typehub-javascript-sdk": "^1.1.8",
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
