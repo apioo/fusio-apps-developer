@@ -24,7 +24,7 @@
     "@popperjs/core": "2.11.8",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
-    "fusio-sdk": "^6.0.0",
+    "fusio-sdk": "^6.1.0",
     "ngx-captcha": "^13.0.0",
     "ngx-fusio-sdk": "^6.2.0",
     "ngx-clipboard": "^16.0.0",
