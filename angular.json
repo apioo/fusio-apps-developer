@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "fusio": {
+    "developer": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -65,10 +65,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "fusio:build:production"
+              "buildTarget": "developer:build:production"
             },
             "development": {
-              "buildTarget": "fusio:build:development"
+              "buildTarget": "developer:build:development"
             }
           },
           "defaultConfiguration": "development"
