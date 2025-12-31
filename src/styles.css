@@ -1,8 +1,4 @@
 
-@import "~bootstrap-icons/font/bootstrap-icons.css";
-@import "~bootstrap/dist/css/bootstrap.min.css";
-@import "~@vscode/codicons/dist/codicon.css";
-
 body {
   background-color: #eee;
 }
@@ -51,7 +47,7 @@ body {
 }
 
 .fusio-intro {
-  background-image: url(assets/header.jpg);
+  background-image: url(/assets/header.jpg);
   background-position: left top;
   background-repeat: no-repeat;
   background-color: #191a1f;

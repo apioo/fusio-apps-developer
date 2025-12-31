@@ -1,5 +1,5 @@
 #stage 1
-FROM node:18-alpine as node
+FROM node:22-alpine AS node
 ENV NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /app
 COPY . .
@@ -14,5 +14,4 @@ ENV RECAPTCHA_KEY=""
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY nginx/replace_env.sh /docker-entrypoint.d/replace_env.sh
 RUN chmod +x /docker-entrypoint.d/replace_env.sh
-COPY --from=node /app/dist/developer /usr/share/nginx/html
-COPY --from=node /app/dist/developer/index.html /usr/share/index.html
+COPY --from=node /app/dist/developer/browser /usr/share/nginx/html

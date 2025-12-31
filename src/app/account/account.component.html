@@ -1,13 +1,15 @@
 
 <div class="fusio-page">
   <nav class="fusio-tabs">
-    <ul ngbNav [(activeId)]="active" class="nav-tabs">
-      <li [ngbNavItem]="item.title" *ngFor="let item of items">
-        <a ngbNavLink [routerLink]="item.path" class="nav-link">{{item.title}}</a>
-      </li>
+    <ul class="nav nav-tabs">
+      @for (item of items(); track item.title) {
+        <li class="nav-item">
+          <a class="nav-link" [ngClass]="{'active': active() === item.title}" [routerLink]="item.path">{{item.title}}</a>
+        </li>
+      }
     </ul>
   </nav>
   <div class="mt-3">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"  />
   </div>
 </div>

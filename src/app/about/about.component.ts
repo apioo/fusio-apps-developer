@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
 @Component({
@@ -8,7 +8,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class AboutComponent implements OnInit {
 
-  about?: About;
+  about = signal<About|undefined>(undefined);
 
   constructor(private http: HttpClient) { }
 
@@ -18,7 +18,7 @@ export class AboutComponent implements OnInit {
     }
 
     this.http.get<About>(FUSIO_URL).subscribe((about) => {
-      this.about = about;
+      this.about.set(about);
     });
   }
 

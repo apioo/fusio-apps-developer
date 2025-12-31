@@ -1,4 +1,4 @@
-import {Config} from "ngx-fusio-sdk/lib/config/config";
+import {Config} from "ngx-fusio-sdk";
 
 export class ConfigBuilder {
 
@@ -12,7 +12,7 @@ export class ConfigBuilder {
 
     return {
       baseUrl: baseUrl,
-      logo: 'fusio_64px.png',
+      logo: 'assets/fusio_64px.png',
       appKey: appKey && appKey !== '${APP_KEY}' ? appKey : undefined,
       homePath: 'account',
       helpUrl: 'https://docs.fusio-project.org/docs/developer/',
