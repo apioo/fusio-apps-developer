@@ -47,7 +47,7 @@ body {
 }
 
 .fusio-intro {
-  background-image: url(/assets/header.jpg);
+  background-image: url(../public/assets/header.jpg);
   background-position: left top;
   background-repeat: no-repeat;
   background-color: #191a1f;
