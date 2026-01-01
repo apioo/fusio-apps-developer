@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --base-href /apps/developer/ --deploy-url /apps/developer/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -40,7 +40,7 @@
     "marked": "^16.0.0",
     "ngx-captcha": "^14.0.0",
     "ngx-clipboard": "^16.0.0",
-    "ngx-fusio-sdk": "^7.0.8",
+    "ngx-fusio-sdk": "^7.1.1",
     "ngx-gravatar": "^13.0.0",
     "ngx-markdown": "^20.0.0",
     "ngx-typeschema-editor": "^4.0.4",
