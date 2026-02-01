@@ -36,7 +36,7 @@
     "@vscode/codicons": "^0.0.36",
     "bootstrap": "^5.3.0",
     "bootstrap-icons": "^1.10.5",
-    "fusio-sdk": "^6.4.0",
+    "fusio-sdk": "^6.4.1",
     "marked": "^16.0.0",
     "ngx-captcha": "^14.0.0",
     "ngx-clipboard": "^16.0.0",
