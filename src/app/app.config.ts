@@ -6,7 +6,7 @@ import {ApiService} from "./api.service";
 import {routes} from './app.routes';
 import {ConfigBuilder} from "./config-builder";
 import {provideMarkdown} from "ngx-markdown";
-import {ApiService as SDK, FUSIO_CONFIG} from "ngx-fusio-sdk";
+import {ApiService as SDK, FUSIO_CONFIG, provideAgentChatTypes} from "ngx-fusio-sdk";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(withFetch()),
+    provideAgentChatTypes(),
     provideMarkdown(),
     {
       provide: SDK,
